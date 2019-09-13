@@ -97,8 +97,8 @@ project.tasks['sonarqube'].dependsOn test, integration
 
 sonarqube {
   properties {
-    property "sonar.projectName", "Reform :: spring-boot-template"
-    property "sonar.projectKey", "uk.gov.hmcts.reform:spring-boot-template"
+    property "sonar.projectName", "Reform :: bulk-scan-payment-processor"
+    property "sonar.projectKey", "uk.gov.hmcts.reform:bulk-scan-payment-processor"
     property "sonar.jacoco.reportPath", "${project.buildDir}/jacoco/test.exec"
     property "sonar.jacoco.itReportPath", "${project.buildDir}/jacoco/integration.exec"
 
@@ -200,10 +200,10 @@ test {
   failFast = true
 }
 
-mainClassName = 'uk.gov.hmcts.reform.demo.Application'
+mainClassName = 'uk.gov.hmcts.reform.bulkscan.payment.processor.Application'
 
 bootJar {
-  archiveName = 'spring-boot-template.jar'
+  archiveName = 'bulk-scan-payment-processor.jar'
 
   manifest {
     attributes('Implementation-Version': project.version.toString())
