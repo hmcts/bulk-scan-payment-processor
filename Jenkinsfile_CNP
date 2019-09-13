@@ -1,0 +1,24 @@
+#!groovy
+@Library("Infrastructure")
+
+import uk.gov.hmcts.contino.GradleBuilder
+import uk.gov.hmcts.contino.Kubectl
+import uk.gov.hmcts.contino.DockerImage
+import uk.gov.hmcts.pipeline.TeamConfig
+
+def type = "java"
+def product = "bulk-scan"
+def component = "pay-processor"
+
+def channel = '#bsp-build-notices'
+GradleBuilder builder = new GradleBuilder(this, product)
+
+withPipeline(type, product, component) {
+  after('test') {
+    builder.gradle('integration')
+  }
+
+  enableDockerBuild()
+  installCharts()
+  enableSlackNotifications(channel)
+}
