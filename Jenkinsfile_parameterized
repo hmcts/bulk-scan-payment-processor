@@ -1,5 +1,5 @@
 #!groovy
-@Library(value="Infrastructure", changelog=false) _
+@Library(value="Infrastructure", changelog=false)
 
 def channel = '#bsp-build-notices'
 
@@ -11,7 +11,7 @@ properties([
     string(name: 'ENVIRONMENT', defaultValue: 'sandbox', description: 'Environment where code should be built and deployed'),
     choice(name: 'SUBSCRIPTION', choices: 'sandbox\nnonprod\nprod', description: 'Azure subscriptions available to build in')
   ]),
-  [$class: 'GithubProjectProperty', projectUrlStr: 'github.com/hmcts/bulk-scan-ccd-event-handler-sample-app'],
+  [$class: 'GithubProjectProperty', projectUrlStr: 'github.com/hmcts/bulk-scan-payment-processor'],
   pipelineTriggers([[$class: 'GitHubPushTrigger']])
 ])
 
