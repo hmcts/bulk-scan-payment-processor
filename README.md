@@ -4,8 +4,7 @@
 
 ## Purpose
 
-Retrieve service bus queue messages from payments queue and process them by either creating a new payment record for a exception record in CCD 
-or update an existing CCD exception record reference in payments to use service case reference.
+Retrieve service bus queue messages from payments queue and process them by either creating a new payment record for an exception record in CCD or update an existing CCD exception record reference in payments to use service case reference.
 
 ## Building and deploying the application
 
@@ -84,7 +83,7 @@ docker images
 docker image rm <image-id>
 ```
 
-There is no need to remove postgres and java or similar core images.
+There is no need to remove java or similar core images.
 
 ## License
 
