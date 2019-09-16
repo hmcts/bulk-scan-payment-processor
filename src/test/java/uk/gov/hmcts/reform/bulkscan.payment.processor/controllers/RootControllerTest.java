@@ -4,7 +4,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.http.HttpStatus;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -23,8 +22,8 @@ public class RootControllerTest {
         MockHttpServletResponse response = mockMvc.perform(get("/"))
             .andReturn().getResponse();
 
+        assertThat(response.getStatus()).isEqualTo(200);
         assertThat(response.getContentAsString()).isEqualTo("Welcome to bulk-scan-payment-processor");
-        assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
     }
 }
 
