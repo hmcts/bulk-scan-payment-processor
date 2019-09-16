@@ -24,7 +24,7 @@ public class RootControllerTest {
             .andReturn().getResponse();
 
         assertThat(response.getContentAsString()).isEqualTo("Welcome to bulk-scan-payment-processor");
-        assertThat(response.getStatus()).isEqualTo(HttpStatus.OK);
+        assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
     }
 }
 
