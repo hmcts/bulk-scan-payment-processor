@@ -76,11 +76,10 @@ checkstyle {
 }
 
 pmd {
-  toolVersion = "6.16.0"
+  toolVersion = "6.14.0"
+  ignoreFailures = true
   sourceSets = [sourceSets.main, sourceSets.test, sourceSets.functionalTest, sourceSets.integrationTest, sourceSets.smokeTest]
   reportsDir = file("$project.buildDir/reports/pmd")
-  // https://github.com/pmd/pmd/issues/876
-  ruleSets = []
   ruleSetFiles = files("config/pmd/ruleset.xml")
 }
 
@@ -89,7 +88,7 @@ jacocoTestReport {
   reports {
     xml.enabled = true
     csv.enabled = false
-    xml.destination file("${buildDir}/reports/jacoco/test/jacocoTestReport.xml")
+    xml.destination = file("${project.buildDir}/reports/jacoco/test/jacocoTestReport.xml")
   }
 }
 
@@ -101,7 +100,6 @@ sonarqube {
     property "sonar.projectKey", "uk.gov.hmcts.reform:bulk-scan-payment-processor"
     property "sonar.jacoco.reportPath", "${project.buildDir}/jacoco/test.exec"
     property "sonar.jacoco.itReportPath", "${project.buildDir}/jacoco/integration.exec"
-
   }
 }
 
