@@ -11,10 +11,9 @@ def channel = '#bsp-build-notices'
 GradleBuilder builder = new GradleBuilder(this, product)
 
 withPipeline(type, product, component) {
-  after('test') {
+ after('test') {
     builder.gradle('integration')
   }
-
   enableDockerBuild()
   installCharts()
   enableSlackNotifications(channel)
