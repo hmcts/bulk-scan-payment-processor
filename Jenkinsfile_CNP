@@ -5,7 +5,7 @@ import uk.gov.hmcts.contino.GradleBuilder
 
 def type = "java"
 def product = "bulk-scan"
-def component = "pay-processor"
+def component = "payment-processor"
 
 def channel = '#bsp-build-notices'
 GradleBuilder builder = new GradleBuilder(this, product)
