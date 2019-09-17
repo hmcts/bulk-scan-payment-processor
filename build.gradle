@@ -92,14 +92,12 @@ jacocoTestReport {
   }
 }
 
-project.tasks['sonarqube'].dependsOn test, integration
+project.tasks['sonarqube'].dependsOn jacocoTestReport
 
 sonarqube {
   properties {
     property "sonar.projectName", "Reform :: bulk-scan-payment-processor"
     property "sonar.projectKey", "uk.gov.hmcts.reform:bulk-scan-payment-processor"
-    property "sonar.jacoco.reportPath", "${project.buildDir}/jacoco/test.exec"
-    property "sonar.jacoco.itReportPath", "${project.buildDir}/jacoco/integration.exec"
   }
 }
 
