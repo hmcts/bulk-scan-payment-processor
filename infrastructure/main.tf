@@ -4,8 +4,6 @@ provider "azurerm" {
 
 locals {
   ase_name   = "${data.terraform_remote_state.core_apps_compute.ase_name[0]}"
-  is_preview = "${(var.env == "preview" || var.env == "spreview")}"
-  local_env  = "${local.is_preview ? "aat" : var.env}"
   sku_size   = "${var.env == "prod" || var.env == "sprod" || var.env == "aat" ? "I2" : "I1"}"
 }
 
