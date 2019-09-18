@@ -1,4 +1,4 @@
-ARG APP_INSIGHTS_AGENT_VERSION=2.3.1
+ARG APP_INSIGHTS_AGENT_VERSION=2.4.0-BETA-SNAPSHOT
 
 FROM hmcts/cnp-java-base:openjdk-11-distroless-1.0-beta
 
