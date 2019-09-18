@@ -1,9 +1,19 @@
-ARG APP_INSIGHTS_AGENT_VERSION=2.4.0-BETA-SNAPSHOT
+ARG APP_INSIGHTS_AGENT_VERSION=2.5.0-BETA.3
 
-FROM hmcts/cnp-java-base:openjdk-11-distroless-1.0-beta
+# Build image
 
-COPY build/libs/bulk-scan-payment-processor.jar /opt/app/
-COPY lib/applicationinsights-agent-2.4.0-BETA-SNAPSHOT.jar lib/AI-Agent.xml /opt/app/
+FROM busybox as downloader
+
+RUN wget -P /tmp https://github.com/microsoft/ApplicationInsights-Java/releases/download/2.5.0-BETA.3/applicationinsights-agent-2.5.0-BETA.3.jar
+
+# Application image
+
+FROM hmctspublic.azurecr.io/base/java:openjdk-11-distroless-1.0
+
+EXPOSE 4000
+
+COPY --from=downloader /tmp/applicationinsights-agent-2.5.0-BETA.3.jar /opt/app/
+COPY lib/AI-Agent.xml /opt/app/
 
 EXPOSE 8583
 
