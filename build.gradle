@@ -148,7 +148,7 @@ repositories {
 def versions = [
   junit           : '5.5.1',
   junitPlatform   : '1.5.1',
-  reformLogging   : '5.0.1',
+  reformLogging   : '5.1.0-beta',
   springBoot      : springBoot.class.package.implementationVersion,
   springfoxSwagger: '2.9.2'
 ]
