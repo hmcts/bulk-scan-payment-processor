@@ -1,4 +1,4 @@
 java:
   applicationPort: 8583
   environment:
-  image: 'https://hmctspublic.azurecr.io/bulk-scan/pay-processor:latest'
+  image: 'https://hmctspublic.azurecr.io/bulk-scan/payment-processor:latest'
