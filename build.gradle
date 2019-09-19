@@ -211,7 +211,9 @@ test {
 mainClassName = 'uk.gov.hmcts.reform.bulkscan.payment.processor.Application'
 
 bootJar {
-  archiveName = 'bulk-scan-payment-processor.jar'
+  getArchiveFileName().set(provider {
+    'bulk-scan-orchestrator.jar'
+  })
 
   manifest {
     attributes('Implementation-Version': project.version.toString())
