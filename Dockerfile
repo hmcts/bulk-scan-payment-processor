@@ -14,6 +14,8 @@ COPY --from=downloader /tmp/applicationinsights-agent-${APP_INSIGHTS_AGENT_VERSI
 
 COPY lib/AI-Agent.xml /opt/app/
 
+COPY build/libs/bulk-scan-payment-processor.jar /opt/app/
+
 EXPOSE 8583
 
 CMD ["bulk-scan-payment-processor.jar"]
