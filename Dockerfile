@@ -1,18 +1,17 @@
-ARG APP_INSIGHTS_AGENT_VERSION=2.5.0-BETA.3
+ARG APP_INSIGHTS_AGENT_VERSION=2.5.0
 
 # Build image
 
 FROM busybox as downloader
 
-RUN wget -P /tmp https://github.com/microsoft/ApplicationInsights-Java/releases/download/2.5.0-BETA.3/applicationinsights-agent-2.5.0-BETA.3.jar
+RUN wget -P /tmp https://github.com/microsoft/ApplicationInsights-Java/releases/download/2.5.0/applicationinsights-agent-2.5.0.jar
 
 # Application image
 
-FROM hmctspublic.azurecr.io/base/java:openjdk-11-distroless-1.0
+FROM hmctspublic.azurecr.io/base/java:openjdk-11-distroless-1.1
 
-EXPOSE 4000
+COPY --from=downloader /tmp/applicationinsights-agent-${APP_INSIGHTS_AGENT_VERSION}.jar /opt/app/
 
-COPY --from=downloader /tmp/applicationinsights-agent-2.5.0-BETA.3.jar /opt/app/
 COPY lib/AI-Agent.xml /opt/app/
 
 EXPOSE 8583
