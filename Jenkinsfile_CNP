@@ -16,6 +16,7 @@ withPipeline(type, product, component) {
   }
   enableDockerBuild()
   enableAksStagingDeployment()
+  disableLegacyDeployment()
   installCharts()
   enableSlackNotifications(channel)
 }
