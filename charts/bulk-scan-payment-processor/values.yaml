@@ -1,4 +1,5 @@
 java:
   applicationPort: 8583
+  ingressHost: bulk-scan-payment-processor-{{ .Values.global.environment }}.service.core-compute-{{ .Values.global.environment }}.internal
   environment:
   image: 'https://hmctspublic.azurecr.io/bulk-scan/payment-processor:latest'
