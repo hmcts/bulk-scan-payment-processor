@@ -4,7 +4,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 
 import java.util.List;
 
-@ConfigurationProperties(prefix = "site-configuration")
+@ConfigurationProperties(prefix = "site-mappings")
 public class SiteConfiguration {
     private List<Sites> sites;
 

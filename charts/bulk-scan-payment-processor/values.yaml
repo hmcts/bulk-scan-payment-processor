@@ -5,7 +5,7 @@ java:
   image: 'https://hmctspublic.azurecr.io/bulk-scan/payment-processor:latest'
   keyVaults:
     "bulk-scan":
-      resourceGroup: payment-processor
+      resourceGroup: bulk-scan
       secrets:
         - site-id-probate
         - site-id-divorce

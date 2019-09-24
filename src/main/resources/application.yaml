@@ -17,7 +17,7 @@ spring:
   application:
     name: Bulk Scan Payment Processor
 
-site-configuration:
+site-mappings:
   sites:
     - siteName: PROBATE
       poBox: 12625
