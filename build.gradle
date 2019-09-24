@@ -129,6 +129,10 @@ dependencyCheck {
 dependencyManagement {
   dependencies {
     dependency group: 'org.bouncycastle', name: 'bcpkix-jdk15on', version: '1.63'
+    // CVE-2019-14540, CVE-2019-16335 - until 2.9.9.3 HikariCP issue :o
+    dependencySet(group: 'com.fasterxml.jackson.core', version: '2.9.10') {
+      entry 'jackson-databind'
+    }
     // CVE-2018-10237 - Unbounded memory allocation
     dependencySet(group: 'com.google.guava', version: '28.1-jre') {
       entry 'guava'
@@ -152,20 +156,6 @@ def versions = [
   springBoot      : springBoot.class.package.implementationVersion,
   springfoxSwagger: '2.9.2'
 ]
-
-configurations.all {
-  resolutionStrategy {
-    eachDependency { DependencyResolveDetails details ->
-      if (details.requested.group in ['com.fasterxml.jackson.core', 'com.fasterxml.jackson.module', 'com.fasterxml.jackson.datatype']) {
-        details.useVersion '2.9.9'
-      }
-
-      if (details.requested.name == 'jackson-databind') {
-        details.useVersion '2.9.9.2'
-      }
-    }
-  }
-}
 
 ext["rest-assured.version"] = '4.0.0'
 

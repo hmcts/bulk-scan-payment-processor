@@ -8,14 +8,7 @@
     <cpe>cpe:/a:pivotal_software:spring_security</cpe>
     <cve>CVE-2018-1258</cve>
   </suppress>
-  <suppress until="2019-09-30">
-    <notes><![CDATA[
-   No fix available
-   ]]></notes>
-    <packageUrl regex="true">^pkg:maven/com\.fasterxml\.jackson\.core/jackson\-databind@.*$</packageUrl>
-    <cve>CVE-2019-14540</cve>
-    <cve>CVE-2019-16335</cve>
-  </suppress>
+
   <suppress>
     <notes><![CDATA[
    Only used in smoke tests
