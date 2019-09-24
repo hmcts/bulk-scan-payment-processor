@@ -1,0 +1,10 @@
+spring:
+  cloud:
+    propertiesvolume:
+      enabled: true
+      prefixed: true
+      paths: /mnt/secrets/bulk-scan
+      aliases:
+        site-id-probate: SITE_ID_PROBATE
+        site-id-divorce: SITE_ID_DIVROCE
+        site-id-finrem: SITE_ID_FINREM
