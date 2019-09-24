@@ -170,6 +170,9 @@ configurations.all {
 ext["rest-assured.version"] = '4.0.0'
 
 dependencies {
+  def withoutSpringCloudContext = {
+    exclude group: 'org.springframework.cloud', module: 'spring-cloud-context'
+  }
   compile group: 'org.springframework.boot', name: 'spring-boot-starter-web'
   compile group: 'org.springframework.boot', name: 'spring-boot-starter-actuator'
   compile group: 'org.springframework.boot', name: 'spring-boot-starter-aop'
