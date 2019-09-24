@@ -6,5 +6,5 @@ spring:
       paths: /mnt/secrets/bulk-scan
       aliases:
         site-id-probate: SITE_ID_PROBATE
-        site-id-divorce: SITE_ID_DIVROCE
+        site-id-divorce: SITE_ID_DIVORCE
         site-id-finrem: SITE_ID_FINREM
