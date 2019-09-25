@@ -11,6 +11,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class QueueClientsConfiguration {
 
+    @Bean
     public IMessageReceiver envelopesMessageReceiver(
         @Value("${azure.servicebus.payments.connection-string}") String connectionString
     ) throws InterruptedException, ServiceBusException {
