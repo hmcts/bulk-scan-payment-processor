@@ -24,3 +24,15 @@ azure:
       queue-name: payments
       max-delivery-count: ${PAYMENTS_QUEUE_MAX_DELIVERY_COUNT}
 
+site-mappings:
+  sites:
+    - siteName: PROBATE
+      poBox: 12625
+      siteId: ${SITE_ID_PROBATE}
+    - siteName: DIVORCE
+      poBox: 12706
+      siteId: ${SITE_ID_DIVORCE}
+    - siteName: DIVORCE
+      poBox: 12746
+      siteId: ${SITE_ID_FINREM}
+

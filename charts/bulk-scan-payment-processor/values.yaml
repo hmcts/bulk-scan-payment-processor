@@ -17,3 +17,10 @@ servicebus:
   setup:
     queues:
       - name: payments
+  keyVaults:
+    "bulk-scan":
+      resourceGroup: bulk-scan
+      secrets:
+        - site-id-probate
+        - site-id-divorce
+        - site-id-finrem
