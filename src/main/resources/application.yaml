@@ -16,3 +16,16 @@ management:
 spring:
   application:
     name: Bulk Scan Payment Processor
+
+site-mappings:
+  sites:
+    - siteName: PROBATE
+      poBox: 12625
+      siteId: ${SITE_ID_PROBATE}
+    - siteName: DIVORCE
+      poBox: 12706
+      siteId: ${SITE_ID_DIVORCE}
+    - siteName: DIVORCE
+      poBox: 12746
+      siteId: ${SITE_ID_FINREM}
+
