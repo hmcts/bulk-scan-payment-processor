@@ -3,3 +3,20 @@ java:
   # Don't modify below here
   image: ${IMAGE_NAME}
   ingressHost: ${SERVICE_FQDN}
+  PAYMENTS_QUEUE_SEND_CONNECTION_STRING: "$(SB_CONN_STRING);EntityPath=payments"
+  PAYMENTS_QUEUE_MAX_DELIVERY_COUNT: "5"
+  secrets:
+    SB_CONN_STRING:
+      secretRef: servicebus-secret-namespace-{{ .Release.Name }}
+      key: connectionString
+servicebus:
+  resourceGroup: bulk-scan-aks
+  teamName: "Software Engineering"
+  location: uksouth
+  serviceplan: basic
+  setup:
+    queues:
+      - name: payments
+bspp:
+  servicebus:
+    enabled: true

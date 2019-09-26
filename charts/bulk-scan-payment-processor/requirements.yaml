@@ -5,4 +5,4 @@ dependencies:
   - name: servicebus
     version: ~0.1.1
     repository: '@hmctspublic'
-    condition: bsp.servicebus.enabled
+    condition: bspp.servicebus.enabled
