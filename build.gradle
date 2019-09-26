@@ -90,6 +90,13 @@ jacocoTestReport {
     csv.enabled = false
     xml.destination = file("${project.buildDir}/reports/jacoco/test/jacocoTestReport.xml")
   }
+  afterEvaluate {
+    getClassDirectories().from = getClassDirectories().files.collect {
+      fileTree(dir: it, exclude: [
+        'uk/gov/hmcts/reform/bulkscan/payment/processor/config/**'
+      ])
+    }
+  }
 }
 
 project.tasks['sonarqube'].dependsOn jacocoTestReport
@@ -99,7 +106,7 @@ sonarqube {
     property "sonar.projectName", "Reform :: Bulk Scan Payment Processor"
     property "sonar.projectKey", "uk.gov.hmcts.reform:bulk-scan-payment-processor"
     property "sonar.coverage.jacoco.xmlReportPaths", jacocoTestReport.reports.xml.destination.path
-    property "sonar.exclusions", "**/config/**"
+    property "sonar.exclusions", "**/config/**,**/Application.java"
   }
 }
 
