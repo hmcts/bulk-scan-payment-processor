@@ -3,6 +3,7 @@ java:
   # Don't modify below here
   image: ${IMAGE_NAME}
   ingressHost: ${SERVICE_FQDN}
+  aadIdentityName:
   PAYMENTS_QUEUE_SEND_CONNECTION_STRING: "$(SB_CONN_STRING);EntityPath=payments"
   PAYMENTS_QUEUE_MAX_DELIVERY_COUNT: "5"
   secrets:
@@ -20,3 +21,4 @@ servicebus:
 bspp:
   servicebus:
     enabled: true
+
