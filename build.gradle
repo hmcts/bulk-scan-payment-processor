@@ -93,8 +93,7 @@ jacocoTestReport {
   afterEvaluate {
     getClassDirectories().from = getClassDirectories().files.collect {
       fileTree(dir: it, exclude: [
-        'uk/gov/hmcts/reform/bulkscan/payment/processor/config/**',
-        'uk/gov/hmcts/reform/bulkscan/payment/processor/*Application**' //remove soon
+        'uk/gov/hmcts/reform/bulkscan/payment/processor/config/**'
       ])
     }
   }
@@ -107,7 +106,7 @@ sonarqube {
     property "sonar.projectName", "Reform :: Bulk Scan Payment Processor"
     property "sonar.projectKey", "uk.gov.hmcts.reform:bulk-scan-payment-processor"
     property "sonar.coverage.jacoco.xmlReportPaths", jacocoTestReport.reports.xml.destination.path
-    property "sonar.exclusions", "**/config/**"
+    property "sonar.exclusions", "**/config/**,**/Application.java"
   }
 }
 
