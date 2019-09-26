@@ -94,7 +94,7 @@ jacocoTestReport {
     getClassDirectories().from = getClassDirectories().files.collect {
       fileTree(dir: it, exclude: [
         'uk/gov/hmcts/reform/bulkscan/payment/processor/config/**',
-        'uk/gov/hmcts/reform/bulkscan/payment/processor/Application.java'
+        'uk/gov/hmcts/reform/bulkscan/payment/processor/Application.class'
       ])
     }
   }
