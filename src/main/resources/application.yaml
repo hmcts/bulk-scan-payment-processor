@@ -17,6 +17,13 @@ spring:
   application:
     name: Bulk Scan Payment Processor
 
+azure:
+  servicebus:
+    payments:
+      connection-string: ${PAYMENTS_QUEUE_SEND_CONNECTION_STRING}
+      queue-name: payments
+      max-delivery-count: ${PAYMENTS_QUEUE_MAX_DELIVERY_COUNT}
+
 site-mappings:
   sites:
     - siteName: PROBATE
