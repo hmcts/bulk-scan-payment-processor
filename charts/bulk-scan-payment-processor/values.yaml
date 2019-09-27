@@ -3,6 +3,7 @@ java:
   aadIdentityName: rpe
   ingressHost: bulk-scan-payment-processor-{{ .Values.global.environment }}.service.core-compute-{{ .Values.global.environment }}.internal
   environment:
+    PAYMENTS_QUEUE_MAX_DELIVERY_COUNT: "5"
   image: 'https://hmctspublic.azurecr.io/bulk-scan/payment-processor:latest'
   keyVaults:
     "bulk-scan":
