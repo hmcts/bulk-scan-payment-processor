@@ -14,8 +14,7 @@ public class PaymentMessage {
     public final String poBox;
     public final String jurisdiction;
     public final List<PaymentInfo> payments;
-
-
+    
     public PaymentMessage(
         @JsonProperty(value = "envelope_id", required = true) String envelopeId,
         @JsonProperty(value = "ccd_case_number", required = true) String ccdCaseNumber,
