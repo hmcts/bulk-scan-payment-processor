@@ -13,6 +13,7 @@ public class DummySmokeTest {
 
     private static final String TEST_URL = ConfigFactory.load().getString("test-url");
 
+
     @Test
     public void replaceThisWithActualTests() {
         // TODO: this test is there so that a test report can be created for smoke tests
