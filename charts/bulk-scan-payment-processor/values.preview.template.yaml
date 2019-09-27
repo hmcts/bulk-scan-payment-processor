@@ -17,6 +17,6 @@ servicebus:
   setup:
     queues:
       - name: payments
-bspp:
+bs-payment-processor:
   servicebus:
     enabled: true
