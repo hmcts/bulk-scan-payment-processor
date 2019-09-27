@@ -18,7 +18,6 @@ import java.lang.annotation.Target;
  * Its purpose is to:
  *  - centralise the integration test configuration
  *  - avoid copy and past
- *  - enable one profile for efficient running only @DirtysContext will restart/refresh the orchestrator context.
  */
 @Target({ ElementType.TYPE })
 @Retention(RetentionPolicy.RUNTIME)
