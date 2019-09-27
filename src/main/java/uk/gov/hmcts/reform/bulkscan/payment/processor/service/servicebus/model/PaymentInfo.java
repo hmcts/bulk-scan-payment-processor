@@ -6,11 +6,11 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class PaymentInfo {
 
-    public final String documentControlNumbers;
+    public final String documentControlNumber;
 
-    public PaymentInfo(@JsonProperty(value = "document_control_numbers", required = true)
-                           String documentControlNumbers) {
-        this.documentControlNumbers = documentControlNumbers;
+    public PaymentInfo(@JsonProperty(value = "document_control_number", required = true)
+                           String documentControlNumber) {
+        this.documentControlNumber = documentControlNumber;
     }
 
 
