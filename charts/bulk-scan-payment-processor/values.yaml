@@ -11,3 +11,4 @@ java:
         - site-id-probate
         - site-id-divorce
         - site-id-finrem
+        - payments-queue-send-connection-string
