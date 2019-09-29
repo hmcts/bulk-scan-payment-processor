@@ -13,3 +13,6 @@ java:
         - site-id-divorce
         - site-id-finrem
         - payments-queue-listen-connection-string
+bs-payment-processor:
+  servicebus:
+    enabled: false
