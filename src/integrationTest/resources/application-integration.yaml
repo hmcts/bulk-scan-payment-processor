@@ -1,0 +1,6 @@
+wiremock:
+  url: &wiremock "http://localhost:${wiremock.port}"
+
+pay-hub:
+  api:
+    url: *wiremock
