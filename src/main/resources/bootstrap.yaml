@@ -2,8 +2,8 @@ spring:
   cloud:
     propertiesvolume:
       enabled: true
-      prefixed: true
-      paths: /mnt/secrets/bulk-scan
+      prefixed: false
+      paths: /mnt/secrets
       aliases:
         site-id-probate: SITE_ID_PROBATE
         site-id-divorce: SITE_ID_DIVORCE
