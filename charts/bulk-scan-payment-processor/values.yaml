@@ -4,6 +4,7 @@ java:
   ingressHost: bulk-scan-payment-processor-{{ .Values.global.environment }}.service.core-compute-{{ .Values.global.environment }}.internal
   environment:
     PAYMENTS_QUEUE_MAX_DELIVERY_COUNT: "5"
+    PAY_HUB_URL:  https://ccpay-bulkscanning-api-{{ .Values.global.environment }}.service.core-compute-{{ .Values.global.environment }}.internal
   image: 'https://hmctspublic.azurecr.io/bulk-scan/payment-processor:latest'
   keyVaults:
     "bulk-scan":
@@ -13,3 +14,6 @@ java:
         - site-id-divorce
         - site-id-finrem
         - payments-queue-listen-connection-string
+bs-payment-processor:
+  servicebus:
+    enabled: false
