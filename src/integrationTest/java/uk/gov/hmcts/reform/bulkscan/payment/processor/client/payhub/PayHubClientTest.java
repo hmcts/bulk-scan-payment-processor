@@ -1,18 +1,15 @@
 package uk.gov.hmcts.reform.bulkscan.payment.processor.client.payhub;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder;
 import com.google.common.collect.ImmutableList;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.contract.wiremock.AutoConfigureWireMock;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.test.context.junit4.SpringRunner;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.client.payhub.request.PaymentRequest;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.client.payhub.response.PaymentResult;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.config.IntegrationTest;
@@ -32,7 +29,6 @@ import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 
 @AutoConfigureWireMock
 @IntegrationTest
-@RunWith(SpringRunner.class)
 public class PayHubClientTest {
 
     @Autowired

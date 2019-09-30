@@ -172,8 +172,8 @@ repositories {
 }
 
 def versions = [
-  junit           : '5.5.1',
-  junitPlatform   : '1.5.1',
+  junit           : '5.5.2',
+  junitPlatform   : '1.5.2',
   reformLogging   : '5.1.0',
   springBoot      : springBoot.class.package.implementationVersion,
   springfoxSwagger: '2.9.2'
@@ -184,6 +184,9 @@ ext["rest-assured.version"] = '4.0.0'
 dependencies {
   def withoutSpringCloudContext = {
     exclude group: 'org.springframework.cloud', module: 'spring-cloud-context'
+  }
+  def withoutJunit4 = {
+    exclude group: 'junit', module: 'junit'
   }
   compile group: 'org.springframework.boot', name: 'spring-boot-starter-web'
   compile group: 'org.springframework.boot', name: 'spring-boot-starter-actuator'
@@ -205,12 +208,14 @@ dependencies {
 
   compile group: 'com.microsoft.azure', name: 'azure-servicebus', version: '1.2.15'
 
-
+  testCompile group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: versions.junit
+  testCompile group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: versions.junit
+  testCompile group: 'org.junit.jupiter', name: 'junit-jupiter-params', version: versions.junit
   testCompile group: 'org.junit.platform', name: 'junit-platform-commons', version: versions.junitPlatform
   testCompile group: 'org.junit.platform', name: 'junit-platform-engine', version: versions.junitPlatform
-  testCompile group: 'org.mockito', name: 'mockito-junit-jupiter', version: '3.0.0'
-  testCompile group: 'org.springframework.boot', name: 'spring-boot-starter-test'
-  testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter', version: versions.junit
+
+  testCompile group: 'org.springframework.boot', name: 'spring-boot-starter-test', withoutJunit4
+
 
   integrationTestCompile group: 'org.springframework.cloud', name: 'spring-cloud-contract-wiremock', version: '2.1.3.RELEASE'
   integrationTestCompile sourceSets.main.runtimeClasspath
