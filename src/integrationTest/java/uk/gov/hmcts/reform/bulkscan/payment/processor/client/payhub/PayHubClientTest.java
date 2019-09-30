@@ -35,7 +35,6 @@ import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 @RunWith(SpringRunner.class)
 public class PayHubClientTest {
 
-
     @Autowired
     private PayHubClient client;
 
@@ -46,7 +45,8 @@ public class PayHubClientTest {
     public void should_return_Ok_when_everything_is_ok_with_request() throws JsonProcessingException {
         // given
         PaymentResult response = new PaymentResult(ImmutableList.of("xxxyyyzzz", "zzzyyyxxx"));
-        stubWithResponse(okJson(mapper.writeValueAsString(response)),mapper.writeValueAsString(getPaymentRequest()));
+        stubWithRequestAndResponse(mapper.writeValueAsString(getPaymentRequest()),
+                                   okJson(mapper.writeValueAsString(response)));
 
         // when
         ResponseEntity<PaymentResult> paymentResponse = client.postPayments(getPaymentRequest());
@@ -62,10 +62,13 @@ public class PayHubClientTest {
     public void should_return_Created_when_everything_is_ok_with_request() throws JsonProcessingException {
         // given
         PaymentResult response = new PaymentResult(ImmutableList.of("xxxyyyzzz"));
-        stubWithResponse(aResponse()
-                             .withStatus(201)
-                             .withHeader(CONTENT_TYPE, "application/json")
-                             .withBody(mapper.writeValueAsString(response)));
+        stubWithRequestAndResponse(
+            mapper.writeValueAsString(getPaymentRequest()),
+            aResponse()
+                .withStatus(201)
+                .withHeader(CONTENT_TYPE, "application/json")
+                .withBody(mapper.writeValueAsString(response))
+        );
 
         // when
         ResponseEntity<PaymentResult> paymentResponse = client.postPayments(getPaymentRequest());
@@ -81,7 +84,7 @@ public class PayHubClientTest {
         throws JsonProcessingException {
         // given
         String message = "error occurred";
-        stubWithResponse(getBadRequest(message));
+        stubWithRequestAndResponse(mapper.writeValueAsString(getPaymentRequest()), getBadRequest(message));
 
         // when
         Throwable throwable = catchThrowable(() -> client.postPayments(getPaymentRequest()));
@@ -100,7 +103,7 @@ public class PayHubClientTest {
     public void should_return_PayHubClientException_for_serverError()
         throws JsonProcessingException {
         // given
-        stubWithResponse(getServerErrorRequest());
+        stubWithRequestAndResponse(mapper.writeValueAsString(getPaymentRequest()), getServerErrorRequest());
 
         // when
         Throwable throwable = catchThrowable(() -> client.postPayments(getPaymentRequest()));
@@ -132,11 +135,7 @@ public class PayHubClientTest {
         return message == null ? null : message.getBytes();
     }
 
-    private static void stubWithResponse(ResponseDefinitionBuilder builder) {
-        stubFor(post("/bulk-scan-payments").willReturn(builder));
-    }
-
-    private static void stubWithResponse(ResponseDefinitionBuilder builder,String requestStr) {
+    private static void stubWithRequestAndResponse(String requestStr, ResponseDefinitionBuilder builder) {
         stubFor(post("/bulk-scan-payments").withRequestBody(equalToJson(requestStr)).willReturn(builder));
     }
 
