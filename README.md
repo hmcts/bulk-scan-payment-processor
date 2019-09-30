@@ -83,6 +83,7 @@ docker images
 docker image rm <image-id>
 ```
 
+
 There is no need to remove java or similar core images.
 
 ## License
