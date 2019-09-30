@@ -19,6 +19,7 @@ import uk.gov.hmcts.reform.bulkscan.payment.processor.config.IntegrationTest;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.badRequest;
+import static com.github.tomakehurst.wiremock.client.WireMock.equalToJson;
 import static com.github.tomakehurst.wiremock.client.WireMock.okJson;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
 import static com.github.tomakehurst.wiremock.client.WireMock.serverError;
@@ -45,7 +46,7 @@ public class PayHubClientTest {
     public void should_return_Ok_when_everything_is_ok_with_request() throws JsonProcessingException {
         // given
         PaymentResult response = new PaymentResult(ImmutableList.of("xxxyyyzzz", "zzzyyyxxx"));
-        stubWithResponse(okJson(mapper.writeValueAsString(response)));
+        stubWithResponse(okJson(mapper.writeValueAsString(response)),mapper.writeValueAsString(getPaymentRequest()));
 
         // when
         ResponseEntity<PaymentResult> paymentResponse = client.postPayments(getPaymentRequest());
@@ -133,6 +134,10 @@ public class PayHubClientTest {
 
     private static void stubWithResponse(ResponseDefinitionBuilder builder) {
         stubFor(post("/bulk-scan-payments").willReturn(builder));
+    }
+
+    private static void stubWithResponse(ResponseDefinitionBuilder builder,String requestStr) {
+        stubFor(post("/bulk-scan-payments").withRequestBody(equalToJson(requestStr)).willReturn(builder));
     }
 
     private static PaymentRequest getPaymentRequest() {

@@ -7,16 +7,16 @@ import java.util.List;
 public class PaymentRequest {
 
     @JsonProperty("ccd_case_number")
-    private final String ccdCaseNumber;
+    public final String ccdCaseNumber;
 
     @JsonProperty("document_control_numbers")
-    private final List<String> documentControlNumbers;
+    public final List<String> documentControlNumbers;
 
     @JsonProperty("is_exception_record")
-    private final boolean isExceptionRecord;
+    public final boolean isExceptionRecord;
 
     @JsonProperty("site_id")
-    private final String siteId;
+    public final String siteId;
 
     public PaymentRequest(String ccdCaseNumber, List<String> documentControlNumbers,
                           boolean isExceptionRecord, String siteId) {
