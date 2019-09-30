@@ -197,11 +197,8 @@ dependencies {
   testCompile group: 'org.junit.platform', name: 'junit-platform-commons', version: versions.junitPlatform
   testCompile group: 'org.junit.platform', name: 'junit-platform-engine', version: versions.junitPlatform
   testCompile group: 'org.mockito', name: 'mockito-junit-jupiter', version: '3.0.0'
-  testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter', version: versions.junit
-
-
-
   testCompile group: 'org.springframework.boot', name: 'spring-boot-starter-test'
+  testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter', version: versions.junit
 
   integrationTestCompile group: 'org.springframework.cloud', name: 'spring-cloud-contract-wiremock', version: '2.1.1.RELEASE'
   integrationTestCompile sourceSets.main.runtimeClasspath
