@@ -8,7 +8,6 @@ public class PaymentResult {
 
     public final List<String> paymentDcns;
 
-
     public PaymentResult(
         @JsonProperty("payment_dcns") List<String> paymentDcns
     ) {
