@@ -8,8 +8,7 @@ public class PaymentInfo {
 
     public final String documentControlNumber;
 
-    public PaymentInfo(@JsonProperty(value = "document_control_number", required = true)
-                           String documentControlNumber) {
+    public PaymentInfo(@JsonProperty(value = "document_control_number", required = true) String documentControlNumber) {
         this.documentControlNumber = documentControlNumber;
     }
 
