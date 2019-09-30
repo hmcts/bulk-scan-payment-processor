@@ -10,7 +10,6 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
-import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.PaymentMessageProcessor;
 
 import static org.mockito.Mockito.mock;
 import static org.springframework.util.SocketUtils.findAvailableTcpPort;
@@ -29,11 +28,6 @@ public class IntegrationContextInitializer implements ApplicationContextInitiali
     @Bean
     public Options options(@Value("${wiremock.port}") int port) {
         return WireMockConfiguration.options().port(port).notifier(new Slf4jNotifier(false));
-    }
-
-    @Bean
-    public PaymentMessageProcessor paymentMessageProcessor() {
-        return mock(PaymentMessageProcessor.class);
     }
 
     @Bean
