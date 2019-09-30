@@ -5,6 +5,11 @@ java:
       key: connectionString
   environment:
     PAYMENTS_QUEUE_READ_CONNECTION_STRING: "$(SB_CONN_STRING);EntityPath=payments"
+  keyVaults:
+    "s2s":
+      resourceGroup: rpe-service-auth-provider
+      secrets:
+        - microservicekey-bulk-scan-payment-processor
   # Don't modify below here
   image: ${IMAGE_NAME}
   ingressHost: ${SERVICE_FQDN}

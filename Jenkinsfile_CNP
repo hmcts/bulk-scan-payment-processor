@@ -10,8 +10,32 @@ def component = "payment-processor"
 def channel = '#bsp-build-notices'
 GradleBuilder builder = new GradleBuilder(this, product)
 
+def secrets = [
+  's2s-${env}': [
+    secret('microservicekey-bulk-scan-payments-processor', 'S2S_SECRET')
+  ]
+]
+
+static LinkedHashMap<String, Object> secret(String secretName, String envVar) {
+  [ $class: 'AzureKeyVaultSecret',
+    secretType: 'Secret',
+    name: secretName,
+    version: '',
+    envVariable: envVar
+  ]
+}
+
 withPipeline(type, product, component) {
- after('test') {
+  before('smoketest:preview') {
+    withAksClient('nonprod') {
+
+      // Vars needed for AKS testing
+      env.S2S_NAME = 'bulk_scan_payments_processor'
+      env.S2S_URL = 'http://rpe-service-auth-provider-aat.service.core-compute-aat.internal'
+    }
+  }
+
+  after('test') {
     builder.gradle('integration')
   }
   enableDockerBuild()
@@ -19,4 +43,5 @@ withPipeline(type, product, component) {
   disableLegacyDeployment()
   installCharts()
   enableSlackNotifications(channel)
+  loadVaultSecrets(secrets)
 }
