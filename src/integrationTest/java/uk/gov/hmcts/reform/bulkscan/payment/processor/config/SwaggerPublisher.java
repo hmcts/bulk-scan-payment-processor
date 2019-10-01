@@ -20,6 +20,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
  * Each travis run on master should automatically save and upload (if updated) documentation.
  */
 
+@AutoConfigureMockMvc
 @IntegrationTest
 class SwaggerPublisher {
 
