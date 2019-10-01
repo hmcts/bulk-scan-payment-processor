@@ -3,3 +3,5 @@ java:
   # Don't modify below here
   image: ${IMAGE_NAME}
   ingressHost: ${SERVICE_FQDN}
+  S2S_NAME: "bulk_scan_payment_processor"
+  S2S_URL: "http://rpe-service-auth-provider-aat.service.core-compute-aat.internal"
