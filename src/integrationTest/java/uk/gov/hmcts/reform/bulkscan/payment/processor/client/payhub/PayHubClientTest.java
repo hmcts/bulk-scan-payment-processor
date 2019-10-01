@@ -116,13 +116,13 @@ public class PayHubClientTest {
     }
 
 
-    private ResponseDefinitionBuilder getBadRequest(String bodyMessage) throws JsonProcessingException {
+    private ResponseDefinitionBuilder getBadRequest(String bodyMessage) {
         return badRequest()
             .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
             .withBody(get4xxResponseBody(bodyMessage));
     }
 
-    private ResponseDefinitionBuilder getServerErrorRequest() throws JsonProcessingException {
+    private ResponseDefinitionBuilder getServerErrorRequest() {
         return serverError()
             .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
     }
