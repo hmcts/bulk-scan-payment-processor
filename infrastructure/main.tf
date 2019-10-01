@@ -25,7 +25,7 @@ data "azurerm_key_vault" "local_key_vault" {
   resource_group_name = "${local.vaultName}"
 }
 
-resource "azurerm_key_vault_secret" "local_s2s_key" {
+resource "azurerm_key_vault_secret" "local_s2s_secret" {
   name         = "microservicekey-bulk-scan-payment-processor"
   value        = "${data.azurerm_key_vault_secret.s2s_secret.value}"
   key_vault_id = "${data.azurerm_key_vault.local_key_vault.id}"
