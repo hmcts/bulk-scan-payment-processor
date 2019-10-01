@@ -1,6 +1,6 @@
 java:
   applicationPort: 8583
-  aadIdentityName: rpe
+  aadIdentityName: bsp
   ingressHost: bulk-scan-payment-processor-{{ .Values.global.environment }}.service.core-compute-{{ .Values.global.environment }}.internal
   environment:
     PAYMENTS_QUEUE_MAX_DELIVERY_COUNT: "5"
