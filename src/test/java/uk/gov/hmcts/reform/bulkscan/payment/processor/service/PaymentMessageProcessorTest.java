@@ -192,40 +192,6 @@ public class PaymentMessageProcessorTest {
         );
     }
 
-    //    @Test
-    //    public void should_send_message_with_envelope_id_when_processing_successful() throws Exception {
-    //        // given
-    //        String envelopeId = UUID.randomUUID().toString();
-    //        IMessage message = mock(IMessage.class);
-    //        given(message.getMessageBody()).willReturn(
-    //            MessageBody.fromBinaryData(ImmutableList.of(envelopeJson(NEW_APPLICATION, "caseRef123", envelopeId)))
-    //        );
-    //        given(message.getLockToken()).willReturn(UUID.randomUUID());
-    //        given(messageReceiver.receive()).willReturn(message);
-    //
-    //        // when
-    //        paymentMessageProcessor.processNextMessage();
-    //
-    //        // then
-    //        verify(processedEnvelopeNotifier).notify(envelopeId);
-    //    }
-
-    //    @Test
-    //    public void should_not_send_processed_envelope_notification_when_processing_fails() throws Exception {
-    //        // given
-    //        willReturn(getValidMessage()).given(messageReceiver).receive();
-    //
-    //        // and
-    //        Exception processingFailureCause = new RuntimeException("test exception");
-    //        willThrow(processingFailureCause).given(envelopeHandler).handleEnvelope(any());
-    //
-    //        // when
-    //        paymentMessageProcessor.processNextMessage();
-    //
-    //        // then no notification is sent
-    //        verifyNoMoreInteractions(processedEnvelopeNotifier);
-    //    }
-
     @Test
     public void should_throw_exception_when_message_receiver_fails() throws Exception {
         ServiceBusException receiverException = new ServiceBusException(true);
@@ -239,11 +205,11 @@ public class PaymentMessageProcessorTest {
     private IMessage getValidMessage() {
         IMessage message = mock(IMessage.class);
         given(message.getMessageBody())
-            .willReturn(MessageBody.fromBinaryData(ImmutableList.of(envelopeJson())));
+            .willReturn(MessageBody.fromBinaryData(ImmutableList.of(paymentJsonToByte())));
         return message;
     }
 
-    private byte[] envelopeJson() {
+    private byte[] paymentJsonToByte() {
         return paymentMessageJsonAsByte("213132131", true);
     }
 
