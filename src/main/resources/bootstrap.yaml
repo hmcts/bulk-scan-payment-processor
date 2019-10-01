@@ -3,7 +3,7 @@ spring:
     propertiesvolume:
       enabled: true
       prefixed: false
-      paths: /mnt/secrets/bulk-scan,/mnt/secrets/s2s
+      paths: /mnt/secrets/bulk-scan
       aliases:
         site-id-probate: SITE_ID_PROBATE
         site-id-divorce: SITE_ID_DIVORCE
