@@ -57,7 +57,7 @@ task functional(type: Test, description: 'Runs the functional tests.', group: 'V
 task integration(type: Test, description: 'Runs the integration tests.', group: 'Verification') {
   testClassesDirs = sourceSets.integrationTest.output.classesDirs
   classpath = sourceSets.integrationTest.runtimeClasspath
-  useJUnitPlatform()
+  failFast = true
   // set your environment variables here
   // environment("APPINSIGHTS_INSTRUMENTATIONKEY", "test-key")
 }
@@ -66,6 +66,18 @@ task smoke(type: Test) {
   description = "Runs Smoke Tests"
   testClassesDirs = sourceSets.smokeTest.output.classesDirs
   classpath = sourceSets.smokeTest.runtimeClasspath
+}
+
+tasks.withType(Test) {
+  useJUnitPlatform()
+
+  testLogging {
+    exceptionFormat = 'full'
+  }
+}
+
+test {
+  failFast = true
 }
 
 checkstyle {
@@ -157,8 +169,8 @@ repositories {
 }
 
 def versions = [
-  junit           : '5.5.1',
-  junitPlatform   : '1.5.1',
+  junit           : '5.5.2',
+  junitPlatform   : '1.5.2',
   reformLogging   : '5.1.0',
   springBoot      : springBoot.class.package.implementationVersion,
   springfoxSwagger: '2.9.2'
@@ -182,10 +194,11 @@ dependencies {
 
   compile group: 'uk.gov.hmcts.reform', name: 'logging', version: versions.reformLogging
   compile group: 'uk.gov.hmcts.reform', name: 'logging-appinsights', version: versions.reformLogging
-  compile group: 'uk.gov.hmcts.reform', name: 'properties-volume-spring-boot-starter', version:'0.0.4', withoutSpringCloudContext
+  compile group: 'uk.gov.hmcts.reform', name: 'properties-volume-spring-boot-starter', version: '0.0.4', withoutSpringCloudContext
 
   compile group: 'org.springframework.cloud', name: 'spring-cloud-starter-netflix-hystrix', version: '2.1.3.RELEASE'
   compile group: 'com.microsoft.azure', name: 'azure-servicebus', version: '1.2.15'
+  compile group: 'org.springframework.cloud', name: 'spring-cloud-starter-openfeign', version: '2.1.3.RELEASE'
 
   testCompile group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: versions.junit
   testCompile group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: versions.junit
@@ -204,11 +217,6 @@ dependencies {
   smokeTestCompile sourceSets.test.runtimeClasspath
   smokeTestCompile group: 'io.rest-assured', name: 'rest-assured'
   smokeTestCompile group: 'com.typesafe', name: 'config', version: '1.3.4'
-}
-
-test {
-  useJUnitPlatform()
-  failFast = true
 }
 
 mainClassName = 'uk.gov.hmcts.reform.bulkscan.payment.processor.Application'
