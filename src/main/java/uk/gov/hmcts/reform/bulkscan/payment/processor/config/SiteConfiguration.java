@@ -8,7 +8,6 @@ import java.util.List;
 public class SiteConfiguration {
     private List<Sites> sites;
 
-    // region getters and setters
     public List<Sites> getSites() {
         return sites;
     }
@@ -16,7 +15,6 @@ public class SiteConfiguration {
     public void setSites(List<Sites> sites) {
         this.sites = sites;
     }
-    // endregion
 
     public static class Sites {
 
@@ -24,7 +22,6 @@ public class SiteConfiguration {
         private String poBox;
         private String siteId;
 
-        // region constructor, getters and setters
         public Sites(String siteName, String poBox, String siteId) {
             this.siteName = siteName;
             this.poBox = poBox;
