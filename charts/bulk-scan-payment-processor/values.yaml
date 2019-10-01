@@ -11,7 +11,7 @@ java:
     "bulk-scan":
       resourceGroup: bulk-scan
       secrets:
-        - microservicekey-bulk-scan-payment-processor
+        - s2s-secret-payment-processor
         - site-id-probate
         - site-id-divorce
         - site-id-finrem

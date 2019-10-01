@@ -9,4 +9,4 @@ spring:
         site-id-divorce: SITE_ID_DIVORCE
         site-id-finrem: SITE_ID_FINREM
         payments-queue-listen-connection-string: PAYMENTS_QUEUE_READ_CONNECTION_STRING
-        microservicekey-bulk-scan-payment-processor: S2S_SECRET
+        s2s-secret-payment-processor: S2S_SECRET
