@@ -14,7 +14,6 @@ import java.util.List;
 @Service
 public class PaymentMessageParser {
 
-    @Autowired
     private final ObjectMapper objectMapper;
 
     private static final Throwable ERROR_CAUSE = new RuntimeException("Message Binary data is null");
