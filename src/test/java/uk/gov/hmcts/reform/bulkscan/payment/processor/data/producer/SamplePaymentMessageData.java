@@ -6,14 +6,11 @@ import org.json.JSONObject;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.model.PaymentInfo;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.model.PaymentMessage;
 
-public class SamplePaymentMessageData {
-
+public final class SamplePaymentMessageData {
 
     public static final String ENVELOPE_ID = "99999ZS";
-
     public static final String JURSIDICTION = "BULKSCAN";
     public static final String PO_BOX = "BULKSCAN_PO_BOX";
-
     public static final String DCN_1 = "xxxyyyzzz";
     public static final String DCN_2 = "ABCDDDDDD";
 

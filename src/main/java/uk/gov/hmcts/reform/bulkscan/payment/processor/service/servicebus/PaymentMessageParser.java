@@ -17,7 +17,7 @@ public class PaymentMessageParser {
     @Autowired
     private final ObjectMapper objectMapper;
 
-    private static final Throwable errorCause = new RuntimeException("Message Binary data is null");
+    private static final Throwable ERROR_CAUSE = new RuntimeException("Message Binary data is null");
 
     public PaymentMessageParser(ObjectMapper objectMapper) {
         this.objectMapper = objectMapper;
@@ -34,7 +34,7 @@ public class PaymentMessageParser {
     private static byte[] getBinaryData(MessageBody messageBody) {
         List<byte[]> binaryData = messageBody.getBinaryData();
         if (binaryData == null) {
-            throw new InvalidMessageException(errorCause);
+            throw new InvalidMessageException(ERROR_CAUSE);
         }
 
         return CollectionUtils.isEmpty(binaryData) ? null : binaryData.get(0);

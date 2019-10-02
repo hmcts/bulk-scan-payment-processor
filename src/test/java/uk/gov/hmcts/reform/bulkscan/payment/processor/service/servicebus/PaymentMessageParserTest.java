@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import com.google.common.collect.ImmutableList;
 import com.microsoft.azure.servicebus.MessageBody;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.exceptions.InvalidMessageException;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.model.PaymentMessage;
@@ -21,29 +20,24 @@ public class PaymentMessageParserTest {
 
     private ObjectMapper objectMapper = new ObjectMapper();
 
-    private PaymentMessageParser paymentMessageParser;
-
-    @BeforeEach
-    public void before() {
-        paymentMessageParser = new PaymentMessageParser(objectMapper);
-    }
+    private final PaymentMessageParser paymentMessageParser = new PaymentMessageParser(objectMapper);
 
     @Test
-    public void parse_valid_paymentMessage() {
+    public void should_return_valid_paymentMessage_when_queue_message_is_invalid() {
         PaymentMessage expected = paymentMessage("232131313121", false);
         PaymentMessage paymentMessage = paymentMessageParser.parse(getValidMessageBody());
         assertThat(paymentMessage).isEqualToComparingFieldByFieldRecursively(expected);
     }
 
     @Test
-    public void throw_exception_when_invalid_paymentMessage() {
+    public void should_throw_invalidMessageException_when_queue_message_is_invalid() {
         assertThatThrownBy(
             () -> paymentMessageParser.parse(fromBinaryData(ImmutableList.of("parse exception".getBytes()))))
             .isInstanceOf(InvalidMessageException.class);
     }
 
     @Test
-    public void throw_exception_when_dataEmpty_paymentMessage() {
+    public void should_throw_InvalidMessageException_when_queue_message_is_null() {
 
         MessageBody nullBinaryData = fromSequenceData(ImmutableList.of(ImmutableList.of(new Object())));
         assertThatThrownBy(
@@ -51,14 +45,11 @@ public class PaymentMessageParserTest {
             .isInstanceOf(InvalidMessageException.class);
     }
 
-
     private MessageBody getValidMessageBody() {
         return fromBinaryData(ImmutableList.of(paymentMessageJsonAsByte(
             "232131313121",
             false
         )));
-
-
     }
 
 }
