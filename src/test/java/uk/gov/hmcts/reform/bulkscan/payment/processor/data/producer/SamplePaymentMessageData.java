@@ -45,11 +45,10 @@ public final class SamplePaymentMessageData {
         );
     }
 
-    public static byte[] paymentMessageJsonAsByte
-        (
-            String ccdCaseNumber,
-            boolean isExceptionRecord
-        ) throws JSONException {
+    public static byte[] paymentMessageJsonAsByte(
+        String ccdCaseNumber,
+        boolean isExceptionRecord
+    ) throws JSONException {
 
         return paymentMessageJson(ccdCaseNumber, isExceptionRecord).getBytes();
     }
