@@ -1,5 +1,6 @@
 package uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.handler;
 
+import org.apache.commons.lang.NotImplementedException;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.client.payhub.PayHubClientException;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.model.PaymentMessage;
@@ -18,5 +19,6 @@ public class PaymentMessageHandler {
         //Handle message
         //call the pay hub
 
+        throw new NotImplementedException();
     }
 }

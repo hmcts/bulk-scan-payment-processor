@@ -1,6 +1,5 @@
 package uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus;
 
-import com.google.common.collect.ImmutableMap;
 import com.microsoft.azure.servicebus.IMessage;
 import com.microsoft.azure.servicebus.IMessageReceiver;
 import com.microsoft.azure.servicebus.primitives.ServiceBusException;
@@ -17,8 +16,6 @@ import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.handler
 import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.handler.MessageProcessingResultType;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.handler.PaymentMessageHandler;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.model.PaymentMessage;
-
-import java.time.Instant;
 
 import static uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.handler.MessageProcessingResultType.POTENTIALLY_RECOVERABLE_FAILURE;
 import static uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.handler.MessageProcessingResultType.SUCCESS;
@@ -153,8 +150,7 @@ public class PaymentMessageProcessor {
         messageReceiver.deadLetter(
             message.getLockToken(),
             reason,
-            description,
-            ImmutableMap.of("deadLetteredAt", Instant.now().toString())
+            description
         );
 
         log.info("Message with ID {} has been dead-lettered", message.getMessageId());

@@ -171,8 +171,7 @@ public class PaymentMessageProcessorTest {
         verify(messageReceiver).deadLetter(
             eq(message.getLockToken()),
             eq(DEAD_LETTER_REASON_PROCESSING_ERROR),
-            contains(JsonParseException.class.getSimpleName()),
-            any()
+            contains(JsonParseException.class.getSimpleName())
         );
         verifyNoMoreInteractions(messageReceiver);
     }
@@ -223,8 +222,7 @@ public class PaymentMessageProcessorTest {
         verify(messageReceiver).deadLetter(
             eq(validMessage.getLockToken()),
             eq("Too many deliveries"),
-            eq("Reached limit of message delivery count of 1"),
-            any()
+            eq("Reached limit of message delivery count of 1")
         );
     }
 
