@@ -33,16 +33,20 @@ public class PaymentMessageProcessor {
 
     private final PaymentMessageHandler paymentMessageHandler;
     private final IMessageReceiver messageReceiver;
+    private final PaymentMessageParser paymentMessageParser;
     private final int maxDeliveryCount;
 
-    public PaymentMessageProcessor(PaymentMessageHandler paymentMessageHandler,
-                                   IMessageReceiver messageReceiver,
-                                   @Value("${azure.servicebus.payments.max-delivery-count}") int maxDeliveryCount) {
+    public PaymentMessageProcessor(
+        PaymentMessageHandler paymentMessageHandler,
+        IMessageReceiver messageReceiver,
+        PaymentMessageParser paymentMessageParser,
+        @Value("${azure.servicebus.payments.max-delivery-count}") int maxDeliveryCount
+    ) {
         this.paymentMessageHandler = paymentMessageHandler;
         this.messageReceiver = messageReceiver;
+        this.paymentMessageParser = paymentMessageParser;
         this.maxDeliveryCount = maxDeliveryCount;
     }
-
 
     /**
      * Reads and processes next message from the queue.
@@ -55,6 +59,7 @@ public class PaymentMessageProcessor {
             MessageProcessingResult result = process(message);
             tryFinaliseProcessedMessage(message, result);
         }
+
         return message != null;
     }
 
@@ -64,7 +69,7 @@ public class PaymentMessageProcessor {
         PaymentMessage payment = null;
 
         try {
-            payment = PaymentMessageParser.parse(message.getMessageBody());
+            payment = paymentMessageParser.parse(message.getMessageBody());
             logMessageParsed(message, payment);
             paymentMessageHandler.handlePaymentMessage(payment);
             log.info("Processed message with ID {}. Envelope ID: {}", message.getMessageId(), payment.envelopeId);
@@ -82,7 +87,6 @@ public class PaymentMessageProcessor {
         }
 
         return new MessageProcessingResult(POTENTIALLY_RECOVERABLE_FAILURE);
-
     }
 
     private void tryFinaliseProcessedMessage(IMessage message, MessageProcessingResult processingResult) {
@@ -155,9 +159,10 @@ public class PaymentMessageProcessor {
         log.info("Message with ID {} has been dead-lettered", message.getMessageId());
     }
 
-    private void logMessageFinaliseError(IMessage message,
-                                         MessageProcessingResultType processingResultType,
-                                         Exception ex) {
+    private void logMessageFinaliseError(
+        IMessage message,
+        MessageProcessingResultType processingResultType,
+        Exception ex) {
         log.error(
             "Failed to manage processed message with ID {}. Processing result: {}",
             message.getMessageId(),
@@ -186,10 +191,9 @@ public class PaymentMessageProcessor {
 
         String fullMessage = paymentMessage != null
             ? baseMessage + String.format(
-            " CCD Case Number: %s, Jurisdiction: %s",
-            paymentMessage.ccdCaseNumber,
-            paymentMessage.jurisdiction
-        )
+                " CCD Case Number: %s, Jurisdiction: %s",
+                paymentMessage.ccdCaseNumber,
+                paymentMessage.jurisdiction)
             : baseMessage;
 
         log.error(fullMessage, exception);

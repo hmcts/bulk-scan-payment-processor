@@ -1,9 +1,9 @@
 package uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus;
 
-import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.microsoft.azure.servicebus.MessageBody;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.exceptions.InvalidMessageException;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.model.PaymentMessage;
@@ -11,21 +11,17 @@ import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.model.P
 import java.io.IOException;
 import java.util.List;
 
+@Service
 public class PaymentMessageParser {
 
-    private static final ObjectMapper objectMapper;
+    @Autowired
+    private final ObjectMapper objectMapper;
 
-    static {
-        objectMapper = new ObjectMapper();
-        objectMapper.registerModule(new JavaTimeModule());
-        objectMapper.enable(MapperFeature.ACCEPT_CASE_INSENSITIVE_ENUMS);
+    public PaymentMessageParser(ObjectMapper objectMapper) {
+        this.objectMapper = objectMapper;
     }
 
-    private PaymentMessageParser() {
-        // utility class
-    }
-
-    public static PaymentMessage parse(MessageBody messageBody) {
+    public PaymentMessage parse(MessageBody messageBody) {
         try {
             return objectMapper.readValue(getBinaryData(messageBody), PaymentMessage.class);
         } catch (IOException exc) {
@@ -35,6 +31,9 @@ public class PaymentMessageParser {
 
     private static byte[] getBinaryData(MessageBody messageBody) {
         List<byte[]> binaryData = messageBody.getBinaryData();
+        if (binaryData == null) {
+            throw new InvalidMessageException(new RuntimeException("Message Binary data is null"));
+        }
 
         return CollectionUtils.isEmpty(binaryData) ? null : binaryData.get(0);
     }

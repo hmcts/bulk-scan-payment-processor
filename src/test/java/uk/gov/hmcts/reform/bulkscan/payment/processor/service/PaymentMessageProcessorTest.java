@@ -10,7 +10,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.PaymentMessageParser;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.PaymentMessageProcessor;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.handler.PaymentMessageHandler;
 
@@ -31,7 +33,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static uk.gov.hmcts.reform.bulkscan.payment.processor.data.producer.SamplePaymentMessageData.paymentMessageJsonAsByte;
 
-@ExtendWith(SpringExtension.class)
+@ExtendWith(MockitoExtension.class)
 public class PaymentMessageProcessorTest {
 
     private static final String DEAD_LETTER_REASON_PROCESSING_ERROR = "Message processing error";
@@ -42,6 +44,9 @@ public class PaymentMessageProcessorTest {
     @Mock
     private PaymentMessageHandler paymentMessageHandler;
 
+    @Mock
+    private PaymentMessageParser paymentMessageParser;
+
     private PaymentMessageProcessor paymentMessageProcessor;
 
     @BeforeEach
@@ -49,6 +54,7 @@ public class PaymentMessageProcessorTest {
         paymentMessageProcessor = new PaymentMessageProcessor(
             paymentMessageHandler,
             messageReceiver,
+            paymentMessageParser,
             10
         );
     }
@@ -171,6 +177,7 @@ public class PaymentMessageProcessorTest {
         paymentMessageProcessor = new PaymentMessageProcessor(
             paymentMessageHandler,
             messageReceiver,
+            paymentMessageParser,
             1
         );
         Exception processingFailureCause = new RuntimeException(
