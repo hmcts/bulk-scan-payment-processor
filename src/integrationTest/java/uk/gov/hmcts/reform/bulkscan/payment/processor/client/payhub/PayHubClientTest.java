@@ -24,6 +24,7 @@ import static com.google.common.net.HttpHeaders.CONTENT_TYPE;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.CONFLICT;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 
 
@@ -95,6 +96,29 @@ public class PayHubClientTest {
         PayHubClientException exception = (PayHubClientException) throwable;
 
         assertThat(exception.getStatus()).isEqualTo(BAD_REQUEST);
+    }
+
+
+    @Test
+    public void should_return_PayHubClientException_for_conflict() throws JsonProcessingException {
+        // given
+
+        stubWithRequestAndResponse(
+            mapper.writeValueAsString(getPaymentRequest()),
+            aResponse().withStatus(409)
+                .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+        );
+
+        // when
+        Throwable throwable = catchThrowable(() -> client.postPayments(getPaymentRequest()));
+
+        // then
+        assertThat(throwable).isInstanceOf(PayHubClientException.class);
+
+        // and
+        PayHubClientException exception = (PayHubClientException) throwable;
+
+        assertThat(exception.getStatus()).isEqualTo(CONFLICT);
     }
 
     @Test
