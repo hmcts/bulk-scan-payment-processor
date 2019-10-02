@@ -37,8 +37,13 @@ public final class SamplePaymentMessageData {
     }
 
     public static PaymentMessage paymentMessage(String ccdCaseNumber, boolean isExceptionRecord) {
-        return new PaymentMessage(ENVELOPE_ID, ccdCaseNumber, isExceptionRecord, PO_BOX, JURSIDICTION,
-                                  ImmutableList.of(new PaymentInfo(DCN_1), new PaymentInfo(DCN_2))
+        return new PaymentMessage(
+            ENVELOPE_ID,
+            ccdCaseNumber,
+            isExceptionRecord,
+            PO_BOX,
+            JURSIDICTION,
+            ImmutableList.of(new PaymentInfo(DCN_1), new PaymentInfo(DCN_2))
         );
     }
 

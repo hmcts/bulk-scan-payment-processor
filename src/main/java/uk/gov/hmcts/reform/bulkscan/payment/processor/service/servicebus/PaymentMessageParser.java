@@ -2,7 +2,6 @@ package uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.microsoft.azure.servicebus.MessageBody;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.exceptions.InvalidMessageException;
@@ -16,7 +15,7 @@ public class PaymentMessageParser {
 
     private final ObjectMapper objectMapper;
 
-    private static final Throwable ERROR_CAUSE = new RuntimeException("Message Binary data is null");
+    private static final String ERROR_CAUSE = "Message Binary data is null";
 
     public PaymentMessageParser(ObjectMapper objectMapper) {
         this.objectMapper = objectMapper;
