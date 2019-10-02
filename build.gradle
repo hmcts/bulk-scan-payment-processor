@@ -216,7 +216,7 @@ dependencies {
   testCompile group: 'org.junit.platform', name: 'junit-platform-engine', version: versions.junitPlatform
 
   testCompile group: 'org.springframework.boot', name: 'spring-boot-starter-test', withoutJunit4
-  testCompile group: 'com.github.tomakehurst', name: 'wiremock-jre8', version: '2.25.0', withoutJunit4
+  integrationTestCompile group: 'com.github.tomakehurst', name: 'wiremock-jre8', version: '2.25.0', withoutJunit4
 
   integrationTestCompile group: 'org.springframework.cloud', name: 'spring-cloud-contract-wiremock', version: '2.1.3.RELEASE', withoutMockitoStandAlone
 
