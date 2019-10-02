@@ -4,3 +4,9 @@ wiremock:
 pay-hub:
   api:
     url: *wiremock
+
+idam:
+  s2s-auth:
+    url: *wiremock
+  api:
+    url: *wiremock
