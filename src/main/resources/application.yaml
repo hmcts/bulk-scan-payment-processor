@@ -49,4 +49,4 @@ idam:
 scheduling:
   task:
     consume-payments-queue:
-      time-interval-ms: 1000
+      time-interval: 1000
