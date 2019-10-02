@@ -76,15 +76,18 @@ public class PaymentMessageProcessor {
             return new MessageProcessingResult(UNRECOVERABLE_FAILURE, ex);
         } catch (PayHubClientException ex) {
             logMessageProcessingError(message, payment, ex);
+
+            MessageProcessingResultType messageProcessingResultType = POTENTIALLY_RECOVERABLE_FAILURE;
             if (ex.getStatus() == HttpStatus.BAD_REQUEST.CONFLICT) {
-                return new MessageProcessingResult(SUCCESS, ex);
+                messageProcessingResultType = SUCCESS;
             }
+
+            return new MessageProcessingResult(messageProcessingResultType, ex);
+
         } catch (Exception ex) {
             logMessageProcessingError(message, payment, ex);
             return new MessageProcessingResult(POTENTIALLY_RECOVERABLE_FAILURE);
         }
-
-        return new MessageProcessingResult(POTENTIALLY_RECOVERABLE_FAILURE);
     }
 
     private void tryFinaliseProcessedMessage(IMessage message, MessageProcessingResult processingResult) {
@@ -116,29 +119,31 @@ public class PaymentMessageProcessor {
                 );
                 break;
             case POTENTIALLY_RECOVERABLE_FAILURE:
-                // starts from 0
-                int deliveryCount = (int) message.getDeliveryCount() + 1;
-
-                if (deliveryCount < maxDeliveryCount) {
-                    // do nothing - let the message lock expire
-                    log.info(
-                        "Allowing message with ID {} to return to queue (delivery attempt {})",
-                        message.getMessageId(),
-                        deliveryCount
-                    );
-                } else {
-                    deadLetterTheMessage(
-                        message,
-                        "Too many deliveries",
-                        "Reached limit of message delivery count of " + deliveryCount
-                    );
-                }
-
+                deadLetterIfDeliveryOver(message);
                 break;
             default:
                 throw new MessageProcessingException(
                     "Unknown message processing result type: " + processingResult.resultType
                 );
+        }
+    }
+
+    private void deadLetterIfDeliveryOver(IMessage message) throws InterruptedException, ServiceBusException {
+        int deliveryCount = (int) message.getDeliveryCount() + 1;
+
+        if (deliveryCount < maxDeliveryCount) {
+            // do nothing - let the message lock expire
+            log.info(
+                "Allowing message with ID {} to return to queue (delivery attempt {})",
+                message.getMessageId(),
+                deliveryCount
+            );
+        } else {
+            deadLetterTheMessage(
+                message,
+                "Too many deliveries",
+                "Reached limit of message delivery count of " + deliveryCount
+            );
         }
     }
 
@@ -179,7 +184,6 @@ public class PaymentMessageProcessor {
             payment.jurisdiction,
             payment.poBox,
             payment.payments
-
         );
     }
 
