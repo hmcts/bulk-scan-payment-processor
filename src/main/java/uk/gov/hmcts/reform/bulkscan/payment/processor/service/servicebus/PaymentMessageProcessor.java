@@ -192,9 +192,10 @@ public class PaymentMessageProcessor {
 
         String fullMessage = paymentMessage != null
             ? baseMessage + String.format(
-            " CCD Case Number: %s, Jurisdiction: %s",
-            paymentMessage.ccdCaseNumber,
-            paymentMessage.jurisdiction)
+                " CCD Case Number: %s, Jurisdiction: %s",
+                paymentMessage.ccdCaseNumber,
+                paymentMessage.jurisdiction
+            )
             : baseMessage;
 
         log.error(fullMessage, exception);
