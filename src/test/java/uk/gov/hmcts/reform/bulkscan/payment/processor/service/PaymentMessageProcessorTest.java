@@ -65,7 +65,6 @@ public class PaymentMessageProcessorTest {
         );
     }
 
-
     @Test
     public void should_return_true_when_there_is_a_message_to_process() throws Exception {
         // given
@@ -79,7 +78,6 @@ public class PaymentMessageProcessorTest {
         // then
         assertThat(processedMessage).isTrue();
     }
-
 
     @Test
     public void should_return_false_when_there_is_no_message_to_process() throws Exception {
@@ -107,7 +105,7 @@ public class PaymentMessageProcessorTest {
     public void should_not_throw_exception_when_payment_handler_fails() throws Exception {
         // given
         willReturn(getValidMessage()).given(messageReceiver).receive();
-        willReturn(paymentMessage("32131",true)).given(paymentMessageParser).parse(any());
+        willReturn(paymentMessage("32131", true)).given(paymentMessageParser).parse(any());
 
         // and
         willThrow(new RuntimeException()).given(paymentMessageHandler).handlePaymentMessage(any());
@@ -115,13 +113,12 @@ public class PaymentMessageProcessorTest {
         assertThatCode(() -> paymentMessageProcessor.processNextMessage()).doesNotThrowAnyException();
     }
 
-
     @Test
     public void should_complete_the_message_when_processing_is_successful() throws Exception {
         // given
         IMessage validMessage = getValidMessage();
         given(messageReceiver.receive()).willReturn(validMessage);
-        willReturn(paymentMessage(CCD_CASE_NUMBER,IS_EXCEPTION_RECORD)).given(paymentMessageParser).parse(any());
+        willReturn(paymentMessage(CCD_CASE_NUMBER, IS_EXCEPTION_RECORD)).given(paymentMessageParser).parse(any());
 
         // when
         paymentMessageProcessor.processNextMessage();
@@ -130,7 +127,6 @@ public class PaymentMessageProcessorTest {
         verify(messageReceiver).receive();
         verify(messageReceiver).complete(validMessage.getLockToken());
     }
-
 
     @Test
     public void should_dead_letter_the_message_when_unrecoverable_failure() throws Exception {
@@ -159,11 +155,10 @@ public class PaymentMessageProcessorTest {
         verifyNoMoreInteractions(messageReceiver);
     }
 
-
     @Test
     public void should_not_finalize_the_message_when_recoverable_failure() throws Exception {
         willReturn(getValidMessage()).given(messageReceiver).receive();
-        willReturn(paymentMessage(CCD_CASE_NUMBER,IS_EXCEPTION_RECORD)).given(paymentMessageParser).parse(any());
+        willReturn(paymentMessage(CCD_CASE_NUMBER, IS_EXCEPTION_RECORD)).given(paymentMessageParser).parse(any());
 
         Exception processingFailureCause = new RuntimeException(
             "exception of type treated as recoverable"
@@ -184,7 +179,7 @@ public class PaymentMessageProcessorTest {
         // given
         IMessage validMessage = getValidMessage();
         given(messageReceiver.receive()).willReturn(validMessage);
-        willReturn(paymentMessage(CCD_CASE_NUMBER,IS_EXCEPTION_RECORD)).given(paymentMessageParser).parse(any());
+        willReturn(paymentMessage(CCD_CASE_NUMBER, IS_EXCEPTION_RECORD)).given(paymentMessageParser).parse(any());
 
         paymentMessageProcessor = new PaymentMessageProcessor(
             paymentMessageHandler,
@@ -231,7 +226,5 @@ public class PaymentMessageProcessorTest {
     private byte[] paymentJsonToByte() throws JSONException {
         return paymentMessageJsonAsByte(CCD_CASE_NUMBER, IS_EXCEPTION_RECORD);
     }
-
-
 
 }
