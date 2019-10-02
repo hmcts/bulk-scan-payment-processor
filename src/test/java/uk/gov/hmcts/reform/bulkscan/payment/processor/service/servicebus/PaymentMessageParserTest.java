@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import com.google.common.collect.ImmutableList;
 import com.microsoft.azure.servicebus.MessageBody;
+import org.json.JSONException;
 import org.junit.jupiter.api.Test;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.exceptions.InvalidMessageException;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.model.PaymentMessage;
@@ -23,7 +24,7 @@ public class PaymentMessageParserTest {
     private final PaymentMessageParser paymentMessageParser = new PaymentMessageParser(objectMapper);
 
     @Test
-    public void should_return_valid_paymentMessage_when_queue_message_is_invalid() {
+    public void should_return_valid_paymentMessage_when_queue_message_is_invalid() throws JSONException {
         PaymentMessage expected = paymentMessage("232131313121", false);
         PaymentMessage paymentMessage = paymentMessageParser.parse(getValidMessageBody());
         assertThat(paymentMessage).isEqualToComparingFieldByFieldRecursively(expected);
@@ -42,10 +43,11 @@ public class PaymentMessageParserTest {
         MessageBody nullBinaryData = fromSequenceData(ImmutableList.of(ImmutableList.of(new Object())));
         assertThatThrownBy(
             () -> paymentMessageParser.parse(nullBinaryData))
-            .isInstanceOf(InvalidMessageException.class);
+            .isInstanceOf(InvalidMessageException.class)
+            .hasMessage("Message Binary data is null");;
     }
 
-    private MessageBody getValidMessageBody() {
+    private MessageBody getValidMessageBody() throws JSONException {
         return fromBinaryData(ImmutableList.of(paymentMessageJsonAsByte(
             "232131313121",
             false
