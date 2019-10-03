@@ -75,10 +75,16 @@ public class PaymentMessageProcessor {
             log.error("Rejected message with ID {}, because it's invalid", message.getMessageId(), ex);
             return new MessageProcessingResult(UNRECOVERABLE_FAILURE, ex);
         } catch (PayHubClientException ex) {
+            if (ex.getStatus() == HttpStatus.CONFLICT) {
+                log.info(
+                    "Processed with Http 409, message ID {}. Envelope ID: {}",
+                    message.getMessageId(),
+                    payment.envelopeId
+                );
+                return new MessageProcessingResult(SUCCESS, ex);
+            }
             logMessageProcessingError(message, payment, ex);
-            MessageProcessingResultType messageProcessingResultType =
-                (ex.getStatus() == HttpStatus.BAD_REQUEST.CONFLICT) ? SUCCESS : POTENTIALLY_RECOVERABLE_FAILURE;
-            return new MessageProcessingResult(messageProcessingResultType, ex);
+            return new MessageProcessingResult(POTENTIALLY_RECOVERABLE_FAILURE, ex);
         } catch (Exception ex) {
             logMessageProcessingError(message, payment, ex);
             return new MessageProcessingResult(POTENTIALLY_RECOVERABLE_FAILURE);
@@ -155,13 +161,14 @@ public class PaymentMessageProcessor {
             description
         );
 
-        log.info("Message with ID {} has been dead-lettered", message.getMessageId());
+        log.info("Message with ID {} has been dead-lettered, reason {} ", message.getMessageId(), reason);
     }
 
     private void logMessageFinaliseError(
         IMessage message,
         MessageProcessingResultType processingResultType,
-        Exception ex) {
+        Exception ex
+    ) {
         log.error(
             "Failed to manage processed message with ID {}. Processing result: {}",
             message.getMessageId(),
