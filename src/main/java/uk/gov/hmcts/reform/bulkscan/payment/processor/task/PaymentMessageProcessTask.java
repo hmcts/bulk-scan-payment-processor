@@ -21,7 +21,7 @@ public class PaymentMessageProcessTask {
         this.paymentMessageProcessor = paymentMessageProcessor;
     }
 
-    @Scheduled(fixedDelayString = "${scheduling.task.consume-payments-queue.time-interval}")
+    @Scheduled(fixedDelayString = "${scheduling.task.consume-payments-queue.time-interval-ms}")
     public void consumeMessages() {
         log.info("Started the job consuming payment messages");
 
