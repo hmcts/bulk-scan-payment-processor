@@ -64,7 +64,7 @@ public class PaymentRequestMapperTest {
         assertThatThrownBy(
             () -> paymentRequestMapper.mapPaymentMessage(paymentMessage("case_number_1231", true)))
             .isInstanceOf(SiteNotFoundException.class)
-            .hasMessage("Site not Found for po box : " + PO_BOX);
+            .hasMessage("Site not Found for  po box : " + PO_BOX);
     }
 
     @Test

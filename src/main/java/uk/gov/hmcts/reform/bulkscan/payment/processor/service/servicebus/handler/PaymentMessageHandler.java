@@ -11,8 +11,6 @@ import uk.gov.hmcts.reform.bulkscan.payment.processor.client.payhub.response.Pay
 import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.PaymentRequestMapper;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.model.PaymentMessage;
 
-import java.util.Objects;
-
 @Service
 public class PaymentMessageHandler {
 
@@ -36,8 +34,9 @@ public class PaymentMessageHandler {
         PaymentRequest request = paymentRequestMapper.mapPaymentMessage(paymentMessage);
 
         log.info(
-            "Sending Payment request to PayHub with Document Control Numbers: ",
-            String.join(",", request.documentControlNumbers));
+            "Sending Payment request with Document Control Numbers: {} Envelope id: {} Jurisdiction: {} poBox: {}",
+            String.join(",", request.documentControlNumbers)
+        );
 
         ResponseEntity<PaymentResult> paymentResult = payHubClient.postPayments(
             authTokenGenerator.generate(),
@@ -45,8 +44,7 @@ public class PaymentMessageHandler {
         );
 
         log.info(
-            "Payment response received from PayHub. Document Control Numbers in the response: {}",
-            String.join(",", Objects.requireNonNull(paymentResult.getBody()).paymentDcns)
+            "Payment response received from PayHub: {}", paymentResult.getBody()
         );
 
         return paymentResult.getBody();

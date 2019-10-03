@@ -46,8 +46,9 @@ public class PaymentRequestMapper {
 
     private String getSiteIdForPostCode(String poBox) {
         String siteId = siteConfiguration.getSiteIdByPoBox(poBox);
-        if (siteId == null)
+        if (siteId == null) {
             throw new SiteNotFoundException("Site not Found for  po box : " + poBox);
+        }
 
         return siteId;
     }
