@@ -6,7 +6,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.client.payhub.PayHubClient;
-import uk.gov.hmcts.reform.bulkscan.payment.processor.client.payhub.PayHubClientException;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.client.payhub.request.PaymentRequest;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.client.payhub.response.PaymentResult;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.PaymentRequestMapper;
@@ -33,7 +32,7 @@ public class PaymentMessageHandler {
         this.payHubClient = payHubClient;
     }
 
-    public PaymentResult handlePaymentMessage(PaymentMessage paymentMessage) throws PayHubClientException {
+    public PaymentResult handlePaymentMessage(PaymentMessage paymentMessage) {
         PaymentRequest request = paymentRequestMapper.mapPaymentMessage(paymentMessage);
 
         log.info(

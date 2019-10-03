@@ -12,6 +12,7 @@ import uk.gov.hmcts.reform.bulkscan.payment.processor.client.payhub.request.Paym
 import uk.gov.hmcts.reform.bulkscan.payment.processor.client.payhub.response.PaymentResult;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.config.SiteConfiguration;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.data.producer.SamplePaymentMessageData;
+import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.exceptions.SiteNotConfiguredException;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.handler.PaymentMessageHandler;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.model.PaymentMessage;
 
@@ -22,6 +23,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -66,4 +68,5 @@ public class PaymentMessageHandlerTest {
         verify(s2sTokenGenerator).generate();
         verify(payHubClient).postPayments(anyString(), any(PaymentRequest.class));
     }
+
 }
