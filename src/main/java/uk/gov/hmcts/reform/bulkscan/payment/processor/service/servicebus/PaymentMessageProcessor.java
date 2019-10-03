@@ -77,10 +77,8 @@ public class PaymentMessageProcessor {
         } catch (PayHubClientException ex) {
             logMessageProcessingError(message, payment, ex);
 
-            MessageProcessingResultType messageProcessingResultType = POTENTIALLY_RECOVERABLE_FAILURE;
-            if (ex.getStatus() == HttpStatus.BAD_REQUEST.CONFLICT) {
-                messageProcessingResultType = SUCCESS;
-            }
+            MessageProcessingResultType messageProcessingResultType =
+                (ex.getStatus() == HttpStatus.BAD_REQUEST.CONFLICT) ? SUCCESS : POTENTIALLY_RECOVERABLE_FAILURE;
 
             return new MessageProcessingResult(messageProcessingResultType, ex);
 
