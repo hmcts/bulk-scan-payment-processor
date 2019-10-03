@@ -42,6 +42,6 @@ public class PaymentMessageProcessTask {
     }
 
     private void logTaskError(Exception exception) {
-        log.error("An error occurred when running the 'consume messages' task", exception);
+        log.error("An error occurred when running the 'consume payment messages' task", exception);
     }
 }
