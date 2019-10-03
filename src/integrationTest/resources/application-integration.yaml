@@ -10,3 +10,8 @@ idam:
     url: *wiremock
   api:
     url: *wiremock
+
+scheduling:
+  task:
+    consume-payments-queue:
+      enabled: false

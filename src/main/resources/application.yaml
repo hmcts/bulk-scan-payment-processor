@@ -45,3 +45,8 @@ idam:
     url: ${S2S_URL:http://localhost:4552}
     secret: ${S2S_SECRET:AAAAAAAAAAAAAAAA}
     name: ${S2S_NAME:bulk_scan_payments_processor}
+
+scheduling:
+  task:
+    consume-payments-queue:
+      time-interval-ms: 1000
