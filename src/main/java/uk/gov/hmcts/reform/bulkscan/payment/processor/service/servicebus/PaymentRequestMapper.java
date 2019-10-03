@@ -7,6 +7,8 @@ import uk.gov.hmcts.reform.bulkscan.payment.processor.client.payhub.request.Paym
 import uk.gov.hmcts.reform.bulkscan.payment.processor.config.SiteConfiguration;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.exceptions.InvalidMessageException;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.exceptions.SiteNotConfiguredException;
+import uk.gov.hmcts.reform.bulkscan.payment.processor.exception.SiteNotFoundException;
+import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.model.PaymentInfo;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.model.PaymentMessage;
 
 import java.util.List;
@@ -27,7 +29,7 @@ public class PaymentRequestMapper {
             message.ccdCaseNumber,
             getPaymentDocumentControlNumbers(message),
             message.isExceptionRecord,
-            getSiteIdForPostCodeAndJurisdiction(message.poBox, message.jurisdiction)
+            getSiteIdForPostCode(message.poBox)
         );
     }
 
@@ -44,19 +46,12 @@ public class PaymentRequestMapper {
             .collect(Collectors.toList());
     }
 
-    private String getSiteIdForPostCodeAndJurisdiction(String poBox, String jurisdiction) {
-        return siteConfiguration.getSites()
-            .stream().
-                filter(
-                    config -> config.getPoBox().equalsIgnoreCase(poBox)
-                        && config.getSiteName().equalsIgnoreCase(jurisdiction)
-                )
-            .findFirst()
-            .map(SiteConfiguration.Sites::getPoBox)
-            .orElseThrow(() ->
-                new SiteNotConfiguredException(
-                    String.format("Site id is not found for site name: %s PoBox: %s", jurisdiction, poBox)
-                )
-            );
+    private String getSiteIdForPostCode(String poBox) {
+
+        String siteId = siteConfiguration.getSiteIdByPoBox(poBox);
+        if (siteId == null)
+            throw new SiteNotFoundException("Site not Found for  po box : " + poBox);
+
+        return siteId;
     }
 }
