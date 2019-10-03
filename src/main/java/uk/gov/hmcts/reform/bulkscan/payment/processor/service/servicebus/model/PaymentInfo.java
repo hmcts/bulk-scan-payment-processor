@@ -12,5 +12,8 @@ public class PaymentInfo {
         this.documentControlNumber = documentControlNumber;
     }
 
-
+    @Override
+    public String toString() {
+        return documentControlNumber;
+    }
 }
