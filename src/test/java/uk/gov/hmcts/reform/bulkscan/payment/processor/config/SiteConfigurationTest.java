@@ -1,7 +1,7 @@
 package uk.gov.hmcts.reform.bulkscan.payment.processor.config;
 
-
 import com.google.common.collect.ImmutableList;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.test.util.ReflectionTestUtils;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.exception.SiteConfigurationException;
