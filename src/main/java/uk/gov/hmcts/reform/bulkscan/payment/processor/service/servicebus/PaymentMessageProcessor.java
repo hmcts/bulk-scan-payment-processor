@@ -79,7 +79,7 @@ public class PaymentMessageProcessor {
                 log.info(
                     "Processed with Http 409, message ID {}. Envelope ID: {}",
                     message.getMessageId(),
-                    payment.envelopeId
+                    payment == null ? "" : payment.envelopeId
                 );
                 return new MessageProcessingResult(SUCCESS, ex);
             }
