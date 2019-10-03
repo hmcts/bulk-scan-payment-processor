@@ -27,7 +27,6 @@ public class PaymentMessageProcessTaskTest {
         queueConsumeTask = new PaymentMessageProcessTask(
             paymentMessageProcessor
         );
-
     }
 
     @Test
