@@ -35,7 +35,7 @@ public class PaymentRequestMapperTest {
     }
 
     @Test
-    public void should_return_valid_PaymentRequest_when_paymentMessage_is_valid() {
+    public void should_return_valid_PaymentRequest_when_PaymentMessage_is_valid() {
         // given
         when(siteConfig.getSiteIdByPoBox(PO_BOX)).thenReturn("A123");
         PaymentRequest expectedPaymentRequest = new PaymentRequest(
@@ -64,7 +64,7 @@ public class PaymentRequestMapperTest {
         assertThatThrownBy(
             () -> paymentRequestMapper.mapPaymentMessage(paymentMessage("case_number_1231", true)))
             .isInstanceOf(SiteNotFoundException.class)
-            .hasMessage("Site not Found for  po box : " + PO_BOX);
+            .hasMessage("Site not Found for po box: " + PO_BOX);
     }
 
     @Test

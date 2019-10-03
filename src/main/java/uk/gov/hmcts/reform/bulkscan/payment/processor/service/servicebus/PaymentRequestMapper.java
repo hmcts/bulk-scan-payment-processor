@@ -27,7 +27,7 @@ public class PaymentRequestMapper {
             message.ccdCaseNumber,
             getPaymentDocumentControlNumbers(message),
             message.isExceptionRecord,
-            getSiteIdForPostCode(message.poBox)
+            getSiteIdForPoBox(message.poBox)
         );
     }
 
@@ -44,10 +44,10 @@ public class PaymentRequestMapper {
             .collect(Collectors.toList());
     }
 
-    private String getSiteIdForPostCode(String poBox) {
+    private String getSiteIdForPoBox(String poBox) {
         String siteId = siteConfiguration.getSiteIdByPoBox(poBox);
         if (siteId == null) {
-            throw new SiteNotFoundException("Site not Found for  po box : " + poBox);
+            throw new SiteNotFoundException("Site not Found for po box: " + poBox);
         }
 
         return siteId;

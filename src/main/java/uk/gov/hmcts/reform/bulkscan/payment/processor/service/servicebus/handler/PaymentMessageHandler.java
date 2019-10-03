@@ -2,7 +2,6 @@ package uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.handle
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.client.payhub.PayHubClient;
@@ -34,22 +33,25 @@ public class PaymentMessageHandler {
         PaymentRequest request = paymentRequestMapper.mapPaymentMessage(paymentMessage);
 
         log.info(
-            "Sending Payment request with Document Control Numbers: {} Envelope id: {} Jurisdiction: {} poBox: {}",
-            String.join(",", request.documentControlNumbers)
+            "Sending Payment request with Document Control Numbers: {} Envelope id: {} poBox: {}",
+            String.join(", ", request.documentControlNumbers),
+            paymentMessage.envelopeId,
+            paymentMessage.poBox
         );
 
-        ResponseEntity<PaymentResult> paymentResult = payHubClient.postPayments(
+        PaymentResult paymentResult = payHubClient.postPayments(
             authTokenGenerator.generate(),
             request
-        );
+        ).getBody();
 
         log.info(
-            "Payment response received from PayHub: {}", paymentResult.getBody()
+            "Payment response received from PayHub: {} Envelope id: {} Ccd case reference: {}",
+            paymentResult == null ? null : String.join(", ", paymentResult.paymentDcns),
+            paymentMessage.envelopeId,
+            paymentMessage.ccdCaseNumber
         );
 
-        return paymentResult.getBody();
-
+        return paymentResult;
     }
-
 
 }

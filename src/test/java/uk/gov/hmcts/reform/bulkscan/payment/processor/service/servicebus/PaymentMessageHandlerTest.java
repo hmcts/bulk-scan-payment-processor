@@ -17,10 +17,9 @@ import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.model.P
 import java.util.Optional;
 
 import static java.util.Collections.singletonList;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -55,12 +54,10 @@ public class PaymentMessageHandlerTest {
             .thenReturn(ResponseEntity.of(Optional.of(new PaymentResult(singletonList("1234")))));
 
         // when
-        messageHandler.handlePaymentMessage(message);
+        PaymentResult result = messageHandler.handlePaymentMessage(message);
 
         // then
-        verify(requestMapper).mapPaymentMessage(message);
-        verify(s2sTokenGenerator).generate();
-        verify(payHubClient).postPayments(anyString(), any(PaymentRequest.class));
+        assertThat(result).isNotNull();
+        assertThat(result.paymentDcns).hasSize(1).contains("1234");
     }
-
 }
