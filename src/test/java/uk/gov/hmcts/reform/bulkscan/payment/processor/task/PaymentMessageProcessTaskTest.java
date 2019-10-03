@@ -1,4 +1,4 @@
-package uk.gov.hmcts.reform.bulkscan.payment.processor.service.task;
+package uk.gov.hmcts.reform.bulkscan.payment.processor.task;
 
 import com.microsoft.azure.servicebus.primitives.ServiceBusException;
 import org.junit.jupiter.api.BeforeEach;

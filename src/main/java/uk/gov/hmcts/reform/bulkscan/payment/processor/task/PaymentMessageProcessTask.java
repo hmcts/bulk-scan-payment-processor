@@ -1,4 +1,4 @@
-package uk.gov.hmcts.reform.bulkscan.payment.processor.service.task;
+package uk.gov.hmcts.reform.bulkscan.payment.processor.task;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,7 +16,8 @@ public class PaymentMessageProcessTask {
     private final PaymentMessageProcessor paymentMessageProcessor;
 
     public PaymentMessageProcessTask(
-        PaymentMessageProcessor paymentMessageProcessor) {
+        PaymentMessageProcessor paymentMessageProcessor
+    ) {
         this.paymentMessageProcessor = paymentMessageProcessor;
     }
 
