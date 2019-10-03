@@ -114,7 +114,7 @@ public class PaymentMessageProcessor {
                 );
                 break;
             case POTENTIALLY_RECOVERABLE_FAILURE:
-                deadLetterIfDeliveryOver(message);
+                deadLetterIfMaxDeliveryCountIsReached(message);
                 break;
             default:
                 throw new MessageProcessingException(
@@ -123,7 +123,9 @@ public class PaymentMessageProcessor {
         }
     }
 
-    private void deadLetterIfDeliveryOver(IMessage message) throws InterruptedException, ServiceBusException {
+    private void deadLetterIfMaxDeliveryCountIsReached(IMessage message)
+        throws InterruptedException, ServiceBusException {
+
         int deliveryCount = (int) message.getDeliveryCount() + 1;
 
         if (deliveryCount < maxDeliveryCount) {
