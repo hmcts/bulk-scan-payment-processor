@@ -5,10 +5,8 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.client.payhub.request.PaymentRequest;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.config.SiteConfiguration;
-import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.exceptions.InvalidMessageException;
-import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.exceptions.SiteNotConfiguredException;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.exception.SiteNotFoundException;
-import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.model.PaymentInfo;
+import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.exceptions.InvalidMessageException;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.model.PaymentMessage;
 
 import java.util.List;
@@ -47,7 +45,6 @@ public class PaymentRequestMapper {
     }
 
     private String getSiteIdForPostCode(String poBox) {
-
         String siteId = siteConfiguration.getSiteIdByPoBox(poBox);
         if (siteId == null)
             throw new SiteNotFoundException("Site not Found for  po box : " + poBox);
