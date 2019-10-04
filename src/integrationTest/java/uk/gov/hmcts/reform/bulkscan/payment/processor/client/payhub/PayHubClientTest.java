@@ -1,7 +1,6 @@
 package uk.gov.hmcts.reform.bulkscan.payment.processor.client.payhub;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder;
 import com.google.common.collect.ImmutableList;
 import org.junit.jupiter.api.Test;
@@ -89,7 +88,11 @@ public class PayHubClientTest {
         String message = "error occurred";
         String s2sToken = randomUUID().toString();
 
-        stubWithRequestAndResponse(s2sToken, fileContentAsString("testdata/bulk-scan-payments/payment-request.json"), getBadRequest(message));
+        stubWithRequestAndResponse(
+            s2sToken,
+            fileContentAsString("testdata/bulk-scan-payments/payment-request.json"),
+            getBadRequest(message)
+        );
 
         // when
         Throwable throwable = catchThrowable(() -> client.postPayments(s2sToken, getPaymentRequest()));

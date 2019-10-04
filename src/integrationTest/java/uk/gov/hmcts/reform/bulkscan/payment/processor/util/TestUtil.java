@@ -7,7 +7,8 @@ import java.nio.charset.StandardCharsets;
 
 public final class TestUtil {
 
-    private  TestUtil() {}
+    private TestUtil() {
+    }
 
     public static String fileContentAsString(String file) {
         return new String(fileContentAsBytes(file), StandardCharsets.UTF_8);
