@@ -12,6 +12,8 @@ import uk.gov.hmcts.reform.bulkscan.payment.processor.client.payhub.request.Paym
 import uk.gov.hmcts.reform.bulkscan.payment.processor.client.payhub.response.PaymentResult;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.config.IntegrationTest;
 
+import java.io.IOException;
+
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.badRequest;
 import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
@@ -32,17 +34,19 @@ import static uk.gov.hmcts.reform.bulkscan.payment.processor.util.TestUtil.fileC
 @IntegrationTest
 public class PayHubClientTest {
 
+    private static final String PAYMENT_REQUEST_JSON = "testdata/bulk-scan-payments/payment-request.json";
+
     @Autowired
     private PayHubClient client;
 
     @Test
-    public void should_return_Ok_when_everything_is_ok_with_request() throws JsonProcessingException {
+    public void should_return_Ok_when_everything_is_ok_with_request() throws IOException {
         // given
         String s2sToken = randomUUID().toString();
 
         stubWithRequestAndResponse(
             s2sToken,
-            fileContentAsString("testdata/bulk-scan-payments/payment-request.json"),
+            fileContentAsString(PAYMENT_REQUEST_JSON),
             okJson(fileContentAsString("testdata/bulk-scan-payments/payment-result-1.json"))
         );
 
@@ -58,13 +62,13 @@ public class PayHubClientTest {
     }
 
     @Test
-    public void should_return_Created_when_everything_is_ok_with_request() throws JsonProcessingException {
+    public void should_return_Created_when_everything_is_ok_with_request() throws IOException {
         // given
         String s2sToken = randomUUID().toString();
 
         stubWithRequestAndResponse(
             s2sToken,
-            fileContentAsString("testdata/bulk-scan-payments/payment-request.json"),
+            fileContentAsString(PAYMENT_REQUEST_JSON),
             aResponse()
                 .withStatus(201)
                 .withHeader(CONTENT_TYPE, "application/json")
@@ -83,14 +87,14 @@ public class PayHubClientTest {
 
 
     @Test
-    public void should_return_PayHubClientException_for_badRequest() throws JsonProcessingException {
+    public void should_return_PayHubClientException_for_badRequest() throws IOException {
         // given
         String message = "error occurred";
         String s2sToken = randomUUID().toString();
 
         stubWithRequestAndResponse(
             s2sToken,
-            fileContentAsString("testdata/bulk-scan-payments/payment-request.json"),
+            fileContentAsString(PAYMENT_REQUEST_JSON),
             getBadRequest(message)
         );
 
@@ -108,13 +112,13 @@ public class PayHubClientTest {
 
 
     @Test
-    public void should_return_PayHubClientException_for_conflict() throws JsonProcessingException {
+    public void should_return_PayHubClientException_for_conflict() throws IOException {
         // given
         String s2sToken = randomUUID().toString();
 
         stubWithRequestAndResponse(
             s2sToken,
-            fileContentAsString("testdata/bulk-scan-payments/payment-request.json"),
+            fileContentAsString(PAYMENT_REQUEST_JSON),
             aResponse().withStatus(409)
                 .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
         );
@@ -133,12 +137,12 @@ public class PayHubClientTest {
 
     @Test
     public void should_return_PayHubClientException_for_serverError()
-        throws JsonProcessingException {
+        throws IOException {
         // given
         String s2sToken = randomUUID().toString();
         stubWithRequestAndResponse(
             s2sToken,
-            fileContentAsString("testdata/bulk-scan-payments/payment-request.json"),
+            fileContentAsString(PAYMENT_REQUEST_JSON),
             getServerErrorRequest()
         );
 

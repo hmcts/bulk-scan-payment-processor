@@ -10,15 +10,11 @@ public final class TestUtil {
     private TestUtil() {
     }
 
-    public static String fileContentAsString(String file) {
+    public static String fileContentAsString(String file) throws IOException {
         return new String(fileContentAsBytes(file), StandardCharsets.UTF_8);
     }
 
-    public static byte[] fileContentAsBytes(String file) {
-        try {
+    public static byte[] fileContentAsBytes(String file) throws IOException {
             return Resources.toByteArray(Resources.getResource(file));
-        } catch (IOException e) {
-            throw new RuntimeException("Could not load file" + file, e);
-        }
     }
 }
