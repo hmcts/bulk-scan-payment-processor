@@ -15,6 +15,6 @@ public final class TestUtil {
     }
 
     public static byte[] fileContentAsBytes(String file) throws IOException {
-            return Resources.toByteArray(Resources.getResource(file));
+        return Resources.toByteArray(Resources.getResource(file));
     }
 }

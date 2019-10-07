@@ -1,6 +1,5 @@
 package uk.gov.hmcts.reform.bulkscan.payment.processor.client.payhub;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder;
 import com.google.common.collect.ImmutableList;
 import org.junit.jupiter.api.Test;
