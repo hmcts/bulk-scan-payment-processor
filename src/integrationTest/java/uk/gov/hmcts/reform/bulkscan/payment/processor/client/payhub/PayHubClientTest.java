@@ -33,7 +33,7 @@ import static uk.gov.hmcts.reform.bulkscan.payment.processor.util.TestUtil.fileC
 @IntegrationTest
 public class PayHubClientTest {
 
-    private static final String PAYMENT_REQUEST_JSON = "testdata/bulk-scan-payments/payment-request.json";
+    private static final String PAYMENT_REQUEST_JSON = "testdata/post-payments/payment-request.json";
 
     @Autowired
     private PayHubClient client;
@@ -46,7 +46,7 @@ public class PayHubClientTest {
         stubWithRequestAndResponse(
             s2sToken,
             fileContentAsString(PAYMENT_REQUEST_JSON),
-            okJson(fileContentAsString("testdata/bulk-scan-payments/payment-result-1.json"))
+            okJson(fileContentAsString("testdata/post-payments/payment-result-1.json"))
         );
 
         PaymentResult response = new PaymentResult(ImmutableList.of("123444", "666666"));
@@ -71,7 +71,7 @@ public class PayHubClientTest {
             aResponse()
                 .withStatus(201)
                 .withHeader(CONTENT_TYPE, "application/json")
-                .withBody(fileContentAsString("testdata/bulk-scan-payments/payment-result-2.json"))
+                .withBody(fileContentAsString("testdata/post-payments/payment-result-2.json"))
         );
 
         PaymentResult response = new PaymentResult(ImmutableList.of("DCN-4343"));
