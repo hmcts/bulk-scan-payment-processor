@@ -87,8 +87,6 @@ public class PayHubClientPutPaymentTest {
         // and
         PayHubClientException exception = (PayHubClientException) throwable;
 
-        assertThat(exception).isNotNull();
-
         assertThat(exception.getStatus()).isEqualTo(httpStatus);
 
     }
