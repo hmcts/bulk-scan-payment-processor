@@ -161,8 +161,12 @@ public class PaymentMessageProcessor {
             description
         );
 
-        log.info("Message with ID {} has been dead-lettered, reason {}, description {}",
-                 message.getMessageId(), reason, description);
+        log.info(
+            "Message with ID {} has been dead-lettered, reason {}, description {}",
+            message.getMessageId(),
+            reason,
+            description
+        );
     }
 
     private void logMessageFinaliseError(
