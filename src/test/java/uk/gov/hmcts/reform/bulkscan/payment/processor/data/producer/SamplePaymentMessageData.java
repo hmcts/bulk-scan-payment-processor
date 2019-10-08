@@ -11,6 +11,7 @@ public final class SamplePaymentMessageData {
 
     public static final String ENVELOPE_ID = "99999ZS";
     public static final String JURISDICTION = "BULKSCAN";
+    public static final String SERVICE = "bulkscan";
     public static final String PO_BOX = "BULKSCAN_PO_BOX";
     public static final String DCN_1 = "xxxyyyzzz";
     public static final String DCN_2 = "ABCDDDDDD";
@@ -26,6 +27,7 @@ public final class SamplePaymentMessageData {
             .put("is_exception_record", isExceptionRecord)
             .put("po_box", PO_BOX)
             .put("jurisdiction", JURISDICTION)
+            .put("service", SERVICE)
             .put("payments", new JSONArray()
                 .put(new JSONObject().put("document_control_number", DCN_1))
                 .put(new JSONObject().put("document_control_number", DCN_2))
@@ -41,6 +43,7 @@ public final class SamplePaymentMessageData {
             isExceptionRecord,
             PO_BOX,
             JURISDICTION,
+            SERVICE,
             ImmutableList.of(new PaymentInfo(DCN_1), new PaymentInfo(DCN_2))
         );
     }
