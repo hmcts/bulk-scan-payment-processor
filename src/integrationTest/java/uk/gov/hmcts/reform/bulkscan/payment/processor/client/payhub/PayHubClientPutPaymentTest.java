@@ -73,12 +73,12 @@ public class PayHubClientPutPaymentTest {
         );
 
         // when
-        Throwable throwable = catchThrowable(() ->
-                                                 client.updateCaseReference(
-                                                     s2sToken,
-                                                     "exception_2132131",
-                                                     new CaseReferenceRequest("12321321")
-                                                 )
+        Throwable throwable = catchThrowable(
+            () -> client.updateCaseReference(
+                s2sToken,
+                "exception_2132131",
+                new CaseReferenceRequest("12321321")
+            )
         );
 
         // then
@@ -89,9 +89,8 @@ public class PayHubClientPutPaymentTest {
 
         assertThat(exception).isNotNull();
 
-        if (exception != null) {
-            assertThat(exception.getStatus()).isEqualTo(httpStatus);
-        }
+        assertThat(exception.getStatus()).isEqualTo(httpStatus);
+
     }
 
     private ResponseDefinitionBuilder createErrorResponse(
