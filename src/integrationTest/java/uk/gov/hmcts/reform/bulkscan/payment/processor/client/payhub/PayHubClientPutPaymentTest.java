@@ -1,9 +1,9 @@
 package uk.gov.hmcts.reform.bulkscan.payment.processor.client.payhub;
 
 import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder;
-import com.google.common.collect.ImmutableList;
-import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -12,7 +12,6 @@ import org.springframework.http.ResponseEntity;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.client.payhub.request.CaseReferenceRequest;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.config.IntegrationTest;
 
-import java.util.List;
 import java.util.function.Function;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
@@ -25,8 +24,6 @@ import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
-import static org.springframework.http.HttpStatus.BAD_REQUEST;
-import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 
 @IntegrationTest
 public class PayHubClientPutPaymentTest {
@@ -50,7 +47,7 @@ public class PayHubClientPutPaymentTest {
 
         // when
         ResponseEntity updateResponse =
-            client.putPayments(
+            client.updateCaseReference(
                 s2sToken,
                 "98765342",
                 new CaseReferenceRequest("12321321")
@@ -63,15 +60,9 @@ public class PayHubClientPutPaymentTest {
         assertThat(updateResponse.getBody()).isNull();
     }
 
-    @Test
-    public void should_return_PayHubClientException_for_errors() {
-        List<HttpStatus> tests = ImmutableList.of(BAD_REQUEST, BAD_REQUEST, INTERNAL_SERVER_ERROR);
-        SoftAssertions softly = new SoftAssertions();
-        tests.stream().forEach(t -> testError(softly, t));
-        softly.assertAll();
-    }
-
-    private void testError(SoftAssertions softly, HttpStatus httpStatus) {
+    @ParameterizedTest
+    @EnumSource(value = HttpStatus.class, names = {"BAD_REQUEST", "NOT_FOUND", "INTERNAL_SERVER_ERROR"})
+    public void should_return_PayHubClientException_for_errors(HttpStatus httpStatus) {
 
         String s2sToken = randomUUID().toString();
         stubWithRequestAndResponse(
@@ -83,7 +74,7 @@ public class PayHubClientPutPaymentTest {
 
         // when
         Throwable throwable = catchThrowable(() ->
-                                                 client.putPayments(
+                                                 client.updateCaseReference(
                                                      s2sToken,
                                                      "exception_2132131",
                                                      new CaseReferenceRequest("12321321")
@@ -91,15 +82,15 @@ public class PayHubClientPutPaymentTest {
         );
 
         // then
-        softly.assertThat(throwable).isInstanceOf(PayHubClientException.class);
+        assertThat(throwable).isInstanceOf(PayHubClientException.class);
 
         // and
         PayHubClientException exception = (PayHubClientException) throwable;
 
-        softly.assertThat(exception).isNotNull();
+        assertThat(exception).isNotNull();
 
         if (exception != null) {
-            softly.assertThat(exception.getStatus()).isEqualTo(httpStatus);
+            assertThat(exception.getStatus()).isEqualTo(httpStatus);
         }
     }
 
