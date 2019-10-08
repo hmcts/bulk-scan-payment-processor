@@ -161,7 +161,8 @@ public class PaymentMessageProcessor {
             description
         );
 
-        log.info("Message with ID {} has been dead-lettered, reason {} ", message.getMessageId(), reason);
+        log.info("Message with ID {} has been dead-lettered, reason {}, description {}",
+                 message.getMessageId(), reason, description);
     }
 
     private void logMessageFinaliseError(
@@ -183,7 +184,7 @@ public class PaymentMessageProcessor {
                 + "PO Box: {}, Document Control Numbers : {}",
             message.getMessageId(),
             payment.envelopeId,
-            payment.ccdCaseNumber,
+            payment.ccdReference,
             payment.isExceptionRecord,
             payment.jurisdiction,
             payment.poBox,
@@ -197,7 +198,7 @@ public class PaymentMessageProcessor {
         String fullMessage = paymentMessage != null
             ? baseMessage + String.format(
                 " CCD Case Number: %s, Jurisdiction: %s",
-                paymentMessage.ccdCaseNumber,
+                paymentMessage.ccdReference,
                 paymentMessage.jurisdiction
             )
             : baseMessage;
