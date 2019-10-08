@@ -48,7 +48,7 @@ public class PaymentMessageHandler {
             "Payment response received from PayHub: {} Envelope id: {} Ccd case reference: {}",
             paymentResult == null ? null : String.join(", ", paymentResult.paymentDcns),
             paymentMessage.envelopeId,
-            paymentMessage.ccdCaseNumber
+            paymentMessage.ccdReference
         );
 
         return paymentResult;
