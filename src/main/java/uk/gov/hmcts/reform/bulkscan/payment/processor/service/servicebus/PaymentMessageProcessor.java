@@ -11,7 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.client.payhub.PayHubClientException;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.exceptions.InvalidMessageException;
-import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.exceptions.MessageProcessingException;
+import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.exceptions.UnknownMessageProcessingResultException;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.handler.MessageProcessingResult;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.handler.MessageProcessingResultType;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.handler.PaymentMessageHandler;
@@ -123,7 +123,7 @@ public class PaymentMessageProcessor {
                 deadLetterIfMaxDeliveryCountIsReached(message);
                 break;
             default:
-                throw new MessageProcessingException(
+                throw new UnknownMessageProcessingResultException(
                     "Unknown message processing result type: " + processingResult.resultType
                 );
         }
