@@ -1,15 +1,18 @@
 package uk.gov.hmcts.reform.bulkscan.payment.processor.client.payhub;
 
 import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder;
+import com.google.common.collect.ImmutableList;
+import org.assertj.core.api.SoftAssertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.client.payhub.request.CaseReferenceRequest;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.config.IntegrationTest;
 
-import java.io.IOException;
+import java.util.List;
 import java.util.function.Function;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
@@ -24,26 +27,24 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
-import static org.springframework.http.HttpStatus.NOT_FOUND;
-import static uk.gov.hmcts.reform.bulkscan.payment.processor.util.TestUtil.fileContentAsString;
 
 @IntegrationTest
 public class PayHubClientPutPaymentTest {
 
-    private static final String CASE_REF_REQUEST_JSON = "testdata/put-payments/case-reference-request.json";
+    private static final String CASE_REF_REQUEST_JSON = "{ \"ccd_case_number\": \"12321321\"}";
 
     @Autowired
     private PayHubClient client;
 
     @Test
-    public void should_return_ok_when_everything_is_ok_ignore_response_body() throws IOException {
+    public void should_return_ok_when_everything_is_ok_ignore_response_body() {
         // given
         String s2sToken = randomUUID().toString();
 
         stubWithRequestAndResponse(
             s2sToken,
             "98765342",
-            fileContentAsString(CASE_REF_REQUEST_JSON),
+            CASE_REF_REQUEST_JSON,
             okJson("{\"a\":\"1\"}")
         );
 
@@ -63,46 +64,21 @@ public class PayHubClientPutPaymentTest {
     }
 
     @Test
-    public void should_return_PayHubClientException_for_badRequest() throws IOException {
-        // given
-        String message = "error occurred";
-        String s2sToken = randomUUID().toString();
-
-        stubWithRequestAndResponse(
-            s2sToken,
-            "exception_2132131",
-            fileContentAsString(CASE_REF_REQUEST_JSON),
-            createErrorResponse(bul -> bul.withStatus(400).withBody(message.getBytes()))
-        );
-
-        // when
-        Throwable throwable = catchThrowable(() ->
-                                                 client.putPayments(
-                                                     s2sToken,
-                                                     "exception_2132131",
-                                                     new CaseReferenceRequest("12321321")
-                                                 )
-        );
-
-        // then
-        assertThat(throwable).isInstanceOf(PayHubClientException.class);
-
-        // and
-        PayHubClientException exception = (PayHubClientException) throwable;
-
-        assertThat(exception.getStatus()).isEqualTo(BAD_REQUEST);
+    public void should_return_PayHubClientException_for_errors() {
+        List<HttpStatus> tests = ImmutableList.of(BAD_REQUEST, BAD_REQUEST, INTERNAL_SERVER_ERROR);
+        SoftAssertions softly = new SoftAssertions();
+        tests.stream().forEach(t -> testError(softly, t));
+        softly.assertAll();
     }
 
-    @Test
-    public void should_return_PayHubClientException_for_notFound() throws IOException {
-        // given
-        String s2sToken = randomUUID().toString();
+    private void testError(SoftAssertions softly, HttpStatus httpStatus) {
 
+        String s2sToken = randomUUID().toString();
         stubWithRequestAndResponse(
             s2sToken,
             "exception_2132131",
-            fileContentAsString(CASE_REF_REQUEST_JSON),
-            createErrorResponse(bul -> bul.withStatus(404))
+            CASE_REF_REQUEST_JSON,
+            createErrorResponse(b -> b.withStatus(httpStatus.value()))
         );
 
         // when
@@ -115,42 +91,16 @@ public class PayHubClientPutPaymentTest {
         );
 
         // then
-        assertThat(throwable).isInstanceOf(PayHubClientException.class);
+        softly.assertThat(throwable).isInstanceOf(PayHubClientException.class);
 
         // and
         PayHubClientException exception = (PayHubClientException) throwable;
 
-        assertThat(exception.getStatus()).isEqualTo(NOT_FOUND);
-    }
+        softly.assertThat(exception).isNotNull();
 
-    @Test
-    public void should_return_PayHubClientException_for_serverError()
-        throws IOException {
-        // given
-        String s2sToken = randomUUID().toString();
-        stubWithRequestAndResponse(
-            s2sToken,
-            "exception_2132131",
-            fileContentAsString(CASE_REF_REQUEST_JSON),
-            createErrorResponse(bul -> bul.withStatus(500))
-        );
-
-        // when
-        Throwable throwable = catchThrowable(() ->
-                                                 client.putPayments(
-                                                     s2sToken,
-                                                     "exception_2132131",
-                                                     new CaseReferenceRequest("12321321")
-                                                 )
-        );
-
-        // then
-        assertThat(throwable).isInstanceOf(PayHubClientException.class);
-
-        // and
-        PayHubClientException exception = (PayHubClientException) throwable;
-
-        assertThat(exception.getStatus()).isEqualTo(INTERNAL_SERVER_ERROR);
+        if (exception != null) {
+            softly.assertThat(exception.getStatus()).isEqualTo(httpStatus);
+        }
     }
 
     private ResponseDefinitionBuilder createErrorResponse(
