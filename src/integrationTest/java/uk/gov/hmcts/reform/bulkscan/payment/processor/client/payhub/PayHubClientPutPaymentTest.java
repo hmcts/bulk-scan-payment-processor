@@ -10,15 +10,15 @@ import uk.gov.hmcts.reform.bulkscan.payment.processor.client.payhub.request.Case
 import uk.gov.hmcts.reform.bulkscan.payment.processor.config.IntegrationTest;
 
 import java.io.IOException;
+import java.util.function.Function;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
-import static com.github.tomakehurst.wiremock.client.WireMock.badRequest;
 import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.equalToJson;
 import static com.github.tomakehurst.wiremock.client.WireMock.okJson;
 import static com.github.tomakehurst.wiremock.client.WireMock.put;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
-import static com.github.tomakehurst.wiremock.client.WireMock.urlPathMatching;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
 import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
@@ -36,7 +36,7 @@ public class PayHubClientPutPaymentTest {
     private PayHubClient client;
 
     @Test
-    public void should_return_ok_ignore_response_body_when_everything_is_ok() throws IOException {
+    public void should_return_ok_when_everything_is_ok_ignore_response_body() throws IOException {
         // given
         String s2sToken = randomUUID().toString();
 
@@ -72,7 +72,7 @@ public class PayHubClientPutPaymentTest {
             s2sToken,
             "exception_2132131",
             fileContentAsString(CASE_REF_REQUEST_JSON),
-            getBadRequest(message)
+            createErrorResponse(bul -> bul.withStatus(400).withBody(message.getBytes()))
         );
 
         // when
@@ -96,14 +96,13 @@ public class PayHubClientPutPaymentTest {
     @Test
     public void should_return_PayHubClientException_for_notFound() throws IOException {
         // given
-        String message = "error occurred";
         String s2sToken = randomUUID().toString();
 
         stubWithRequestAndResponse(
             s2sToken,
             "exception_2132131",
             fileContentAsString(CASE_REF_REQUEST_JSON),
-            getError(404)
+            createErrorResponse(bul -> bul.withStatus(404))
         );
 
         // when
@@ -133,7 +132,7 @@ public class PayHubClientPutPaymentTest {
             s2sToken,
             "exception_2132131",
             fileContentAsString(CASE_REF_REQUEST_JSON),
-            getError(500)
+            createErrorResponse(bul -> bul.withStatus(500))
         );
 
         // when
@@ -154,19 +153,10 @@ public class PayHubClientPutPaymentTest {
         assertThat(exception.getStatus()).isEqualTo(INTERNAL_SERVER_ERROR);
     }
 
-    private ResponseDefinitionBuilder getError(int httpCode) {
-        return aResponse().withStatus(httpCode)
-            .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
-    }
-
-    private ResponseDefinitionBuilder getBadRequest(String bodyMessage) {
-        return badRequest()
-            .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-            .withBody(get4xxResponseBody(bodyMessage));
-    }
-
-    private static byte[] get4xxResponseBody(String message) {
-        return message == null ? null : message.getBytes();
+    private ResponseDefinitionBuilder createErrorResponse(
+        Function<ResponseDefinitionBuilder, ResponseDefinitionBuilder> func
+    ) {
+        return func.apply(aResponse().withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE));
     }
 
     private static void stubWithRequestAndResponse(
@@ -176,8 +166,7 @@ public class PayHubClientPutPaymentTest {
         ResponseDefinitionBuilder builder
     ) {
         stubFor(
-            put(urlPathMatching("/bulk-scan-payments"))
-                .withQueryParam("exception_reference", equalTo(queryParam))
+            put(urlEqualTo("/bulk-scan-payments?exception_reference=" + queryParam))
                 .withHeader("ServiceAuthorization", equalTo(s2sToken))
                 .withRequestBody(equalToJson(requestStr))
                 .willReturn(builder)
