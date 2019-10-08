@@ -10,7 +10,7 @@ import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.model.P
 public final class SamplePaymentMessageData {
 
     public static final String ENVELOPE_ID = "99999ZS";
-    public static final String JURSIDICTION = "BULKSCAN";
+    public static final String JURISDICTION = "BULKSCAN";
     public static final String SERVICE = "bulkscan";
     public static final String PO_BOX = "BULKSCAN_PO_BOX";
     public static final String DCN_1 = "xxxyyyzzz";
@@ -23,10 +23,10 @@ public final class SamplePaymentMessageData {
 
         return new JSONObject()
             .put("envelope_id", ENVELOPE_ID)
-            .put("ccd_case_number", ccdCaseNumber)
+            .put("ccd_reference", ccdCaseNumber)
             .put("is_exception_record", isExceptionRecord)
             .put("po_box", PO_BOX)
-            .put("jurisdiction", JURSIDICTION)
+            .put("jurisdiction", JURISDICTION)
             .put("service", SERVICE)
             .put("payments", new JSONArray()
                 .put(new JSONObject().put("document_control_number", DCN_1))
@@ -42,7 +42,7 @@ public final class SamplePaymentMessageData {
             ccdCaseNumber,
             isExceptionRecord,
             PO_BOX,
-            JURSIDICTION,
+            JURISDICTION,
             SERVICE,
             ImmutableList.of(new PaymentInfo(DCN_1), new PaymentInfo(DCN_2))
         );

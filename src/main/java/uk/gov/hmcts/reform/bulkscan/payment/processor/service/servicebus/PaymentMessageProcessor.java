@@ -11,7 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.client.payhub.PayHubClientException;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.exceptions.InvalidMessageException;
-import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.exceptions.MessageProcessingException;
+import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.exceptions.UnknownMessageProcessingResultException;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.handler.MessageProcessingResult;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.handler.MessageProcessingResultType;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.handler.PaymentMessageHandler;
@@ -123,7 +123,7 @@ public class PaymentMessageProcessor {
                 deadLetterIfMaxDeliveryCountIsReached(message);
                 break;
             default:
-                throw new MessageProcessingException(
+                throw new UnknownMessageProcessingResultException(
                     "Unknown message processing result type: " + processingResult.resultType
                 );
         }
@@ -161,7 +161,12 @@ public class PaymentMessageProcessor {
             description
         );
 
-        log.info("Message with ID {} has been dead-lettered, reason {} ", message.getMessageId(), reason);
+        log.info(
+            "Message with ID {} has been dead-lettered, reason {}, description {}",
+            message.getMessageId(),
+            reason,
+            description
+        );
     }
 
     private void logMessageFinaliseError(
@@ -183,7 +188,7 @@ public class PaymentMessageProcessor {
                 + "PO Box: {}, Document Control Numbers : {}",
             message.getMessageId(),
             payment.envelopeId,
-            payment.ccdCaseNumber,
+            payment.ccdReference,
             payment.isExceptionRecord,
             payment.jurisdiction,
             payment.poBox,
@@ -197,7 +202,7 @@ public class PaymentMessageProcessor {
         String fullMessage = paymentMessage != null
             ? baseMessage + String.format(
                 " CCD Case Number: %s, Jurisdiction: %s",
-                paymentMessage.ccdCaseNumber,
+                paymentMessage.ccdReference,
                 paymentMessage.jurisdiction
             )
             : baseMessage;

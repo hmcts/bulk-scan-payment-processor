@@ -9,23 +9,23 @@ import java.util.List;
 public class PaymentMessage {
 
     public final String envelopeId;
-    public final String ccdCaseNumber;
+    public final String ccdReference;
     public final boolean isExceptionRecord;
     public final String poBox;
     public final String jurisdiction;
     public final String service;
     public final List<PaymentInfo> payments;
-    
+
     public PaymentMessage(
         @JsonProperty(value = "envelope_id", required = true) String envelopeId,
-        @JsonProperty(value = "ccd_case_number", required = true) String ccdCaseNumber,
+        @JsonProperty(value = "ccd_reference", required = true) String ccdReference,
         @JsonProperty(value = "is_exception_record", required = true) boolean isExceptionRecord,
         @JsonProperty(value = "po_box", required = true) String poBox,
         @JsonProperty(value = "jurisdiction", required = true) String jurisdiction,
         @JsonProperty(value = "service", required = true) String service,
         @JsonProperty(value = "payments", required = true) List<PaymentInfo> payments) {
         this.envelopeId = envelopeId;
-        this.ccdCaseNumber = ccdCaseNumber;
+        this.ccdReference = ccdReference;
         this.isExceptionRecord = isExceptionRecord;
         this.poBox = poBox;
         this.jurisdiction = jurisdiction;

@@ -24,7 +24,7 @@ public class PaymentRequestMapper {
 
     public PaymentRequest mapPaymentMessage(PaymentMessage message) {
         return new PaymentRequest(
-            message.ccdCaseNumber,
+            message.ccdReference,
             getPaymentDocumentControlNumbers(message),
             message.isExceptionRecord,
             getSiteIdForPoBox(message.poBox)
