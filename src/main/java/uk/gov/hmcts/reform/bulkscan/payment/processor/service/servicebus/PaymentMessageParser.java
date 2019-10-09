@@ -15,7 +15,7 @@ import java.util.List;
 @Service
 public class PaymentMessageParser {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(PaymentMessageProcessor.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(PaymentMessageParser.class);
 
     private final ObjectMapper objectMapper;
 
