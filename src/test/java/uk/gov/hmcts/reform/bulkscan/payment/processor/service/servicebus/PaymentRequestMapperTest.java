@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import uk.gov.hmcts.reform.bulkscan.payment.processor.client.payhub.request.PaymentRequest;
+import uk.gov.hmcts.reform.bulkscan.payment.processor.client.payhub.request.CreatePaymentRequest;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.config.SiteConfiguration;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.exception.SiteNotFoundException;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.exceptions.InvalidMessageException;
@@ -38,7 +38,7 @@ public class PaymentRequestMapperTest {
     public void should_return_valid_PaymentRequest_when_PaymentMessage_is_valid() {
         // given
         when(siteConfig.getSiteIdByPoBox(PO_BOX)).thenReturn("A123");
-        PaymentRequest expectedPaymentRequest = new PaymentRequest(
+        CreatePaymentRequest expectedPaymentRequest = new CreatePaymentRequest(
             "case_number_3333",
             ImmutableList.of(DCN_1, DCN_2),
             false,
@@ -46,7 +46,7 @@ public class PaymentRequestMapperTest {
         );
 
         // when
-        PaymentRequest paymentRequest = paymentRequestMapper.mapPaymentMessage(paymentMessage(
+        CreatePaymentRequest paymentRequest = paymentRequestMapper.mapPaymentMessage(paymentMessage(
             "case_number_3333",
             false
         ));
