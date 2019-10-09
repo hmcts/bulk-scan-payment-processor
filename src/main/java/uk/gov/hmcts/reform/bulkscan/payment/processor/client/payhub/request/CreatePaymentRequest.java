@@ -18,8 +18,12 @@ public class CreatePaymentRequest {
     @JsonProperty("site_id")
     public final String siteId;
 
-    public CreatePaymentRequest(String ccdCaseNumber, List<String> documentControlNumbers,
-                                boolean isExceptionRecord, String siteId) {
+    public CreatePaymentRequest(
+        String ccdCaseNumber,
+        List<String> documentControlNumbers,
+        boolean isExceptionRecord,
+        String siteId
+    ) {
         this.ccdCaseNumber = ccdCaseNumber;
         this.documentControlNumbers = documentControlNumbers;
         this.isExceptionRecord = isExceptionRecord;
