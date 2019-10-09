@@ -99,6 +99,7 @@ public class PaymentMessageProcessorTest {
         IMessage invalidMessage = mock(IMessage.class);
         given(invalidMessage.getMessageBody())
             .willReturn(MessageBody.fromBinaryData(ImmutableList.of("foo".getBytes())));
+        given(invalidMessage.getLabel()).willReturn("CREATE");
         given(messageReceiver.receive()).willReturn(invalidMessage);
 
         assertThat(paymentMessageProcessor.processNextMessage()).isTrue();
@@ -157,6 +158,7 @@ public class PaymentMessageProcessorTest {
         given(message.getMessageBody()).willReturn(
             MessageBody.fromBinaryData(ImmutableList.of("invalid body".getBytes(Charset.defaultCharset())))
         );
+        given(message.getLabel()).willReturn("CREATE");
         willThrow(new InvalidMessageException("JsonParseException")).given(paymentMessageParser).parse(any());
 
         given(message.getLockToken()).willReturn(UUID.randomUUID());
@@ -174,6 +176,28 @@ public class PaymentMessageProcessorTest {
             contains(JsonParseException.class.getSimpleName())
         );
         verifyNoMoreInteractions(messageReceiver);
+    }
+
+    @Test
+    public void should_deadletter_message_when_it_has_no_label() throws Exception {
+        // given
+        var message = mock(IMessage.class);
+        given(message.getLabel()).willReturn(null); // no label
+        given(message.getLockToken()).willReturn(UUID.randomUUID());
+
+        given(messageReceiver.receive()).willReturn(message);
+
+        // when
+        paymentMessageProcessor.processNextMessage();
+
+        // then
+        verify(messageReceiver).receive();
+
+        verify(messageReceiver).deadLetter(
+            eq(message.getLockToken()),
+            eq("Missing label"),
+            eq(null)
+        );
     }
 
     @Test
@@ -240,6 +264,7 @@ public class PaymentMessageProcessorTest {
         IMessage message = mock(IMessage.class);
         given(message.getMessageBody())
             .willReturn(MessageBody.fromBinaryData(ImmutableList.of(paymentJsonToByte())));
+        given(message.getLabel()).willReturn("CREATE");
         return message;
     }
 
