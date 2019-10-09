@@ -177,6 +177,29 @@ public class PaymentMessageProcessorTest {
     }
 
     @Test
+    public void should_deadletter_message_when_it_has_no_label() throws Exception {
+        // given
+        IMessage message = mock(IMessage.class);
+        given(message.getMessageBody()).willReturn(MessageBody.fromBinaryData(ImmutableList.of(paymentJsonToByte())));
+        given(message.getLabel()).willReturn(null); // no label
+        given(message.getLockToken()).willReturn(UUID.randomUUID());
+
+        given(messageReceiver.receive()).willReturn(message);
+
+        // when
+        paymentMessageProcessor.processNextMessage();
+
+        // then
+        verify(messageReceiver).receive();
+
+        verify(messageReceiver).deadLetter(
+            eq(message.getLockToken()),
+            eq(DEAD_LETTER_REASON_PROCESSING_ERROR),
+            contains(JsonParseException.class.getSimpleName())
+        );
+    }
+
+    @Test
     public void should_not_finalize_the_message_when_recoverable_failure() throws Exception {
         willReturn(getValidMessage()).given(messageReceiver).receive();
         willReturn(paymentMessage(CCD_CASE_NUMBER, IS_EXCEPTION_RECORD)).given(paymentMessageParser).parse(any());
