@@ -76,6 +76,7 @@ public class PaymentRequestMapperTest {
             true,
             PO_BOX,
             "Divorce",
+            "finrem",
             emptyList()
         );
 

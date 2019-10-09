@@ -11,7 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.client.payhub.PayHubClientException;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.exceptions.InvalidMessageException;
-import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.exceptions.MessageProcessingException;
+import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.exceptions.UnknownMessageProcessingResultException;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.handler.MessageProcessingResult;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.handler.MessageProcessingResultType;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.handler.PaymentMessageHandler;
@@ -61,23 +61,26 @@ public class PaymentMessageProcessor {
     }
 
     private MessageProcessingResult process(IMessage message) {
-        log.info("Started processing message with ID {}", message.getMessageId());
+        log.info("Started processing payment message with ID {}", message.getMessageId());
 
         PaymentMessage payment = null;
 
         try {
             payment = paymentMessageParser.parse(message.getMessageBody());
-            logMessageParsed(message, payment);
             paymentMessageHandler.handlePaymentMessage(payment);
-            log.info("Processed message with ID {}. Envelope ID: {}", message.getMessageId(), payment.envelopeId);
+            log.info(
+                "Processed payment message with ID {}. Envelope ID: {}",
+                message.getMessageId(),
+                payment.envelopeId
+            );
             return new MessageProcessingResult(SUCCESS);
         } catch (InvalidMessageException ex) {
-            log.error("Rejected message with ID {}, because it's invalid", message.getMessageId(), ex);
+            log.error("Rejected payment message with ID {}, because it's invalid", message.getMessageId(), ex);
             return new MessageProcessingResult(UNRECOVERABLE_FAILURE, ex);
         } catch (PayHubClientException ex) {
             if (ex.getStatus() == HttpStatus.CONFLICT) {
                 log.info(
-                    "Processed with Http 409, message ID {}. Envelope ID: {}",
+                    "Payment Processed with Http 409, message ID {}. Envelope ID: {}",
                     message.getMessageId(),
                     payment == null ? "" : payment.envelopeId
                 );
@@ -110,12 +113,12 @@ public class PaymentMessageProcessor {
         switch (processingResult.resultType) {
             case SUCCESS:
                 messageReceiver.complete(message.getLockToken());
-                log.info("Message with ID {} has been completed", message.getMessageId());
+                log.info("Payment Message with ID {} has been completed", message.getMessageId());
                 break;
             case UNRECOVERABLE_FAILURE:
                 deadLetterTheMessage(
                     message,
-                    "Message processing error",
+                    "Payment Message processing error",
                     processingResult.exception.getMessage()
                 );
                 break;
@@ -123,8 +126,8 @@ public class PaymentMessageProcessor {
                 deadLetterIfMaxDeliveryCountIsReached(message);
                 break;
             default:
-                throw new MessageProcessingException(
-                    "Unknown message processing result type: " + processingResult.resultType
+                throw new UnknownMessageProcessingResultException(
+                    "Unknown payment message processing result type: " + processingResult.resultType
                 );
         }
     }
@@ -137,7 +140,7 @@ public class PaymentMessageProcessor {
         if (deliveryCount < maxDeliveryCount) {
             // do nothing - let the message lock expire
             log.info(
-                "Allowing message with ID {} to return to queue (delivery attempt {})",
+                "Allowing payment message with ID {} to return to queue (delivery attempt {})",
                 message.getMessageId(),
                 deliveryCount
             );
@@ -161,7 +164,12 @@ public class PaymentMessageProcessor {
             description
         );
 
-        log.info("Message with ID {} has been dead-lettered, reason {} ", message.getMessageId(), reason);
+        log.info(
+            "Payment Message with ID {} has been dead-lettered, reason {}, description {}",
+            message.getMessageId(),
+            reason,
+            description
+        );
     }
 
     private void logMessageFinaliseError(
@@ -170,34 +178,20 @@ public class PaymentMessageProcessor {
         Exception ex
     ) {
         log.error(
-            "Failed to manage processed message with ID {}. Processing result: {}",
+            "Failed to process payment message with ID {}. Processing result: {}",
             message.getMessageId(),
             processingResultType,
             ex
         );
     }
 
-    private void logMessageParsed(IMessage message, PaymentMessage payment) {
-        log.info(
-            "Parsed message. ID: {}, Envelope ID: {}, CCD Case Number: {}, Is Exception Record: {}, Jurisdiction: {}, "
-                + "PO Box: {}, Document Control Numbers : {}",
-            message.getMessageId(),
-            payment.envelopeId,
-            payment.ccdCaseNumber,
-            payment.isExceptionRecord,
-            payment.jurisdiction,
-            payment.poBox,
-            payment.payments
-        );
-    }
-
     private void logMessageProcessingError(IMessage message, PaymentMessage paymentMessage, Exception exception) {
-        String baseMessage = String.format("Failed to process message with ID %s.", message.getMessageId());
+        String baseMessage = String.format("Failed to process payment message with ID %s.", message.getMessageId());
 
         String fullMessage = paymentMessage != null
             ? baseMessage + String.format(
                 " CCD Case Number: %s, Jurisdiction: %s",
-                paymentMessage.ccdCaseNumber,
+                paymentMessage.ccdReference,
                 paymentMessage.jurisdiction
             )
             : baseMessage;

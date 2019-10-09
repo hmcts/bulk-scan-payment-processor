@@ -41,7 +41,7 @@ import static uk.gov.hmcts.reform.bulkscan.payment.processor.data.producer.Sampl
 @ExtendWith(MockitoExtension.class)
 public class PaymentMessageProcessorTest {
 
-    private static final String DEAD_LETTER_REASON_PROCESSING_ERROR = "Message processing error";
+    private static final String DEAD_LETTER_REASON_PROCESSING_ERROR = "Payment Message processing error";
 
     @Mock
     private IMessageReceiver messageReceiver;
