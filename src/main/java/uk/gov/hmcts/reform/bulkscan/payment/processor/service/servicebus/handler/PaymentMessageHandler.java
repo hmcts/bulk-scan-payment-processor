@@ -63,7 +63,7 @@ public class PaymentMessageHandler {
         CaseReferenceRequest request = new CaseReferenceRequest(paymentMessage.newCaseRef);
 
         log.info(
-            "Sending payment update case reference request, envelope id {}, case ref {}, exception ref {}",
+            "Sending payment update case reference request, envelope id: {}, case ref: {}, exception ref: {}",
             paymentMessage.envelopeId,
             request.ccdCaseNumber,
             paymentMessage.exceptionRecordRef
@@ -75,9 +75,11 @@ public class PaymentMessageHandler {
             request
         );
 
-        log.info("Payment update response from PayHub, envelope id {}, http status {} ",
-                 paymentMessage.envelopeId,
-                 response.getStatusCode());
+        log.info(
+            "Payment update response from PayHub, envelope id: {}, http status: {} ",
+            paymentMessage.envelopeId,
+            response.getStatusCode()
+        );
 
     }
 

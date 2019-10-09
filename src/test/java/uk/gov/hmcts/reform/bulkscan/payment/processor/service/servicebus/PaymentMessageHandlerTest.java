@@ -55,12 +55,7 @@ public class PaymentMessageHandlerTest {
         PaymentMessage message = SamplePaymentMessageData.paymentMessage("1234", true);
 
         when(s2sTokenGenerator.generate()).thenReturn("test-service");
-        CreatePaymentRequest request = new CreatePaymentRequest(
-            "1234",
-            singletonList("1234"),
-            true,
-            "test-siteId"
-        );
+        CreatePaymentRequest request = new CreatePaymentRequest("1234", singletonList("1234"), true, "test-siteId");
 
         when(requestMapper.mapPaymentMessage(message)).thenReturn(request);
         when(payHubClient.createPayment(any(), eq(request)))
@@ -75,7 +70,7 @@ public class PaymentMessageHandlerTest {
     }
 
     @Test
-    public void should_call_payhub_to_assign_case_ref() {
+    public void should_call_payhub_api_to_assign_case_ref() {
         // given
         UpdatePaymentMessage message = new UpdatePaymentMessage(
             "env-id-12321",
@@ -99,13 +94,13 @@ public class PaymentMessageHandlerTest {
 
         verify(payHubClient).updateCaseReference(any(), any(), requestCaptor.capture());
         CaseReferenceRequest req = requestCaptor.getValue();
-        CaseReferenceRequest request = new CaseReferenceRequest("cas-ref-9999");
-        assertThat(req).isEqualToComparingFieldByFieldRecursively(request);
+        CaseReferenceRequest expectedRequest = new CaseReferenceRequest("cas-ref-9999");
+        assertThat(req).isEqualToComparingFieldByFieldRecursively(expectedRequest);
     }
 
 
     @Test
-    public void should_throw_exception_payhub_if_assign_case_ref_throws() {
+    public void should_throw_exception_if_payhub_api_assign_case_ref_fails() {
         // given
         UpdatePaymentMessage message = new UpdatePaymentMessage(
             "env-id-12321",
