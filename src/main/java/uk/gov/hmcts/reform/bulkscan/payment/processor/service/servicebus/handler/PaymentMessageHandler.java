@@ -5,8 +5,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.client.payhub.PayHubClient;
-import uk.gov.hmcts.reform.bulkscan.payment.processor.client.payhub.request.PaymentRequest;
-import uk.gov.hmcts.reform.bulkscan.payment.processor.client.payhub.response.PaymentResult;
+import uk.gov.hmcts.reform.bulkscan.payment.processor.client.payhub.request.CreatePaymentRequest;
+import uk.gov.hmcts.reform.bulkscan.payment.processor.client.payhub.response.CreatePaymentResponse;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.PaymentRequestMapper;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.model.PaymentMessage;
 
@@ -29,8 +29,8 @@ public class PaymentMessageHandler {
         this.payHubClient = payHubClient;
     }
 
-    public PaymentResult handlePaymentMessage(PaymentMessage paymentMessage) {
-        PaymentRequest request = paymentRequestMapper.mapPaymentMessage(paymentMessage);
+    public CreatePaymentResponse handlePaymentMessage(PaymentMessage paymentMessage) {
+        CreatePaymentRequest request = paymentRequestMapper.mapPaymentMessage(paymentMessage);
 
         log.info(
             "Sending Payment request with Document Control Numbers: {} Envelope id: {} poBox: {}",
@@ -39,7 +39,7 @@ public class PaymentMessageHandler {
             paymentMessage.poBox
         );
 
-        PaymentResult paymentResult = payHubClient.postPayments(
+        CreatePaymentResponse paymentResult = payHubClient.createPayment(
             authTokenGenerator.generate(),
             request
         ).getBody();

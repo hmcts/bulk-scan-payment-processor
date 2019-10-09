@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.List;
 
-public class PaymentRequest {
+public class CreatePaymentRequest {
 
     @JsonProperty("ccd_case_number")
     public final String ccdCaseNumber;
@@ -18,8 +18,8 @@ public class PaymentRequest {
     @JsonProperty("site_id")
     public final String siteId;
 
-    public PaymentRequest(String ccdCaseNumber, List<String> documentControlNumbers,
-                          boolean isExceptionRecord, String siteId) {
+    public CreatePaymentRequest(String ccdCaseNumber, List<String> documentControlNumbers,
+                                boolean isExceptionRecord, String siteId) {
         this.ccdCaseNumber = ccdCaseNumber;
         this.documentControlNumbers = documentControlNumbers;
         this.isExceptionRecord = isExceptionRecord;

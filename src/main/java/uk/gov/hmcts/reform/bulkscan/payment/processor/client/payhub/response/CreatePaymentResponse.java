@@ -4,11 +4,11 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.List;
 
-public class PaymentResult {
+public class CreatePaymentResponse {
 
     public final List<String> paymentDcns;
 
-    public PaymentResult(
+    public CreatePaymentResponse(
         @JsonProperty("payment_dcns") List<String> paymentDcns
     ) {
         this.paymentDcns = paymentDcns;

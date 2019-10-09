@@ -8,8 +8,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.ResponseEntity;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.client.payhub.PayHubClient;
-import uk.gov.hmcts.reform.bulkscan.payment.processor.client.payhub.request.PaymentRequest;
-import uk.gov.hmcts.reform.bulkscan.payment.processor.client.payhub.response.PaymentResult;
+import uk.gov.hmcts.reform.bulkscan.payment.processor.client.payhub.request.CreatePaymentRequest;
+import uk.gov.hmcts.reform.bulkscan.payment.processor.client.payhub.response.CreatePaymentResponse;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.data.producer.SamplePaymentMessageData;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.handler.PaymentMessageHandler;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.model.PaymentMessage;
@@ -47,14 +47,14 @@ public class PaymentMessageHandlerTest {
         PaymentMessage message = SamplePaymentMessageData.paymentMessage("1234", true);
 
         when(s2sTokenGenerator.generate()).thenReturn("test-service");
-        PaymentRequest request = new PaymentRequest("1234", singletonList("1234"), true, "test-siteId");
+        CreatePaymentRequest request = new CreatePaymentRequest("1234", singletonList("1234"), true, "test-siteId");
 
         when(requestMapper.mapPaymentMessage(message)).thenReturn(request);
-        when(payHubClient.postPayments(any(), eq(request)))
-            .thenReturn(ResponseEntity.of(Optional.of(new PaymentResult(singletonList("1234")))));
+        when(payHubClient.createPayment(any(), eq(request)))
+            .thenReturn(ResponseEntity.of(Optional.of(new CreatePaymentResponse(singletonList("1234")))));
 
         // when
-        PaymentResult result = messageHandler.handlePaymentMessage(message);
+        CreatePaymentResponse result = messageHandler.handlePaymentMessage(message);
 
         // then
         assertThat(result).isNotNull();

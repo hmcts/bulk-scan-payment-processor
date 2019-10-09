@@ -7,8 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import uk.gov.hmcts.reform.bulkscan.payment.processor.client.payhub.request.PaymentRequest;
-import uk.gov.hmcts.reform.bulkscan.payment.processor.client.payhub.response.PaymentResult;
+import uk.gov.hmcts.reform.bulkscan.payment.processor.client.payhub.request.CreatePaymentRequest;
+import uk.gov.hmcts.reform.bulkscan.payment.processor.client.payhub.response.CreatePaymentResponse;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.config.IntegrationTest;
 
 import java.io.IOException;
@@ -49,10 +49,10 @@ public class PayHubClientTest {
             okJson(fileContentAsString("testdata/post-payments/payment-result-1.json"))
         );
 
-        PaymentResult response = new PaymentResult(ImmutableList.of("123444", "666666"));
+        CreatePaymentResponse response = new CreatePaymentResponse(ImmutableList.of("123444", "666666"));
 
         // when
-        ResponseEntity<PaymentResult> paymentResponse = client.postPayments(s2sToken, getPaymentRequest());
+        ResponseEntity<CreatePaymentResponse> paymentResponse = client.createPayment(s2sToken, getPaymentRequest());
 
         // then
         assertThat(paymentResponse.getStatusCodeValue()).isEqualTo(200);
@@ -74,10 +74,10 @@ public class PayHubClientTest {
                 .withBody(fileContentAsString("testdata/post-payments/payment-result-2.json"))
         );
 
-        PaymentResult response = new PaymentResult(ImmutableList.of("DCN-4343"));
+        CreatePaymentResponse response = new CreatePaymentResponse(ImmutableList.of("DCN-4343"));
 
         // when
-        ResponseEntity<PaymentResult> paymentResponse = client.postPayments(s2sToken, getPaymentRequest());
+        ResponseEntity<CreatePaymentResponse> paymentResponse = client.createPayment(s2sToken, getPaymentRequest());
 
         // then
         assertThat(paymentResponse.getStatusCodeValue()).isEqualTo(201);
@@ -98,7 +98,7 @@ public class PayHubClientTest {
         );
 
         // when
-        Throwable throwable = catchThrowable(() -> client.postPayments(s2sToken, getPaymentRequest()));
+        Throwable throwable = catchThrowable(() -> client.createPayment(s2sToken, getPaymentRequest()));
 
         // then
         assertThat(throwable).isInstanceOf(PayHubClientException.class);
@@ -123,7 +123,7 @@ public class PayHubClientTest {
         );
 
         // when
-        Throwable throwable = catchThrowable(() -> client.postPayments(s2sToken, getPaymentRequest()));
+        Throwable throwable = catchThrowable(() -> client.createPayment(s2sToken, getPaymentRequest()));
 
         // then
         assertThat(throwable).isInstanceOf(PayHubClientException.class);
@@ -146,7 +146,7 @@ public class PayHubClientTest {
         );
 
         // when
-        Throwable throwable = catchThrowable(() -> client.postPayments(s2sToken, getPaymentRequest()));
+        Throwable throwable = catchThrowable(() -> client.createPayment(s2sToken, getPaymentRequest()));
 
         // then
         assertThat(throwable).isInstanceOf(PayHubClientException.class);
@@ -185,8 +185,8 @@ public class PayHubClientTest {
         );
     }
 
-    private static PaymentRequest getPaymentRequest() {
-        return new PaymentRequest(
+    private static CreatePaymentRequest getPaymentRequest() {
+        return new CreatePaymentRequest(
             "3213213123",
             ImmutableList.of("xxxyyyzzz", "zzzyyyxxx"),
             true,
