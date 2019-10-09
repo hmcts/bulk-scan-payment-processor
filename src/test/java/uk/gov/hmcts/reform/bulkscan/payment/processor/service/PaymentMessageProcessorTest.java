@@ -240,6 +240,7 @@ public class PaymentMessageProcessorTest {
         IMessage message = mock(IMessage.class);
         given(message.getMessageBody())
             .willReturn(MessageBody.fromBinaryData(ImmutableList.of(paymentJsonToByte())));
+        given(message.getLabel()).willReturn("CREATE");
         return message;
     }
 

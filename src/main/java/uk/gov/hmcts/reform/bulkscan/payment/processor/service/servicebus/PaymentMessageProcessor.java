@@ -53,14 +53,20 @@ public class PaymentMessageProcessor {
     public boolean processNextMessage() throws ServiceBusException, InterruptedException {
         IMessage message = messageReceiver.receive();
         if (message != null) {
-            MessageProcessingResult result = process(message);
-            tryFinaliseProcessedMessage(message, result);
+            switch (message.getLabel()) {
+                case "CREATE":
+                    MessageProcessingResult result = processCreateCommand(message);
+                    tryFinaliseProcessedMessage(message, result);
+                    break;
+                default:
+                    deadLetterTheMessage(message, "Unrecognised message type: " + message.getLabel(), null);
+            }
         }
 
         return message != null;
     }
 
-    private MessageProcessingResult process(IMessage message) {
+    private MessageProcessingResult processCreateCommand(IMessage message) {
         log.info("Started processing payment message with ID {}", message.getMessageId());
 
         PaymentMessage payment = null;
