@@ -1,7 +1,5 @@
 package uk.gov.hmcts.reform.bulkscan.payment.processor.client.payhub;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder;
 import com.google.common.collect.ImmutableList;
 import org.junit.jupiter.api.Test;
@@ -12,6 +10,8 @@ import org.springframework.http.ResponseEntity;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.client.payhub.request.PaymentRequest;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.client.payhub.response.PaymentResult;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.config.IntegrationTest;
+
+import java.io.IOException;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
 import static com.github.tomakehurst.wiremock.client.WireMock.badRequest;
@@ -28,28 +28,28 @@ import static org.assertj.core.api.Assertions.catchThrowable;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.CONFLICT;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
+import static uk.gov.hmcts.reform.bulkscan.payment.processor.util.TestUtil.fileContentAsString;
 
 @IntegrationTest
 public class PayHubClientTest {
 
+    private static final String PAYMENT_REQUEST_JSON = "testdata/post-payments/payment-request.json";
+
     @Autowired
     private PayHubClient client;
 
-    @Autowired
-    private ObjectMapper mapper;
-
     @Test
-    public void should_return_Ok_when_everything_is_ok_with_request() throws JsonProcessingException {
+    public void should_return_Ok_when_everything_is_ok_with_request() throws IOException {
         // given
         String s2sToken = randomUUID().toString();
 
-        PaymentResult response = new PaymentResult(ImmutableList.of("xxxyyyzzz", "zzzyyyxxx"));
-
         stubWithRequestAndResponse(
             s2sToken,
-            mapper.writeValueAsString(getPaymentRequest()),
-            okJson(mapper.writeValueAsString(response))
+            fileContentAsString(PAYMENT_REQUEST_JSON),
+            okJson(fileContentAsString("testdata/post-payments/payment-result-1.json"))
         );
+
+        PaymentResult response = new PaymentResult(ImmutableList.of("123444", "666666"));
 
         // when
         ResponseEntity<PaymentResult> paymentResponse = client.postPayments(s2sToken, getPaymentRequest());
@@ -61,19 +61,20 @@ public class PayHubClientTest {
     }
 
     @Test
-    public void should_return_Created_when_everything_is_ok_with_request() throws JsonProcessingException {
+    public void should_return_Created_when_everything_is_ok_with_request() throws IOException {
         // given
         String s2sToken = randomUUID().toString();
-        PaymentResult response = new PaymentResult(ImmutableList.of("xxxyyyzzz"));
 
         stubWithRequestAndResponse(
             s2sToken,
-            mapper.writeValueAsString(getPaymentRequest()),
+            fileContentAsString(PAYMENT_REQUEST_JSON),
             aResponse()
                 .withStatus(201)
                 .withHeader(CONTENT_TYPE, "application/json")
-                .withBody(mapper.writeValueAsString(response))
+                .withBody(fileContentAsString("testdata/post-payments/payment-result-2.json"))
         );
+
+        PaymentResult response = new PaymentResult(ImmutableList.of("DCN-4343"));
 
         // when
         ResponseEntity<PaymentResult> paymentResponse = client.postPayments(s2sToken, getPaymentRequest());
@@ -85,12 +86,16 @@ public class PayHubClientTest {
 
 
     @Test
-    public void should_return_PayHubClientException_for_badRequest() throws JsonProcessingException {
+    public void should_return_PayHubClientException_for_badRequest() throws IOException {
         // given
         String message = "error occurred";
         String s2sToken = randomUUID().toString();
 
-        stubWithRequestAndResponse(s2sToken, mapper.writeValueAsString(getPaymentRequest()), getBadRequest(message));
+        stubWithRequestAndResponse(
+            s2sToken,
+            fileContentAsString(PAYMENT_REQUEST_JSON),
+            getBadRequest(message)
+        );
 
         // when
         Throwable throwable = catchThrowable(() -> client.postPayments(s2sToken, getPaymentRequest()));
@@ -106,13 +111,13 @@ public class PayHubClientTest {
 
 
     @Test
-    public void should_return_PayHubClientException_for_conflict() throws JsonProcessingException {
+    public void should_return_PayHubClientException_for_conflict() throws IOException {
         // given
         String s2sToken = randomUUID().toString();
 
         stubWithRequestAndResponse(
             s2sToken,
-            mapper.writeValueAsString(getPaymentRequest()),
+            fileContentAsString(PAYMENT_REQUEST_JSON),
             aResponse().withStatus(409)
                 .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
         );
@@ -131,10 +136,14 @@ public class PayHubClientTest {
 
     @Test
     public void should_return_PayHubClientException_for_serverError()
-        throws JsonProcessingException {
+        throws IOException {
         // given
         String s2sToken = randomUUID().toString();
-        stubWithRequestAndResponse(s2sToken, mapper.writeValueAsString(getPaymentRequest()), getServerErrorRequest());
+        stubWithRequestAndResponse(
+            s2sToken,
+            fileContentAsString(PAYMENT_REQUEST_JSON),
+            getServerErrorRequest()
+        );
 
         // when
         Throwable throwable = catchThrowable(() -> client.postPayments(s2sToken, getPaymentRequest()));
