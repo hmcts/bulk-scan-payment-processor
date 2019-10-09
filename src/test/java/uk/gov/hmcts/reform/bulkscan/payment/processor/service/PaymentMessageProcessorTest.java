@@ -99,6 +99,7 @@ public class PaymentMessageProcessorTest {
         IMessage invalidMessage = mock(IMessage.class);
         given(invalidMessage.getMessageBody())
             .willReturn(MessageBody.fromBinaryData(ImmutableList.of("foo".getBytes())));
+        given(invalidMessage.getLabel()).willReturn("CREATE");
         given(messageReceiver.receive()).willReturn(invalidMessage);
 
         assertThat(paymentMessageProcessor.processNextMessage()).isTrue();
@@ -157,6 +158,7 @@ public class PaymentMessageProcessorTest {
         given(message.getMessageBody()).willReturn(
             MessageBody.fromBinaryData(ImmutableList.of("invalid body".getBytes(Charset.defaultCharset())))
         );
+        given(message.getLabel()).willReturn("CREATE");
         willThrow(new InvalidMessageException("JsonParseException")).given(paymentMessageParser).parse(any());
 
         given(message.getLockToken()).willReturn(UUID.randomUUID());
@@ -179,8 +181,7 @@ public class PaymentMessageProcessorTest {
     @Test
     public void should_deadletter_message_when_it_has_no_label() throws Exception {
         // given
-        IMessage message = mock(IMessage.class);
-        given(message.getMessageBody()).willReturn(MessageBody.fromBinaryData(ImmutableList.of(paymentJsonToByte())));
+        var message = mock(IMessage.class);
         given(message.getLabel()).willReturn(null); // no label
         given(message.getLockToken()).willReturn(UUID.randomUUID());
 
@@ -194,8 +195,8 @@ public class PaymentMessageProcessorTest {
 
         verify(messageReceiver).deadLetter(
             eq(message.getLockToken()),
-            eq(DEAD_LETTER_REASON_PROCESSING_ERROR),
-            contains(JsonParseException.class.getSimpleName())
+            eq("Missing label"),
+            eq(null)
         );
     }
 

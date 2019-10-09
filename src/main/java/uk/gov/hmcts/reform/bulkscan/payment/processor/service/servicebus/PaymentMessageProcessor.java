@@ -53,13 +53,18 @@ public class PaymentMessageProcessor {
     public boolean processNextMessage() throws ServiceBusException, InterruptedException {
         IMessage message = messageReceiver.receive();
         if (message != null) {
-            switch (message.getLabel()) {
-                case "CREATE":
-                    MessageProcessingResult result = processCreateCommand(message);
-                    tryFinaliseProcessedMessage(message, result);
-                    break;
-                default:
-                    deadLetterTheMessage(message, "Unrecognised message type: " + message.getLabel(), null);
+            if (message.getLabel() == null) {
+                deadLetterTheMessage(message, "Missing label", null);
+            } else {
+                switch (message.getLabel()) {
+                    case "CREATE":
+                        MessageProcessingResult result = processCreateCommand(message);
+                        tryFinaliseProcessedMessage(message, result);
+                        break;
+                    case "UPDATE":
+                    default:
+                        deadLetterTheMessage(message, "Unrecognised message type: " + message.getLabel(), null);
+                }
             }
         }
 
@@ -196,10 +201,10 @@ public class PaymentMessageProcessor {
 
         String fullMessage = paymentMessage != null
             ? baseMessage + String.format(
-                " CCD Case Number: %s, Jurisdiction: %s",
-                paymentMessage.ccdReference,
-                paymentMessage.jurisdiction
-            )
+            " CCD Case Number: %s, Jurisdiction: %s",
+            paymentMessage.ccdReference,
+            paymentMessage.jurisdiction
+        )
             : baseMessage;
 
         log.error(fullMessage, exception);
