@@ -121,7 +121,5 @@ public class PaymentMessageHandlerTest {
             () -> messageHandler.updatePaymentCaseReference(message))
             .isInstanceOf(PayHubClientException.class);
 
-        // then
-        verify(payHubClient).updateCaseReference(any(), any(), any());
     }
 }
