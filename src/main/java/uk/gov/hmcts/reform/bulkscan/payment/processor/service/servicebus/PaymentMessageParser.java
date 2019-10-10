@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.exceptions.InvalidMessageException;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.model.PaymentMessage;
+import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.model.UpdatePaymentMessage;
 
 import java.io.IOException;
 import java.util.List;
@@ -28,6 +29,20 @@ public class PaymentMessageParser {
     public PaymentMessage parse(MessageBody messageBody) {
         try {
             PaymentMessage payment = objectMapper.readValue(getBinaryData(messageBody), PaymentMessage.class);
+            logMessageParsed(payment);
+            return payment;
+        } catch (IOException exc) {
+            LOGGER.error("Payment queue message, parse error ", exc);
+            throw new InvalidMessageException(exc);
+        }
+    }
+
+    public UpdatePaymentMessage parseUpdateMessage(MessageBody messageBody) {
+        try {
+            UpdatePaymentMessage payment = objectMapper.readValue(
+                getBinaryData(messageBody),
+                UpdatePaymentMessage.class
+            );
             logMessageParsed(payment);
             return payment;
         } catch (IOException exc) {
@@ -59,4 +74,15 @@ public class PaymentMessageParser {
         );
     }
 
+    private void logMessageParsed(UpdatePaymentMessage payment) {
+        LOGGER.info(
+            "Parsed Payment message, Envelope ID: {}, Jurisdiction: {}, "
+                + "Service: {}, Exception Record Ref: {}, newCaseRef:{}",
+            payment.envelopeId,
+            payment.jurisdiction,
+            payment.service,
+            payment.exceptionRecordRef,
+            payment.newCaseRef
+        );
+    }
 }

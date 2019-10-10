@@ -5,9 +5,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.ImmutableList;
 import com.microsoft.azure.servicebus.MessageBody;
 import org.json.JSONException;
+import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.exceptions.InvalidMessageException;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.model.PaymentMessage;
+import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.model.UpdatePaymentMessage;
 
 import static com.microsoft.azure.servicebus.MessageBody.fromBinaryData;
 import static com.microsoft.azure.servicebus.MessageBody.fromSequenceData;
@@ -44,7 +46,8 @@ public class PaymentMessageParserTest {
         assertThatThrownBy(
             () -> paymentMessageParser.parse(nullBinaryData))
             .isInstanceOf(InvalidMessageException.class)
-            .hasMessage("Message Binary data is null");;
+            .hasMessage("Message Binary data is null");
+        ;
     }
 
     private MessageBody getValidMessageBody() throws JSONException {
@@ -52,6 +55,71 @@ public class PaymentMessageParserTest {
             "232131313121",
             false
         )));
+    }
+
+
+    @Test
+    public void should_return_valid_updatePaymentMessage_when_queue_message_is_invalid() throws JSONException {
+        UpdatePaymentMessage expected = new UpdatePaymentMessage(
+            "envelopeId",
+            "Probate",
+            "probate",
+            "322131",
+            "99999"
+        );
+
+        UpdatePaymentMessage paymentMessage =
+            paymentMessageParser
+                .parseUpdateMessage(
+                    fromBinaryData(
+                        ImmutableList.of(
+                            getUpdatePaymentMessageJsonString(
+                                "envelopeId",
+                                "Probate",
+                                "probate",
+                                "322131",
+                                "99999"
+                            ).getBytes()
+                        )
+                    )
+                );
+
+        assertThat(paymentMessage).isEqualToComparingFieldByFieldRecursively(expected);
+    }
+
+    @Test
+    public void should_throw_invalidMessageException_when_queue_updatePayment_message_is_invalid() {
+        assertThatThrownBy(
+            () -> paymentMessageParser.parseUpdateMessage(fromBinaryData(ImmutableList.of("parse exception".getBytes()))))
+            .isInstanceOf(InvalidMessageException.class);
+    }
+
+    @Test
+    public void should_throw_InvalidMessageException_when_queue_updatePayment_is_null() {
+
+        MessageBody nullBinaryData = fromSequenceData(ImmutableList.of(ImmutableList.of(new Object())));
+        assertThatThrownBy(
+            () -> paymentMessageParser.parseUpdateMessage(nullBinaryData))
+            .isInstanceOf(InvalidMessageException.class)
+            .hasMessage("Message Binary data is null");
+        ;
+    }
+
+    private static String getUpdatePaymentMessageJsonString(
+        String envelopeId,
+        String jurisdiction,
+        String service,
+        String exceptionRecordRef,
+        String newCaseRef
+    ) throws JSONException {
+
+        return new JSONObject()
+            .put("envelope_id", envelopeId)
+            .put("jurisdiction", jurisdiction)
+            .put("service", service)
+            .put("exception_record_ref", exceptionRecordRef)
+            .put("new_case_ref", newCaseRef)
+            .toString();
     }
 
 }
