@@ -66,6 +66,8 @@ public class PaymentMessageProcessor {
                         deadLetterTheMessage(message, "Unrecognised message type: " + message.getLabel(), null);
                 }
             }
+        } else {
+            log.info("No payment messages to process by payment processor!!");
         }
 
         return message != null;
