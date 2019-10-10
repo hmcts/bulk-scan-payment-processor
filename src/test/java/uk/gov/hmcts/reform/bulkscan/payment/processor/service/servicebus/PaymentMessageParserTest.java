@@ -26,7 +26,7 @@ public class PaymentMessageParserTest {
     private final PaymentMessageParser paymentMessageParser = new PaymentMessageParser(objectMapper);
 
     @Test
-    public void should_return_valid_paymentMessage_when_queue_message_is_invalid() throws JSONException {
+    public void should_return_valid_paymentMessage_when_queue_message_is_valid() throws JSONException {
         PaymentMessage expected = paymentMessage("232131313121", false);
         PaymentMessage paymentMessage = paymentMessageParser.parse(getValidMessageBody());
         assertThat(paymentMessage).isEqualToComparingFieldByFieldRecursively(expected);
@@ -59,7 +59,7 @@ public class PaymentMessageParserTest {
 
 
     @Test
-    public void should_return_valid_updatePaymentMessage_when_queue_message_is_invalid() throws JSONException {
+    public void should_return_valid_updatePaymentMessage_when_queue_message_is_valid() throws JSONException {
         UpdatePaymentMessage expected = new UpdatePaymentMessage(
             "envelopeId",
             "Probate",
@@ -90,8 +90,9 @@ public class PaymentMessageParserTest {
     @Test
     public void should_throw_invalidMessageException_when_queue_updatePayment_message_is_invalid() {
         assertThatThrownBy(
-            () -> paymentMessageParser.parseUpdateMessage(fromBinaryData(ImmutableList.of("parse exception".getBytes()))))
-            .isInstanceOf(InvalidMessageException.class);
+            () -> paymentMessageParser.parseUpdateMessage(
+                fromBinaryData(ImmutableList.of("parse exception".getBytes())))
+        ).isInstanceOf(InvalidMessageException.class);
     }
 
     @Test
