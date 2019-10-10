@@ -6,7 +6,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class PaymentMessage {
+public class CreatePaymentMessage {
 
     public final String envelopeId;
     public final String ccdReference;
@@ -16,7 +16,7 @@ public class PaymentMessage {
     public final String service;
     public final List<PaymentInfo> payments;
 
-    public PaymentMessage(
+    public CreatePaymentMessage(
         @JsonProperty(value = "envelope_id", required = true) String envelopeId,
         @JsonProperty(value = "ccd_reference", required = true) String ccdReference,
         @JsonProperty(value = "is_exception_record", required = true) boolean isExceptionRecord,

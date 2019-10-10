@@ -7,7 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.exceptions.InvalidMessageException;
-import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.model.PaymentMessage;
+import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.model.CreatePaymentMessage;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.model.UpdatePaymentMessage;
 
 import java.io.IOException;
@@ -26,9 +26,10 @@ public class PaymentMessageParser {
         this.objectMapper = objectMapper;
     }
 
-    public PaymentMessage parse(MessageBody messageBody) {
+    public CreatePaymentMessage parse(MessageBody messageBody) {
         try {
-            PaymentMessage payment = objectMapper.readValue(getBinaryData(messageBody), PaymentMessage.class);
+            CreatePaymentMessage payment =
+                objectMapper.readValue(getBinaryData(messageBody), CreatePaymentMessage.class);
             logMessageParsed(payment);
             return payment;
         } catch (IOException exc) {
@@ -60,7 +61,7 @@ public class PaymentMessageParser {
         return CollectionUtils.isEmpty(binaryData) ? null : binaryData.get(0);
     }
 
-    private void logMessageParsed(PaymentMessage payment) {
+    private void logMessageParsed(CreatePaymentMessage payment) {
         LOGGER.info(
             "Parsed Payment message, Envelope ID: {}, CCD Case Number: {}, Is Exception Record: {}, Jurisdiction: {}, "
                 + "PO Box: {}, Service {}, Document Control Numbers : {}",
