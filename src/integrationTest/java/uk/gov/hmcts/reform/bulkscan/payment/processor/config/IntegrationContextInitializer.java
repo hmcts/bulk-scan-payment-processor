@@ -34,5 +34,4 @@ public class IntegrationContextInitializer implements ApplicationContextInitiali
     public IMessageReceiver paymentMessageReceiver() {
         return mock(IMessageReceiver.class);
     }
-
 }
