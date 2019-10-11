@@ -10,7 +10,7 @@ import uk.gov.hmcts.reform.bulkscan.payment.processor.client.payhub.request.Crea
 import uk.gov.hmcts.reform.bulkscan.payment.processor.config.SiteConfiguration;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.exception.SiteNotFoundException;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.exceptions.InvalidMessageException;
-import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.model.PaymentMessage;
+import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.model.CreatePaymentMessage;
 
 import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -70,7 +70,7 @@ public class PaymentRequestMapperTest {
     @Test
     public void should_throw_InvalidMessageException_when_no_payments_info() {
         // given
-        PaymentMessage paymentMessage = new PaymentMessage(
+        CreatePaymentMessage paymentMessage = new CreatePaymentMessage(
             "envelope_id_123",
             "case_num_32213",
             true,

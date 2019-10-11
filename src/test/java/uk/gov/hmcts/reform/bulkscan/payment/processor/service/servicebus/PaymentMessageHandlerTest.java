@@ -17,7 +17,7 @@ import uk.gov.hmcts.reform.bulkscan.payment.processor.client.payhub.request.Crea
 import uk.gov.hmcts.reform.bulkscan.payment.processor.client.payhub.response.CreatePaymentResponse;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.data.producer.SamplePaymentMessageData;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.handler.PaymentMessageHandler;
-import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.model.PaymentMessage;
+import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.model.CreatePaymentMessage;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.model.UpdatePaymentMessage;
 
 import java.util.Optional;
@@ -52,7 +52,7 @@ public class PaymentMessageHandlerTest {
     @Test
     public void should_call_payhub_api_for_successful_payment_message() {
         // given
-        PaymentMessage message = SamplePaymentMessageData.paymentMessage("1234", true);
+        CreatePaymentMessage message = SamplePaymentMessageData.paymentMessage("1234", true);
 
         when(s2sTokenGenerator.generate()).thenReturn("test-service");
         CreatePaymentRequest request = new CreatePaymentRequest("1234", singletonList("1234"), true, "test-siteId");

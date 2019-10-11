@@ -4,8 +4,8 @@ import com.google.common.collect.ImmutableList;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.model.CreatePaymentMessage;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.model.PaymentInfo;
-import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.model.PaymentMessage;
 
 public final class SamplePaymentMessageData {
 
@@ -35,9 +35,9 @@ public final class SamplePaymentMessageData {
             .toString();
     }
 
-    public static PaymentMessage paymentMessage(String ccdCaseNumber, boolean isExceptionRecord) {
+    public static CreatePaymentMessage paymentMessage(String ccdCaseNumber, boolean isExceptionRecord) {
 
-        return new PaymentMessage(
+        return new CreatePaymentMessage(
             ENVELOPE_ID,
             ccdCaseNumber,
             isExceptionRecord,

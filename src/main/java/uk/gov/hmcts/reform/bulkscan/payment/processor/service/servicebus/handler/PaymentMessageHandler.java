@@ -10,7 +10,7 @@ import uk.gov.hmcts.reform.bulkscan.payment.processor.client.payhub.request.Case
 import uk.gov.hmcts.reform.bulkscan.payment.processor.client.payhub.request.CreatePaymentRequest;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.client.payhub.response.CreatePaymentResponse;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.PaymentRequestMapper;
-import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.model.PaymentMessage;
+import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.model.CreatePaymentMessage;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.model.UpdatePaymentMessage;
 
 @Service
@@ -32,7 +32,7 @@ public class PaymentMessageHandler {
         this.payHubClient = payHubClient;
     }
 
-    public CreatePaymentResponse handlePaymentMessage(PaymentMessage paymentMessage) {
+    public CreatePaymentResponse handlePaymentMessage(CreatePaymentMessage paymentMessage) {
         CreatePaymentRequest request = paymentRequestMapper.mapPaymentMessage(paymentMessage);
 
         log.info(
