@@ -6,14 +6,11 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class CreatePaymentMessage {
+public class CreatePaymentMessage extends PaymentMessage {
 
-    public final String envelopeId;
     public final String ccdReference;
     public final boolean isExceptionRecord;
     public final String poBox;
-    public final String jurisdiction;
-    public final String service;
     public final List<PaymentInfo> payments;
 
     public CreatePaymentMessage(
@@ -24,12 +21,10 @@ public class CreatePaymentMessage {
         @JsonProperty(value = "jurisdiction", required = true) String jurisdiction,
         @JsonProperty(value = "service", required = true) String service,
         @JsonProperty(value = "payments", required = true) List<PaymentInfo> payments) {
-        this.envelopeId = envelopeId;
+        super(envelopeId, jurisdiction, service);
         this.ccdReference = ccdReference;
         this.isExceptionRecord = isExceptionRecord;
         this.poBox = poBox;
-        this.jurisdiction = jurisdiction;
-        this.service = service;
         this.payments = payments;
     }
 
