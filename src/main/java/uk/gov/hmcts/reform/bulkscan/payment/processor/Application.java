@@ -8,7 +8,12 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 
 @SpringBootApplication
 @EnableCircuitBreaker
-@EnableFeignClients
+@EnableFeignClients(
+    basePackages = {
+        "uk.gov.hmcts.reform.idam.client",
+        "uk.gov.hmcts.reform.bulkscan.payment.processor.client"
+    }
+)
 @EnableScheduling
 @SuppressWarnings("HideUtilityClassConstructor") // Spring needs a constructor, its not a utility class
 public class Application {
