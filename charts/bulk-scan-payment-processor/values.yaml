@@ -17,6 +17,7 @@ java:
         - site-id-divorce
         - site-id-finrem
         - payments-queue-listen-connection-string
+        - app-insights-instrumentation-key
 bs-payment-processor:
   servicebus:
     enabled: false
