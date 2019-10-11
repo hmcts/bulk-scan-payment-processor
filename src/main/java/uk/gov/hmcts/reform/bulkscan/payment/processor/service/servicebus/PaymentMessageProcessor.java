@@ -7,9 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
-import uk.gov.hmcts.reform.bulkscan.payment.processor.client.payhub.PayHubClientException;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.exceptions.InvalidMessageException;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.exceptions.UnknownMessageProcessingResultException;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.handler.MessageProcessingResult;
@@ -84,27 +82,18 @@ public class PaymentMessageProcessor {
 
         try {
             payment = paymentMessageParser.parse(message.getMessageBody());
-            paymentMessageHandler.handlePaymentMessage(payment);
+            paymentMessageHandler.handlePaymentMessage(payment, message.getMessageId());
+
             log.info(
                 "Processed payment message with ID {}. Envelope ID: {}",
                 message.getMessageId(),
                 payment.envelopeId
             );
+
             return new MessageProcessingResult(SUCCESS);
         } catch (InvalidMessageException ex) {
             log.error("Rejected payment message with ID {}, because it's invalid", message.getMessageId(), ex);
             return new MessageProcessingResult(UNRECOVERABLE_FAILURE, ex);
-        } catch (PayHubClientException ex) {
-            if (ex.getStatus() == HttpStatus.CONFLICT) {
-                log.info(
-                    "Payment Processed with Http 409, message ID {}. Envelope ID: {}",
-                    message.getMessageId(),
-                    payment == null ? "" : payment.envelopeId
-                );
-                return new MessageProcessingResult(SUCCESS, ex);
-            }
-            logMessageProcessingError(message, payment, ex);
-            return new MessageProcessingResult(POTENTIALLY_RECOVERABLE_FAILURE, ex);
         } catch (Exception ex) {
             logMessageProcessingError(message, payment, ex);
             return new MessageProcessingResult(POTENTIALLY_RECOVERABLE_FAILURE);
@@ -230,10 +219,10 @@ public class PaymentMessageProcessor {
 
         String fullMessage = paymentMessage != null
             ? baseMessage + String.format(
-                " CCD Case Number: %s, Jurisdiction: %s",
-                paymentMessage.ccdReference,
-                paymentMessage.jurisdiction
-            )
+            " CCD Case Number: %s, Jurisdiction: %s",
+            paymentMessage.ccdReference,
+            paymentMessage.jurisdiction
+        )
             : baseMessage;
 
         log.error(fullMessage, exception);
@@ -252,11 +241,11 @@ public class PaymentMessageProcessor {
 
         String fullMessage = paymentMessage != null
             ? baseMessage + String.format(
-                " New Case Number: %s, Exception Record Ref: %s,Jurisdiction: %s",
-                paymentMessage.newCaseRef,
-                paymentMessage.exceptionRecordRef,
-                paymentMessage.jurisdiction
-            )
+            " New Case Number: %s, Exception Record Ref: %s,Jurisdiction: %s",
+            paymentMessage.newCaseRef,
+            paymentMessage.exceptionRecordRef,
+            paymentMessage.jurisdiction
+        )
             : baseMessage;
 
         log.error(fullMessage, exception);
