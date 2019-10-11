@@ -10,3 +10,4 @@ spring:
         site-id-finrem: SITE_ID_FINREM
         payments-queue-listen-connection-string: PAYMENTS_QUEUE_READ_CONNECTION_STRING
         s2s-secret-payment-processor: S2S_SECRET
+        app-insights-instrumentation-key: azure.application-insights.instrumentation-key
