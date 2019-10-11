@@ -15,12 +15,11 @@ import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.excepti
 import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.handler.MessageProcessingResult;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.handler.MessageProcessingResultType;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.handler.PaymentMessageHandler;
-import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.model.CreatePaymentMessage;
+import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.model.PaymentMessage;
 
 import static uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.handler.MessageProcessingResultType.POTENTIALLY_RECOVERABLE_FAILURE;
 import static uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.handler.MessageProcessingResultType.SUCCESS;
 import static uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.handler.MessageProcessingResultType.UNRECOVERABLE_FAILURE;
-
 
 @Service
 @Profile("!nosb") // do not register for the nosb (test) profile
@@ -76,11 +75,15 @@ public class PaymentMessageProcessor {
     private MessageProcessingResult processCreateCommand(IMessage message) {
         log.info("Started processing payment message with ID {}", message.getMessageId());
 
-        CreatePaymentMessage payment = null;
+        PaymentMessage payment = null;
 
+        PaymentOperation paymentOperation = PaymentOperation.CREATE;
+        PaymentOperation.valueOf("ssa");
         try {
-            payment = paymentMessageParser.parse(message.getMessageBody());
-            paymentMessageHandler.handlePaymentMessage(payment);
+            //payment = paymentMessageParser.parse(message.getMessageBody());
+            payment = paymentOperation.parser.apply(paymentMessageParser, message.getMessageBody());
+            paymentOperation.handler.accept(paymentMessageHandler, payment);
+            //  paymentMessageHandler.handlePaymentMessage(payment);
             log.info(
                 "Processed payment message with ID {}. Envelope ID: {}",
                 message.getMessageId(),
@@ -198,15 +201,15 @@ public class PaymentMessageProcessor {
         );
     }
 
-    private void logMessageProcessingError(IMessage message, CreatePaymentMessage paymentMessage, Exception exception) {
+    private void logMessageProcessingError(IMessage message, PaymentMessage paymentMessage, Exception exception) {
         String baseMessage = String.format("Failed to process payment message with ID %s.", message.getMessageId());
 
         String fullMessage = paymentMessage != null
             ? baseMessage + String.format(
-                " CCD Case Number: %s, Jurisdiction: %s",
-                paymentMessage.ccdReference,
-                paymentMessage.jurisdiction
-            )
+            " Envelope Id: %s, Jurisdiction: %s",
+            paymentMessage.envelopeId,
+            paymentMessage.jurisdiction
+        )
             : baseMessage;
 
         log.error(fullMessage, exception);

@@ -62,11 +62,8 @@ public class PaymentMessageHandlerTest {
             .thenReturn(ResponseEntity.of(Optional.of(new CreatePaymentResponse(singletonList("1234")))));
 
         // when
-        CreatePaymentResponse result = messageHandler.handlePaymentMessage(message);
-
+        messageHandler.handlePaymentMessage(message);
         // then
-        assertThat(result).isNotNull();
-        assertThat(result.paymentDcns).hasSize(1).contains("1234");
     }
 
     @Test

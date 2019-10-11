@@ -11,6 +11,7 @@ import uk.gov.hmcts.reform.bulkscan.payment.processor.client.payhub.request.Crea
 import uk.gov.hmcts.reform.bulkscan.payment.processor.client.payhub.response.CreatePaymentResponse;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.PaymentRequestMapper;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.model.CreatePaymentMessage;
+import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.model.PaymentMessage;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.model.UpdatePaymentMessage;
 
 @Service
@@ -32,14 +33,15 @@ public class PaymentMessageHandler {
         this.payHubClient = payHubClient;
     }
 
-    public CreatePaymentResponse handlePaymentMessage(CreatePaymentMessage paymentMessage) {
-        CreatePaymentRequest request = paymentRequestMapper.mapPaymentMessage(paymentMessage);
+    public void handlePaymentMessage(PaymentMessage paymentMessage) {
+        CreatePaymentMessage createPaymentMessage = (CreatePaymentMessage)paymentMessage;
+        CreatePaymentRequest request = paymentRequestMapper.mapPaymentMessage(createPaymentMessage);
 
         log.info(
             "Sending Payment request with Document Control Numbers: {} Envelope id: {} poBox: {}",
             String.join(", ", request.documentControlNumbers),
-            paymentMessage.envelopeId,
-            paymentMessage.poBox
+            createPaymentMessage.envelopeId,
+            createPaymentMessage.poBox
         );
 
         CreatePaymentResponse paymentResult = payHubClient.createPayment(
@@ -50,34 +52,33 @@ public class PaymentMessageHandler {
         log.info(
             "Payment response received from PayHub: {} Envelope id: {} Ccd case reference: {}",
             paymentResult == null ? null : String.join(", ", paymentResult.paymentDcns),
-            paymentMessage.envelopeId,
-            paymentMessage.ccdReference
+            createPaymentMessage.envelopeId,
+            createPaymentMessage.ccdReference
         );
 
-        return paymentResult;
     }
 
 
-    public void updatePaymentCaseReference(UpdatePaymentMessage paymentMessage) {
-
-        CaseReferenceRequest request = new CaseReferenceRequest(paymentMessage.newCaseRef);
+    public void updatePaymentCaseReference(PaymentMessage paymentMessage) {
+        UpdatePaymentMessage updatePaymentMessage = (UpdatePaymentMessage)paymentMessage;
+        CaseReferenceRequest request = new CaseReferenceRequest(updatePaymentMessage.newCaseRef);
 
         log.info(
             "Sending payment update case reference request, envelope id: {}, case ref: {}, exception ref: {}",
-            paymentMessage.envelopeId,
+            updatePaymentMessage.envelopeId,
             request.ccdCaseNumber,
-            paymentMessage.exceptionRecordRef
+            updatePaymentMessage.exceptionRecordRef
         );
 
         ResponseEntity<?> response = payHubClient.updateCaseReference(
             authTokenGenerator.generate(),
-            paymentMessage.exceptionRecordRef,
+            updatePaymentMessage.exceptionRecordRef,
             request
         );
 
         log.info(
             "Payment update response from PayHub, envelope id: {}, http status: {} ",
-            paymentMessage.envelopeId,
+            updatePaymentMessage.envelopeId,
             response.getStatusCode()
         );
 
