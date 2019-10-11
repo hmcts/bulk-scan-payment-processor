@@ -10,6 +10,18 @@ idam:
     url: *wiremock
   api:
     url: *wiremock
+  client:
+    id: 'bsp'
+    secret: 'idamclientsecret1'
+    redirect_uri: 'http://localhost/redirect-url'
+  users:
+    bulkscan:
+      username: user1@example.com
+      password: Password12
+
+core_case_data:
+  api:
+    url: *wiremock
 
 scheduling:
   task:

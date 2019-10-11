@@ -10,6 +10,7 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
+import uk.gov.hmcts.reform.idam.client.IdamApi;
 
 import static org.mockito.Mockito.mock;
 import static org.springframework.util.SocketUtils.findAvailableTcpPort;
@@ -35,4 +36,8 @@ public class IntegrationContextInitializer implements ApplicationContextInitiali
         return mock(IMessageReceiver.class);
     }
 
+    @Bean
+    public IdamApi idamApi() {
+        return mock(IdamApi.class);
+    }
 }
