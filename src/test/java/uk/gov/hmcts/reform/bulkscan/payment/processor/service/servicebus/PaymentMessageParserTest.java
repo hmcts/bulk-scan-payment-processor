@@ -8,7 +8,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.exceptions.InvalidMessageException;
-import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.model.PaymentMessage;
+import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.model.CreatePaymentMessage;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.model.UpdatePaymentMessage;
 
 import static com.microsoft.azure.servicebus.MessageBody.fromBinaryData;
@@ -27,8 +27,8 @@ public class PaymentMessageParserTest {
 
     @Test
     public void should_return_valid_paymentMessage_when_queue_message_is_valid() throws JSONException {
-        PaymentMessage expected = paymentMessage("232131313121", false);
-        PaymentMessage paymentMessage = paymentMessageParser.parse(getValidMessageBody());
+        CreatePaymentMessage expected = paymentMessage("232131313121", false);
+        CreatePaymentMessage paymentMessage = paymentMessageParser.parse(getValidMessageBody());
         assertThat(paymentMessage).isEqualToComparingFieldByFieldRecursively(expected);
     }
 

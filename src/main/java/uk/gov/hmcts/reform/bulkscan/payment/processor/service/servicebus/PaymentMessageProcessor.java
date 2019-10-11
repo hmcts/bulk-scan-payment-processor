@@ -15,7 +15,7 @@ import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.excepti
 import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.handler.MessageProcessingResult;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.handler.MessageProcessingResultType;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.handler.PaymentMessageHandler;
-import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.model.PaymentMessage;
+import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.model.CreatePaymentMessage;
 
 import static uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.handler.MessageProcessingResultType.POTENTIALLY_RECOVERABLE_FAILURE;
 import static uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.handler.MessageProcessingResultType.SUCCESS;
@@ -76,7 +76,7 @@ public class PaymentMessageProcessor {
     private MessageProcessingResult processCreateCommand(IMessage message) {
         log.info("Started processing payment message with ID {}", message.getMessageId());
 
-        PaymentMessage payment = null;
+        CreatePaymentMessage payment = null;
 
         try {
             payment = paymentMessageParser.parse(message.getMessageBody());
@@ -198,7 +198,7 @@ public class PaymentMessageProcessor {
         );
     }
 
-    private void logMessageProcessingError(IMessage message, PaymentMessage paymentMessage, Exception exception) {
+    private void logMessageProcessingError(IMessage message, CreatePaymentMessage paymentMessage, Exception exception) {
         String baseMessage = String.format("Failed to process payment message with ID %s.", message.getMessageId());
 
         String fullMessage = paymentMessage != null

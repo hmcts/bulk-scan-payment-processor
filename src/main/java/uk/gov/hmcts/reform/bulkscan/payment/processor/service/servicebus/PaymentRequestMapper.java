@@ -7,7 +7,7 @@ import uk.gov.hmcts.reform.bulkscan.payment.processor.client.payhub.request.Crea
 import uk.gov.hmcts.reform.bulkscan.payment.processor.config.SiteConfiguration;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.exception.SiteNotFoundException;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.exceptions.InvalidMessageException;
-import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.model.PaymentMessage;
+import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.model.CreatePaymentMessage;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -22,7 +22,7 @@ public class PaymentRequestMapper {
         this.siteConfiguration = siteConfiguration;
     }
 
-    public CreatePaymentRequest mapPaymentMessage(PaymentMessage message) {
+    public CreatePaymentRequest mapPaymentMessage(CreatePaymentMessage message) {
         return new CreatePaymentRequest(
             message.ccdReference,
             getPaymentDocumentControlNumbers(message),
@@ -31,7 +31,7 @@ public class PaymentRequestMapper {
         );
     }
 
-    private List<String> getPaymentDocumentControlNumbers(PaymentMessage message) {
+    private List<String> getPaymentDocumentControlNumbers(CreatePaymentMessage message) {
         if (CollectionUtils.isEmpty(message.payments)) {
             throw new InvalidMessageException(
                 "No Document Control Numbers found in the payment message. MessageId: " + message.envelopeId
