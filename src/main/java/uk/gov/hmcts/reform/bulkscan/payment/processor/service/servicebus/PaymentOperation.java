@@ -16,7 +16,6 @@ public enum PaymentOperation {
     public final BiConsumer<PaymentMessageHandler, PaymentMessage> handler;
     public final BiFunction<PaymentMessageParser, MessageBody, PaymentMessage> parser;
 
-
     PaymentOperation(
         BiConsumer<PaymentMessageHandler, PaymentMessage> handler,
         BiFunction<PaymentMessageParser, MessageBody, PaymentMessage> parser) {
@@ -24,11 +23,10 @@ public enum PaymentOperation {
         this.parser = parser;
     }
 
-
-    public static PaymentOperation valueFromStr(String operation){
+    public static PaymentOperation valueFromStr(String operation) {
         try {
             return PaymentOperation.valueOf(operation);
-        }catch (IllegalArgumentException ex) {
+        } catch (IllegalArgumentException ex) {
             throw new IllegalPaymentOperationException("Operation:" + operation + " is not a valid Payment operation");
         }
     }

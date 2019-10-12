@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.client.payhub.PayHubClientException;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.exceptions.InvalidMessageException;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.exceptions.UnknownMessageProcessingResultException;
+import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.exceptions.UnrecoverableMessageProcessingException;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.handler.MessageProcessingResult;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.handler.MessageProcessingResultType;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.handler.PaymentMessageHandler;
@@ -57,7 +58,7 @@ public class PaymentMessageProcessor {
             } else {
                 switch (message.getLabel()) {
                     case "CREATE":
-                        MessageProcessingResult result = processCreateCommand(message);
+                        MessageProcessingResult result = process(message);
                         tryFinaliseProcessedMessage(message, result);
                         break;
                     case "UPDATE":
@@ -72,13 +73,12 @@ public class PaymentMessageProcessor {
         return message != null;
     }
 
-    private MessageProcessingResult processCreateCommand(IMessage message) {
+    private MessageProcessingResult process(IMessage message) {
         log.info("Started processing payment message with ID {}", message.getMessageId());
 
         PaymentMessage payment = null;
 
-        PaymentOperation paymentOperation = PaymentOperation.CREATE;
-        PaymentOperation.valueOf("ssa");
+        PaymentOperation paymentOperation = PaymentOperation.valueOf(message.getLabel());
         try {
             //payment = paymentMessageParser.parse(message.getMessageBody());
             payment = paymentOperation.parser.apply(paymentMessageParser, message.getMessageBody());
@@ -90,6 +90,9 @@ public class PaymentMessageProcessor {
                 payment.envelopeId
             );
             return new MessageProcessingResult(SUCCESS);
+        } catch (UnrecoverableMessageProcessingException ex) {
+            log.error("Rejected payment message with ID {}, Unrecoverable error", message.getMessageId(), ex);
+            return new MessageProcessingResult(UNRECOVERABLE_FAILURE, ex);
         } catch (InvalidMessageException ex) {
             log.error("Rejected payment message with ID {}, because it's invalid", message.getMessageId(), ex);
             return new MessageProcessingResult(UNRECOVERABLE_FAILURE, ex);
