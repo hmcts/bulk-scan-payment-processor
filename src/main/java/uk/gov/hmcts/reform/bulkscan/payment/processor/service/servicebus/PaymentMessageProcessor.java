@@ -77,9 +77,8 @@ public class PaymentMessageProcessor {
         log.info("Started processing payment message with ID {}", message.getMessageId());
 
         PaymentMessage payment = null;
-
-        PaymentOperation paymentOperation = PaymentOperation.valueOf(message.getLabel());
         try {
+            PaymentOperation paymentOperation = PaymentOperation.valueFromStr(message.getLabel());
             //payment = paymentMessageParser.parse(message.getMessageBody());
             payment = paymentOperation.parser.apply(paymentMessageParser, message.getMessageBody());
             paymentOperation.handler.accept(paymentMessageHandler, payment);

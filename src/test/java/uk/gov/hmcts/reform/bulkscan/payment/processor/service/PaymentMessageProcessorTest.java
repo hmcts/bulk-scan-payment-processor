@@ -35,6 +35,7 @@ import static org.mockito.BDDMockito.willThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
 import static uk.gov.hmcts.reform.bulkscan.payment.processor.data.producer.SamplePaymentMessageData.paymentMessage;
 import static uk.gov.hmcts.reform.bulkscan.payment.processor.data.producer.SamplePaymentMessageData.paymentMessageJsonAsByte;
 
@@ -100,6 +101,15 @@ public class PaymentMessageProcessorTest {
         given(invalidMessage.getMessageBody())
             .willReturn(MessageBody.fromBinaryData(ImmutableList.of("foo".getBytes())));
         given(invalidMessage.getLabel()).willReturn("CREATE");
+        given(messageReceiver.receive()).willReturn(invalidMessage);
+
+        assertThat(paymentMessageProcessor.processNextMessage()).isTrue();
+    }
+
+    @Test
+    public void should_not_throw_exception_when_queue_message_label_is_invalid() throws Exception {
+        IMessage invalidMessage = mock(IMessage.class);
+        given(invalidMessage.getLabel()).willReturn("CREATE","CREATE","SET");
         given(messageReceiver.receive()).willReturn(invalidMessage);
 
         assertThat(paymentMessageProcessor.processNextMessage()).isTrue();
