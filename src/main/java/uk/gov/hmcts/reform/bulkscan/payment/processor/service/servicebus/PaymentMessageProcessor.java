@@ -79,10 +79,8 @@ public class PaymentMessageProcessor {
         PaymentMessage payment = null;
         try {
             PaymentOperation paymentOperation = PaymentOperation.valueFromStr(message.getLabel());
-            //payment = paymentMessageParser.parse(message.getMessageBody());
             payment = paymentOperation.parser.apply(paymentMessageParser, message.getMessageBody());
             paymentOperation.handler.accept(paymentMessageHandler, payment);
-            //  paymentMessageHandler.handlePaymentMessage(payment);
             log.info(
                 "Processed payment message with ID {}. Envelope ID: {}",
                 message.getMessageId(),
