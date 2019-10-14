@@ -3,7 +3,7 @@ appVersion: "1.0"
 description: A helm chart for bulk scan pay processor app
 name: bulk-scan-payment-processor
 home: https://github.com/hmcts/bulk-scan-payment-processor
-version: 0.1.0
+version: 0.1.1
 maintainers:
   - name: HMCTS BSP Team
     email: bspteam@hmcts.net
