@@ -16,6 +16,7 @@ import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.handler
 import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.handler.MessageProcessingResultType;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.handler.PaymentMessageHandler;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.model.CreatePaymentMessage;
+import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.model.UpdatePaymentMessage;
 
 import static uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.handler.MessageProcessingResultType.POTENTIALLY_RECOVERABLE_FAILURE;
 import static uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.handler.MessageProcessingResultType.SUCCESS;
@@ -62,6 +63,9 @@ public class PaymentMessageProcessor {
                         tryFinaliseProcessedMessage(message, result);
                         break;
                     case "UPDATE":
+                        var updateResult = processUpdateCommand(message);
+                        tryFinaliseProcessedMessage(message, updateResult);
+                        break;
                     default:
                         deadLetterTheMessage(message, "Unrecognised message type: " + message.getLabel(), null);
                 }
@@ -103,6 +107,29 @@ public class PaymentMessageProcessor {
             return new MessageProcessingResult(POTENTIALLY_RECOVERABLE_FAILURE, ex);
         } catch (Exception ex) {
             logMessageProcessingError(message, payment, ex);
+            return new MessageProcessingResult(POTENTIALLY_RECOVERABLE_FAILURE);
+        }
+    }
+
+    private MessageProcessingResult processUpdateCommand(IMessage message) {
+        log.info("Started processing update payment message with ID {}", message.getMessageId());
+
+        UpdatePaymentMessage payment = null;
+
+        try {
+            payment = paymentMessageParser.parseUpdateMessage(message.getMessageBody());
+            paymentMessageHandler.updatePaymentCaseReference(payment);
+            log.info(
+                "Processed update payment message with ID {}. Envelope ID: {}",
+                message.getMessageId(),
+                payment.envelopeId
+            );
+            return new MessageProcessingResult(SUCCESS);
+        } catch (InvalidMessageException ex) {
+            log.error("Rejected update payment message with ID {}, because it's invalid", message.getMessageId(), ex);
+            return new MessageProcessingResult(UNRECOVERABLE_FAILURE, ex);
+        } catch (Exception ex) {
+            logUpdateMessageProcessingError(message, payment, ex);
             return new MessageProcessingResult(POTENTIALLY_RECOVERABLE_FAILURE);
         }
     }
@@ -205,6 +232,29 @@ public class PaymentMessageProcessor {
             ? baseMessage + String.format(
                 " CCD Case Number: %s, Jurisdiction: %s",
                 paymentMessage.ccdReference,
+                paymentMessage.jurisdiction
+            )
+            : baseMessage;
+
+        log.error(fullMessage, exception);
+    }
+
+    private void logUpdateMessageProcessingError(
+        IMessage message,
+        UpdatePaymentMessage paymentMessage,
+        Exception exception
+    ) {
+
+        String baseMessage = String.format(
+            "Failed to process update payment message with ID %s.",
+            message.getMessageId()
+        );
+
+        String fullMessage = paymentMessage != null
+            ? baseMessage + String.format(
+                " New Case Number: %s, Exception Record Ref: %s,Jurisdiction: %s",
+                paymentMessage.newCaseRef,
+                paymentMessage.exceptionRecordRef,
                 paymentMessage.jurisdiction
             )
             : baseMessage;

@@ -19,6 +19,7 @@ import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.Payment
 import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.PaymentMessageProcessor;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.exceptions.InvalidMessageException;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.handler.PaymentMessageHandler;
+import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.model.UpdatePaymentMessage;
 
 import java.nio.charset.Charset;
 import java.util.UUID;
@@ -37,6 +38,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static uk.gov.hmcts.reform.bulkscan.payment.processor.data.producer.SamplePaymentMessageData.paymentMessage;
 import static uk.gov.hmcts.reform.bulkscan.payment.processor.data.producer.SamplePaymentMessageData.paymentMessageJsonAsByte;
+import static uk.gov.hmcts.reform.bulkscan.payment.processor.data.producer.SamplePaymentMessageData.updatePaymentMessageJsonAsByte;
 
 @ExtendWith(MockitoExtension.class)
 public class PaymentMessageProcessorTest {
@@ -133,6 +135,36 @@ public class PaymentMessageProcessorTest {
     }
 
     @Test
+    public void should_complete_update_message_when_processing_is_successful() throws Exception {
+        // given
+        IMessage validMessage = getValidUpdateMessage(
+            "env-12312",
+            "PROBATE",
+            "PROBATE",
+            "excp-ref-9999",
+            "new-case-ref-12312"
+        );
+
+        given(messageReceiver.receive()).willReturn(validMessage);
+
+        willReturn(new UpdatePaymentMessage(
+            "env-12312",
+            "PROBATE",
+            "PROBATE",
+            "excp-ref-9999",
+            "new-case-ref-12312"
+        )).given(paymentMessageParser).parseUpdateMessage(any());
+
+
+        // when
+        paymentMessageProcessor.processNextMessage();
+
+        // then
+        verify(messageReceiver).receive();
+        verify(messageReceiver).complete(validMessage.getLockToken());
+    }
+
+    @Test
     public void should_complete_the_message_when_processing_get_409_PayHubClientException() throws Exception {
         // given
         IMessage validMessage = getValidMessage();
@@ -160,6 +192,35 @@ public class PaymentMessageProcessorTest {
         );
         given(message.getLabel()).willReturn("CREATE");
         willThrow(new InvalidMessageException("JsonParseException")).given(paymentMessageParser).parse(any());
+
+        given(message.getLockToken()).willReturn(UUID.randomUUID());
+        given(messageReceiver.receive()).willReturn(message);
+
+        // when
+        paymentMessageProcessor.processNextMessage();
+
+        // then
+        verify(messageReceiver).receive();
+
+        verify(messageReceiver).deadLetter(
+            eq(message.getLockToken()),
+            eq(DEAD_LETTER_REASON_PROCESSING_ERROR),
+            contains(JsonParseException.class.getSimpleName())
+        );
+        verifyNoMoreInteractions(messageReceiver);
+    }
+
+    @Test
+    public void should_dead_letter_update_message_when_unrecoverable_failure() throws Exception {
+        // given
+        IMessage message = mock(IMessage.class);
+        given(message.getMessageBody()).willReturn(
+            MessageBody.fromBinaryData(ImmutableList.of("invalid body".getBytes(Charset.defaultCharset())))
+        );
+        given(message.getLabel()).willReturn("UPDATE");
+
+        willThrow(new InvalidMessageException("JsonParseException"))
+            .given(paymentMessageParser).parseUpdateMessage(any());
 
         given(message.getLockToken()).willReturn(UUID.randomUUID());
         given(messageReceiver.receive()).willReturn(message);
@@ -220,6 +281,38 @@ public class PaymentMessageProcessorTest {
     }
 
     @Test
+    public void should_not_finalize_the_update_message_when_recoverable_failure() throws Exception {
+        willReturn(getValidUpdateMessage(
+            "env-12312",
+            "PROBATE",
+            "PROBATE",
+            "excp-ref-9999",
+            "new-case-ref-12312"
+        )).given(messageReceiver).receive();
+
+        willReturn(new UpdatePaymentMessage(
+            "env-12312",
+            "PROBATE",
+            "PROBATE",
+            "excp-ref-9999",
+            "new-case-ref-12312"
+        )).given(paymentMessageParser).parseUpdateMessage(any());
+
+        Exception processingFailureCause = new RuntimeException(
+            "exception of type treated as recoverable"
+        );
+
+        // given an error occurs during message processing
+        willThrow(processingFailureCause).given(paymentMessageHandler).updatePaymentCaseReference(any());
+
+        // when
+        paymentMessageProcessor.processNextMessage();
+
+        // then the message is not finalised (completed/dead-lettered)
+        verify(messageReceiver).receive();
+    }
+
+    @Test
     public void should_finalize_the_message_when_recoverable_failure_but_delivery_maxed() throws Exception {
         // given
         IMessage validMessage = getValidMessage();
@@ -251,6 +344,52 @@ public class PaymentMessageProcessorTest {
     }
 
     @Test
+    public void should_finalize_update_message_when_recoverable_failure_but_delivery_maxed() throws Exception {
+        // given
+        IMessage validMessage = getValidUpdateMessage(
+            "env-12312",
+            "PROBATE",
+            "PROBATE",
+            "excp-ref-9999",
+            "new-case-ref-12312"
+        );
+
+        given(messageReceiver.receive()).willReturn(validMessage);
+
+        willReturn(new UpdatePaymentMessage(
+            "env-12312",
+            "PROBATE",
+            "PROBATE",
+            "excp-ref-9999",
+            "new-case-ref-12312"
+        )).given(paymentMessageParser).parseUpdateMessage(any());
+
+
+
+        paymentMessageProcessor = new PaymentMessageProcessor(
+            paymentMessageHandler,
+            messageReceiver,
+            paymentMessageParser,
+            1
+        );
+        Exception processingFailureCause = new RuntimeException(
+            "exception of type treated as recoverable"
+        );
+
+        // and an error occurs during message processing
+        willThrow(processingFailureCause).given(paymentMessageHandler).updatePaymentCaseReference(any());
+
+        // when
+        paymentMessageProcessor.processNextMessage();
+
+        // then the message is dead-lettered
+        verify(messageReceiver).deadLetter(
+            eq(validMessage.getLockToken()),
+            eq("Too many deliveries"),
+            eq("Reached limit of message delivery count of 1")
+        );
+    }
+    @Test
     public void should_throw_exception_when_message_receiver_fails() throws Exception {
         ServiceBusException receiverException = new ServiceBusException(true);
         willThrow(receiverException).given(messageReceiver).receive();
@@ -265,6 +404,33 @@ public class PaymentMessageProcessorTest {
         given(message.getMessageBody())
             .willReturn(MessageBody.fromBinaryData(ImmutableList.of(paymentJsonToByte())));
         given(message.getLabel()).willReturn("CREATE");
+        return message;
+    }
+
+    private IMessage getValidUpdateMessage(
+        String envelopeId,
+        String jurisdiction,
+        String service,
+        String exceptionRecordRef,
+        String newCaseRef
+    ) throws JSONException {
+        IMessage message = mock(IMessage.class);
+
+        given(message.getMessageBody())
+            .willReturn(
+                MessageBody.fromBinaryData(
+                    ImmutableList.of(
+                        updatePaymentMessageJsonAsByte(
+                            envelopeId,
+                            jurisdiction,
+                            service,
+                            exceptionRecordRef,
+                            newCaseRef
+                        )
+                    )
+                )
+            );
+        given(message.getLabel()).willReturn("UPDATE");
         return message;
     }
 
