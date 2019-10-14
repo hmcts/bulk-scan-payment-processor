@@ -364,14 +364,13 @@ public class PaymentMessageProcessorTest {
             "new-case-ref-12312"
         )).given(paymentMessageParser).parseUpdateMessage(any());
 
-
-
         paymentMessageProcessor = new PaymentMessageProcessor(
             paymentMessageHandler,
             messageReceiver,
             paymentMessageParser,
             1
         );
+
         Exception processingFailureCause = new RuntimeException(
             "exception of type treated as recoverable"
         );
@@ -389,6 +388,7 @@ public class PaymentMessageProcessorTest {
             eq("Reached limit of message delivery count of 1")
         );
     }
+
     @Test
     public void should_throw_exception_when_message_receiver_fails() throws Exception {
         ServiceBusException receiverException = new ServiceBusException(true);
@@ -397,7 +397,6 @@ public class PaymentMessageProcessorTest {
         assertThatThrownBy(() -> paymentMessageProcessor.processNextMessage())
             .isSameAs(receiverException);
     }
-
 
     private IMessage getValidMessage() throws JSONException {
         IMessage message = mock(IMessage.class);
