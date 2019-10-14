@@ -11,7 +11,7 @@ import java.util.function.BiFunction;
 public enum PaymentOperation {
 
     CREATE(PaymentMessageHandler::handlePaymentMessage, PaymentMessageParser::parse),
-    UPDATE(PaymentMessageHandler::handlePaymentMessage, PaymentMessageParser::parseUpdateMessage);
+    UPDATE(PaymentMessageHandler::updatePaymentCaseReference, PaymentMessageParser::parseUpdateMessage);
 
     public final BiConsumer<PaymentMessageHandler, PaymentMessage> handler;
     public final BiFunction<PaymentMessageParser, MessageBody, PaymentMessage> parser;
