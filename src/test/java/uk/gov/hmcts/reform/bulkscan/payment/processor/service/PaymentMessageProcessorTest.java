@@ -34,6 +34,7 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.willReturn;
 import static org.mockito.BDDMockito.willThrow;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static uk.gov.hmcts.reform.bulkscan.payment.processor.data.producer.SamplePaymentMessageData.paymentMessage;
@@ -310,6 +311,7 @@ public class PaymentMessageProcessorTest {
 
         // then the message is not finalised (completed/dead-lettered)
         verify(messageReceiver).receive();
+        verify(messageReceiver, never()).deadLetter(any(), any(), any());
     }
 
     @Test
