@@ -241,7 +241,7 @@ public class PaymentMessageProcessorTest {
     }
 
     @Test
-    public void should_deadletter_message_when_it_has_no_label() throws Exception {
+    public void should_dead_letter_message_when_it_has_no_label() throws Exception {
         // given
         var message = mock(IMessage.class);
         given(message.getLabel()).willReturn(null); // no label
@@ -263,7 +263,7 @@ public class PaymentMessageProcessorTest {
     }
 
     @Test
-    public void should_not_finalize_the_message_when_recoverable_failure() throws Exception {
+    public void should_not_dead_letter_the_message_when_recoverable_failure() throws Exception {
         willReturn(getValidMessage()).given(messageReceiver).receive();
         willReturn(paymentMessage(CCD_CASE_NUMBER, IS_EXCEPTION_RECORD)).given(paymentMessageParser).parse(any());
 
@@ -282,7 +282,7 @@ public class PaymentMessageProcessorTest {
     }
 
     @Test
-    public void should_not_finalize_the_update_message_when_recoverable_failure() throws Exception {
+    public void should_not_dead_letter_the_update_message_when_recoverable_failure() throws Exception {
         willReturn(getValidUpdateMessage(
             "env-12312",
             "PROBATE",
@@ -315,7 +315,7 @@ public class PaymentMessageProcessorTest {
     }
 
     @Test
-    public void should_finalize_the_message_when_recoverable_failure_but_delivery_maxed() throws Exception {
+    public void should_dead_letter_the_message_when_recoverable_failure_but_delivery_maxed() throws Exception {
         // given
         IMessage validMessage = getValidMessage();
         given(messageReceiver.receive()).willReturn(validMessage);
@@ -346,7 +346,7 @@ public class PaymentMessageProcessorTest {
     }
 
     @Test
-    public void should_finalize_update_message_when_recoverable_failure_but_delivery_maxed() throws Exception {
+    public void should_dead_letter_update_message_when_recoverable_failure_but_delivery_maxed() throws Exception {
         // given
         IMessage validMessage = getValidUpdateMessage(
             "env-12312",
