@@ -14,3 +14,11 @@ spring:
         idam-client-secret: IDAM_CLIENT_SECRET
         idam-users-bulkscan-username: IDAM_USERS_BULKSCAN_USERNAME
         idam-users-bulkscan-password: IDAM_USERS_BULKSCAN_PASSWORD
+        idam-users-cmc-username: IDAM_USERS_CMC_USERNAME
+        idam-users-cmc-password: IDAM_USERS_CMC_PASSWORD
+        idam-users-div-username: IDAM_USERS_DIVORCE_USERNAME
+        idam-users-div-password: IDAM_USERS_DIVORCE_PASSWORD
+        idam-users-finrem-username: IDAM_USERS_FINREM_USERNAME
+        idam-users-finrem-password: IDAM_USERS_FINREM_PASSWORD
+        idam-users-probate-username: IDAM_USERS_PROBATE_USERNAME
+        idam-users-probate-password: IDAM_USERS_PROBATE_PASSWORD

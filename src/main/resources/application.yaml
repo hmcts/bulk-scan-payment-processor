@@ -51,10 +51,6 @@ idam:
     id: 'bsp'
     secret: ${IDAM_CLIENT_SECRET}
     redirect_uri: ${IDAM_CLIENT_REDIRECT_URI}
-  users:
-    bulkscan:
-      username: ${IDAM_USERS_BULKSCAN_USERNAME:bulkscan+ccd@gmail.com}
-      password: ${IDAM_USERS_BULKSCAN_PASSWORD:Password12}
 
 scheduling:
   task:

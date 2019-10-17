@@ -23,6 +23,14 @@ java:
         - idam-client-secret
         - idam-users-bulkscan-username
         - idam-users-bulkscan-password
+        - idam-users-cmc-username
+        - idam-users-cmc-password
+        - idam-users-div-username
+        - idam-users-div-password
+        - idam-users-finrem-username
+        - idam-users-finrem-password
+        - idam-users-probate-username
+        - idam-users-probate-password
 bs-payment-processor:
   servicebus:
     enabled: false
