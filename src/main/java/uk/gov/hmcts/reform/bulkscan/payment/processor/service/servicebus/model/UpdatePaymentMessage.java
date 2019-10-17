@@ -18,4 +18,15 @@ public class UpdatePaymentMessage extends PaymentMessage {
         this.exceptionRecordRef = exceptionRecordRef;
         this.newCaseRef = newCaseRef;
     }
+
+    @Override
+    public String toString() {
+        return "UpdatePaymentMessage {"
+            + "exceptionRecordRef='" + exceptionRecordRef + '\''
+            + ", newCaseRef='" + newCaseRef + '\''
+            + ", envelopeId='" + envelopeId + '\''
+            + ", jurisdiction='" + jurisdiction + '\''
+            + ", service='" + service + '\''
+            + '}';
+    }
 }

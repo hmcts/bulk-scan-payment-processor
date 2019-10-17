@@ -27,4 +27,17 @@ public class CreatePaymentMessage extends PaymentMessage {
         this.poBox = poBox;
         this.payments = payments;
     }
+
+    @Override
+    public String toString() {
+        return "CreatePaymentMessage {"
+            + "ccdReference='" + ccdReference + '\''
+            + ", isExceptionRecord=" + isExceptionRecord
+            + ", poBox='" + poBox + '\''
+            + ", payments=" + payments
+            + ", envelopeId='" + envelopeId + '\''
+            + ", jurisdiction='" + jurisdiction + '\''
+            + ", service='" + service + '\''
+            + '}';
+    }
 }
