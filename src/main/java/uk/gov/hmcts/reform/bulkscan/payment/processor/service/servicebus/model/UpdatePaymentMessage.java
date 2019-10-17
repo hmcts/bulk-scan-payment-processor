@@ -10,8 +10,8 @@ public class UpdatePaymentMessage {
     public final String newCaseRef;
 
     public UpdatePaymentMessage(
-        @JsonProperty(value = "envelope_id", required = true) String envelopeId,
-        @JsonProperty(value = "jurisdiction", required = true) String jurisdiction,
+        @JsonProperty(value = "envelope_id") String envelopeId,
+        @JsonProperty(value = "jurisdiction") String jurisdiction,
         @JsonProperty(value = "exception_record_ref", required = true) String exceptionRecordRef,
         @JsonProperty(value = "new_case_ref", required = true) String newCaseRef
     ) {
