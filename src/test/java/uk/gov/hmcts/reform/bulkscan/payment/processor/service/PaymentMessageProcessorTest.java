@@ -112,7 +112,8 @@ public class PaymentMessageProcessorTest {
     public void should_not_throw_exception_when_payment_handler_fails() throws Exception {
         // given
         willReturn(getValidMessage()).given(messageReceiver).receive();
-        willReturn(paymentMessage("32131", true)).given(paymentMessageParser).parse(any());
+        willReturn(paymentMessage("32131", true))
+            .given(paymentMessageParser).parse(any(), any());
 
         // and
         willThrow(new RuntimeException()).given(paymentMessageHandler).handlePaymentMessage(any());
@@ -125,7 +126,8 @@ public class PaymentMessageProcessorTest {
         // given
         IMessage validMessage = getValidMessage();
         given(messageReceiver.receive()).willReturn(validMessage);
-        willReturn(paymentMessage(CCD_CASE_NUMBER, IS_EXCEPTION_RECORD)).given(paymentMessageParser).parse(any());
+        willReturn(paymentMessage(CCD_CASE_NUMBER, IS_EXCEPTION_RECORD))
+            .given(paymentMessageParser).parse(any(), any());
 
         // when
         paymentMessageProcessor.processNextMessage();
@@ -154,7 +156,7 @@ public class PaymentMessageProcessorTest {
             "PROBATE",
             "excp-ref-9999",
             "new-case-ref-12312"
-        )).given(paymentMessageParser).parseUpdateMessage(any());
+        )).given(paymentMessageParser).parse(any(), any());
 
 
         // when
@@ -170,7 +172,8 @@ public class PaymentMessageProcessorTest {
         // given
         IMessage validMessage = getValidMessage();
         given(messageReceiver.receive()).willReturn(validMessage);
-        willReturn(paymentMessage(CCD_CASE_NUMBER, IS_EXCEPTION_RECORD)).given(paymentMessageParser).parse(any());
+        willReturn(paymentMessage(CCD_CASE_NUMBER, IS_EXCEPTION_RECORD))
+            .given(paymentMessageParser).parse(any(), any());
 
         HttpClientErrorException clientException = new HttpClientErrorException(HttpStatus.CONFLICT, "409_CONFLICT");
 
@@ -192,7 +195,8 @@ public class PaymentMessageProcessorTest {
             MessageBody.fromBinaryData(ImmutableList.of("invalid body".getBytes(Charset.defaultCharset())))
         );
         given(message.getLabel()).willReturn("CREATE");
-        willThrow(new InvalidMessageException("JsonParseException")).given(paymentMessageParser).parse(any());
+        willThrow(new InvalidMessageException("JsonParseException"))
+            .given(paymentMessageParser).parse(any(), any());
 
         given(message.getLockToken()).willReturn(UUID.randomUUID());
         given(messageReceiver.receive()).willReturn(message);
@@ -221,7 +225,7 @@ public class PaymentMessageProcessorTest {
         given(message.getLabel()).willReturn("UPDATE");
 
         willThrow(new InvalidMessageException("JsonParseException"))
-            .given(paymentMessageParser).parseUpdateMessage(any());
+            .given(paymentMessageParser).parse(any(), any());
 
         given(message.getLockToken()).willReturn(UUID.randomUUID());
         given(messageReceiver.receive()).willReturn(message);
@@ -265,7 +269,8 @@ public class PaymentMessageProcessorTest {
     @Test
     public void should_not_dead_letter_the_message_when_recoverable_failure() throws Exception {
         willReturn(getValidMessage()).given(messageReceiver).receive();
-        willReturn(paymentMessage(CCD_CASE_NUMBER, IS_EXCEPTION_RECORD)).given(paymentMessageParser).parse(any());
+        willReturn(paymentMessage(CCD_CASE_NUMBER, IS_EXCEPTION_RECORD))
+            .given(paymentMessageParser).parse(any(), any());
 
         Exception processingFailureCause = new RuntimeException(
             "exception of type treated as recoverable"
@@ -297,7 +302,7 @@ public class PaymentMessageProcessorTest {
             "PROBATE",
             "excp-ref-9999",
             "new-case-ref-12312"
-        )).given(paymentMessageParser).parseUpdateMessage(any());
+        )).given(paymentMessageParser).parse(any(), any());
 
         Exception processingFailureCause = new RuntimeException(
             "exception of type treated as recoverable"
@@ -319,7 +324,8 @@ public class PaymentMessageProcessorTest {
         // given
         IMessage validMessage = getValidMessage();
         given(messageReceiver.receive()).willReturn(validMessage);
-        willReturn(paymentMessage(CCD_CASE_NUMBER, IS_EXCEPTION_RECORD)).given(paymentMessageParser).parse(any());
+        willReturn(paymentMessage(CCD_CASE_NUMBER, IS_EXCEPTION_RECORD))
+            .given(paymentMessageParser).parse(any(), any());
 
         paymentMessageProcessor = new PaymentMessageProcessor(
             paymentMessageHandler,
@@ -364,7 +370,7 @@ public class PaymentMessageProcessorTest {
             "PROBATE",
             "excp-ref-9999",
             "new-case-ref-12312"
-        )).given(paymentMessageParser).parseUpdateMessage(any());
+        )).given(paymentMessageParser).parse(any(), any());
 
         paymentMessageProcessor = new PaymentMessageProcessor(
             paymentMessageHandler,

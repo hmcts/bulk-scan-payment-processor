@@ -56,11 +56,11 @@ public final class SamplePaymentMessageData {
 
         return new CreatePaymentMessage(
             ENVELOPE_ID,
+            JURISDICTION,
+            SERVICE,
             ccdCaseNumber,
             isExceptionRecord,
             PO_BOX,
-            JURISDICTION,
-            SERVICE,
             ImmutableList.of(new PaymentInfo(DCN_1), new PaymentInfo(DCN_2))
         );
     }

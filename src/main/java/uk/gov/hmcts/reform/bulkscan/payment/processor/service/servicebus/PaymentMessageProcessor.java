@@ -83,7 +83,7 @@ public class PaymentMessageProcessor {
         CreatePaymentMessage payment = null;
 
         try {
-            payment = paymentMessageParser.parse(message.getMessageBody());
+            payment = paymentMessageParser.parse(message.getMessageBody(), CreatePaymentMessage.class);
             paymentMessageHandler.handlePaymentMessage(payment);
             log.info(
                 "Processed payment message with ID {}. Envelope ID: {}",
@@ -117,7 +117,7 @@ public class PaymentMessageProcessor {
         UpdatePaymentMessage payment = null;
 
         try {
-            payment = paymentMessageParser.parseUpdateMessage(message.getMessageBody());
+            payment = paymentMessageParser.parse(message.getMessageBody(), UpdatePaymentMessage.class);
             paymentMessageHandler.updatePaymentCaseReference(payment);
             log.info(
                 "Processed update payment message with ID {}. Envelope ID: {}",

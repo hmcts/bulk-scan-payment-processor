@@ -72,11 +72,11 @@ public class PaymentRequestMapperTest {
         // given
         CreatePaymentMessage paymentMessage = new CreatePaymentMessage(
             "envelope_id_123",
+            "Divorce",
+            "finrem",
             "case_num_32213",
             true,
             PO_BOX,
-            "Divorce",
-            "finrem",
             emptyList()
         );
 
