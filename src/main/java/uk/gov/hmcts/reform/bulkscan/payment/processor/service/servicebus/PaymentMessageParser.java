@@ -63,7 +63,7 @@ public class PaymentMessageParser {
 
     private void logMessageParsed(CreatePaymentMessage payment) {
         LOGGER.info(
-            "Parsed Payment message, Envelope ID: {}, CCD Case Number: {}, Is Exception Record: {}, Jurisdiction: {}, "
+            "Parsed Create Payment message, Envelope ID: {}, CCD Case Number: {}, Is Exception Record: {}, Jurisdiction: {}, "
                 + "PO Box: {}, Service {}, Document Control Numbers : {}",
             payment.envelopeId,
             payment.ccdReference,
@@ -77,11 +77,9 @@ public class PaymentMessageParser {
 
     private void logMessageParsed(UpdatePaymentMessage payment) {
         LOGGER.info(
-            "Parsed Payment message, Envelope ID: {}, Jurisdiction: {}, "
-                + "Service: {}, Exception Record Ref: {}, newCaseRef:{}",
-            payment.envelopeId,
+            "Parsed update payment message, Jurisdiction: {}, "
+                + "Exception Record Ref: {}, newCaseRef:{}",
             payment.jurisdiction,
-            payment.service,
             payment.exceptionRecordRef,
             payment.newCaseRef
         );

@@ -61,9 +61,7 @@ public class PaymentMessageParserTest {
     @Test
     public void should_return_valid_updatePaymentMessage_when_queue_message_is_valid() throws JSONException {
         UpdatePaymentMessage expected = new UpdatePaymentMessage(
-            "envelopeId",
             "Probate",
-            "probate",
             "322131",
             "99999"
         );
@@ -74,9 +72,7 @@ public class PaymentMessageParserTest {
                     fromBinaryData(
                         ImmutableList.of(
                             getUpdatePaymentMessageJsonString(
-                                "envelopeId",
                                 "Probate",
-                                "probate",
                                 "322131",
                                 "99999"
                             ).getBytes()
@@ -107,17 +103,13 @@ public class PaymentMessageParserTest {
     }
 
     private static String getUpdatePaymentMessageJsonString(
-        String envelopeId,
         String jurisdiction,
-        String service,
         String exceptionRecordRef,
         String newCaseRef
     ) throws JSONException {
 
         return new JSONObject()
-            .put("envelope_id", envelopeId)
             .put("jurisdiction", jurisdiction)
-            .put("service", service)
             .put("exception_record_ref", exceptionRecordRef)
             .put("new_case_ref", newCaseRef)
             .toString();

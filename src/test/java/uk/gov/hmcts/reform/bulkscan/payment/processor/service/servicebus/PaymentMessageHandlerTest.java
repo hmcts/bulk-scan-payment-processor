@@ -73,9 +73,7 @@ public class PaymentMessageHandlerTest {
     public void should_call_payhub_api_to_assign_case_ref() {
         // given
         UpdatePaymentMessage message = new UpdatePaymentMessage(
-            "env-id-12321",
-            "Divorece",
-            "Finrem",
+            "Divorce",
             "exp-21321",
             "cas-ref-9999"
         );
@@ -103,9 +101,7 @@ public class PaymentMessageHandlerTest {
     public void should_throw_exception_if_payhub_api_assign_case_ref_fails() {
         // given
         UpdatePaymentMessage message = new UpdatePaymentMessage(
-            "env-id-12321",
-            "Divorece",
-            "Finrem",
+            "Divorce",
             "exp-21321",
             "cas-ref-9999"
         );

@@ -120,9 +120,10 @@ public class PaymentMessageProcessor {
             payment = paymentMessageParser.parseUpdateMessage(message.getMessageBody());
             paymentMessageHandler.updatePaymentCaseReference(payment);
             log.info(
-                "Processed update payment message with ID {}. Envelope ID: {}",
+                "Processed update payment message with ID {}. Exception Record Ref: {}, New case ref ID: {}",
                 message.getMessageId(),
-                payment.envelopeId
+                payment.exceptionRecordRef,
+                payment.newCaseRef
             );
             return new MessageProcessingResult(SUCCESS);
         } catch (InvalidMessageException ex) {

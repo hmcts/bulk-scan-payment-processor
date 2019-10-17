@@ -139,8 +139,6 @@ public class PaymentMessageProcessorTest {
     public void should_complete_update_message_when_processing_is_successful() throws Exception {
         // given
         IMessage validMessage = getValidUpdateMessage(
-            "env-12312",
-            "PROBATE",
             "PROBATE",
             "excp-ref-9999",
             "new-case-ref-12312"
@@ -149,8 +147,6 @@ public class PaymentMessageProcessorTest {
         given(messageReceiver.receive()).willReturn(validMessage);
 
         willReturn(new UpdatePaymentMessage(
-            "env-12312",
-            "PROBATE",
             "PROBATE",
             "excp-ref-9999",
             "new-case-ref-12312"
@@ -284,16 +280,12 @@ public class PaymentMessageProcessorTest {
     @Test
     public void should_not_dead_letter_the_update_message_when_recoverable_failure() throws Exception {
         willReturn(getValidUpdateMessage(
-            "env-12312",
-            "PROBATE",
             "PROBATE",
             "excp-ref-9999",
             "new-case-ref-12312"
         )).given(messageReceiver).receive();
 
         willReturn(new UpdatePaymentMessage(
-            "env-12312",
-            "PROBATE",
             "PROBATE",
             "excp-ref-9999",
             "new-case-ref-12312"
@@ -349,8 +341,6 @@ public class PaymentMessageProcessorTest {
     public void should_dead_letter_update_message_when_recoverable_failure_but_delivery_maxed() throws Exception {
         // given
         IMessage validMessage = getValidUpdateMessage(
-            "env-12312",
-            "PROBATE",
             "PROBATE",
             "excp-ref-9999",
             "new-case-ref-12312"
@@ -359,8 +349,6 @@ public class PaymentMessageProcessorTest {
         given(messageReceiver.receive()).willReturn(validMessage);
 
         willReturn(new UpdatePaymentMessage(
-            "env-12312",
-            "PROBATE",
             "PROBATE",
             "excp-ref-9999",
             "new-case-ref-12312"
@@ -409,9 +397,7 @@ public class PaymentMessageProcessorTest {
     }
 
     private IMessage getValidUpdateMessage(
-        String envelopeId,
         String jurisdiction,
-        String service,
         String exceptionRecordRef,
         String newCaseRef
     ) throws JSONException {
@@ -422,9 +408,7 @@ public class PaymentMessageProcessorTest {
                 MessageBody.fromBinaryData(
                     ImmutableList.of(
                         updatePaymentMessageJsonAsByte(
-                            envelopeId,
                             jurisdiction,
-                            service,
                             exceptionRecordRef,
                             newCaseRef
                         )
