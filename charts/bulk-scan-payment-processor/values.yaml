@@ -7,6 +7,8 @@ java:
     S2S_NAME: "bulk_scan_payment_processor"
     S2S_URL: http://rpe-service-auth-provider-{{ .Values.global.environment }}.service.core-compute-{{ .Values.global.environment }}.internal
     PAY_HUB_URL: http://ccpay-bulkscanning-api-{{ .Values.global.environment }}.service.core-compute-{{ .Values.global.environment }}.internal
+    IDAM_API_URL: https://idam-api.{{ .Values.global.environment }}.platform.hmcts.net
+    IDAM_CLIENT_REDIRECT_URI: https://bulk-scan-orchestrator-{{ .Values.global.environment }}.service.core-compute-{{ .Values.global.environment }}.internal/oauth2/callback
   image: 'https://hmctspublic.azurecr.io/bulk-scan/payment-processor:latest'
   keyVaults:
     "bulk-scan":
@@ -18,6 +20,17 @@ java:
         - site-id-finrem
         - payments-queue-listen-connection-string
         - app-insights-instrumentation-key
+        - idam-client-secret
+        - idam-users-bulkscan-username
+        - idam-users-bulkscan-password
+        - idam-users-cmc-username
+        - idam-users-cmc-password
+        - idam-users-div-username
+        - idam-users-div-password
+        - idam-users-finrem-username
+        - idam-users-finrem-password
+        - idam-users-probate-username
+        - idam-users-probate-password
 bs-payment-processor:
   servicebus:
     enabled: false
