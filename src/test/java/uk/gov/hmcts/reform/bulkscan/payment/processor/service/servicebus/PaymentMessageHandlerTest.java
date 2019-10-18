@@ -74,8 +74,7 @@ public class PaymentMessageHandlerTest {
         // given
         UpdatePaymentMessage message = new UpdatePaymentMessage(
             "env-id-12321",
-            "Divorece",
-            "Finrem",
+            "Divorce",
             "exp-21321",
             "cas-ref-9999"
         );
@@ -104,8 +103,7 @@ public class PaymentMessageHandlerTest {
         // given
         UpdatePaymentMessage message = new UpdatePaymentMessage(
             "env-id-12321",
-            "Divorece",
-            "Finrem",
+            "Divorce",
             "exp-21321",
             "cas-ref-9999"
         );

@@ -78,10 +78,9 @@ public class PaymentMessageParser {
     private void logMessageParsed(UpdatePaymentMessage payment) {
         LOGGER.info(
             "Parsed Payment message, Envelope ID: {}, Jurisdiction: {}, "
-                + "Service: {}, Exception Record Ref: {}, newCaseRef:{}",
+                + "Exception Record Ref: {}, newCaseRef:{}",
             payment.envelopeId,
             payment.jurisdiction,
-            payment.service,
             payment.exceptionRecordRef,
             payment.newCaseRef
         );

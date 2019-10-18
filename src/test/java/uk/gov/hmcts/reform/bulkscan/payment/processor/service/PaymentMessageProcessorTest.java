@@ -141,7 +141,6 @@ public class PaymentMessageProcessorTest {
         IMessage validMessage = getValidUpdateMessage(
             "env-12312",
             "PROBATE",
-            "PROBATE",
             "excp-ref-9999",
             "new-case-ref-12312"
         );
@@ -150,7 +149,6 @@ public class PaymentMessageProcessorTest {
 
         willReturn(new UpdatePaymentMessage(
             "env-12312",
-            "PROBATE",
             "PROBATE",
             "excp-ref-9999",
             "new-case-ref-12312"
@@ -286,14 +284,12 @@ public class PaymentMessageProcessorTest {
         willReturn(getValidUpdateMessage(
             "env-12312",
             "PROBATE",
-            "PROBATE",
             "excp-ref-9999",
             "new-case-ref-12312"
         )).given(messageReceiver).receive();
 
         willReturn(new UpdatePaymentMessage(
             "env-12312",
-            "PROBATE",
             "PROBATE",
             "excp-ref-9999",
             "new-case-ref-12312"
@@ -351,7 +347,6 @@ public class PaymentMessageProcessorTest {
         IMessage validMessage = getValidUpdateMessage(
             "env-12312",
             "PROBATE",
-            "PROBATE",
             "excp-ref-9999",
             "new-case-ref-12312"
         );
@@ -360,7 +355,6 @@ public class PaymentMessageProcessorTest {
 
         willReturn(new UpdatePaymentMessage(
             "env-12312",
-            "PROBATE",
             "PROBATE",
             "excp-ref-9999",
             "new-case-ref-12312"
@@ -411,7 +405,6 @@ public class PaymentMessageProcessorTest {
     private IMessage getValidUpdateMessage(
         String envelopeId,
         String jurisdiction,
-        String service,
         String exceptionRecordRef,
         String newCaseRef
     ) throws JSONException {
@@ -424,7 +417,6 @@ public class PaymentMessageProcessorTest {
                         updatePaymentMessageJsonAsByte(
                             envelopeId,
                             jurisdiction,
-                            service,
                             exceptionRecordRef,
                             newCaseRef
                         )

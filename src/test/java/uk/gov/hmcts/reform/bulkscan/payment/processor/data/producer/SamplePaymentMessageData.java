@@ -38,7 +38,6 @@ public final class SamplePaymentMessageData {
     public static byte[] updatePaymentMessageJsonAsByte(
         String envelopeId,
         String jurisdiction,
-        String service,
         String exceptionRecordRef,
         String newCaseRef
     ) throws JSONException {
@@ -46,7 +45,6 @@ public final class SamplePaymentMessageData {
         return new JSONObject()
             .put("envelope_id", envelopeId)
             .put("jurisdiction", jurisdiction)
-            .put("service", service)
             .put("exception_record_ref", exceptionRecordRef)
             .put("new_case_ref", newCaseRef)
             .toString().getBytes();
