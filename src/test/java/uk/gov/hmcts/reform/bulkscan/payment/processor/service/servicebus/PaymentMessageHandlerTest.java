@@ -53,8 +53,9 @@ public class PaymentMessageHandlerTest {
     public void should_call_payhub_api_for_successful_payment_message() {
         // given
         CreatePaymentMessage message = SamplePaymentMessageData.paymentMessage("1234", true);
+        String s2sToken = "s2sToken1";
 
-        when(s2sTokenGenerator.generate()).thenReturn("test-service");
+        when(s2sTokenGenerator.generate()).thenReturn(s2sToken);
         CreatePaymentRequest request = new CreatePaymentRequest("1234", singletonList("1234"), true, "test-siteId");
 
         when(requestMapper.mapPaymentMessage(message)).thenReturn(request);
@@ -62,11 +63,10 @@ public class PaymentMessageHandlerTest {
             .thenReturn(ResponseEntity.of(Optional.of(new CreatePaymentResponse(singletonList("1234")))));
 
         // when
-        CreatePaymentResponse result = messageHandler.handlePaymentMessage(message);
+        messageHandler.handlePaymentMessage(message);
 
         // then
-        assertThat(result).isNotNull();
-        assertThat(result.paymentDcns).hasSize(1).contains("1234");
+        verify(payHubClient).createPayment(s2sToken, request);
     }
 
     @Test
