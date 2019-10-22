@@ -12,7 +12,7 @@ import uk.gov.hmcts.reform.ccd.client.model.StartEventResponse;
 @Service
 public class CcdClient {
 
-    public static final Logger log = LoggerFactory.getLogger(CcdClient.class);
+    private static final Logger log = LoggerFactory.getLogger(CcdClient.class);
 
     private static final String AWAITING_DCN_PROCESSING_FIELD_NAME = "awaitingPaymentDCNProcessing";
     private static final String COMPLETE_AWAITING_DCN_PROCESSING_EVENT_ID = "completeAwaitingPaymentDCNProcessing";
