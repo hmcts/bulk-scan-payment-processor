@@ -33,7 +33,11 @@ public class CcdClient {
         String service,
         String jurisdiction
     ) {
-        log.info("Completing awaiting payment DCN processing");
+        log.info(
+            "Completing awaiting payment DCN processing. Exception record ID: {}, service: {}",
+            exceptionRecordCcdId,
+            service
+        );
 
         CcdAuthenticator authenticator = authenticatorFactory.createForJurisdiction(jurisdiction);
         String caseTypeId = service.toUpperCase() + "_ExceptionRecord";
@@ -58,7 +62,11 @@ public class CcdClient {
 
         submitEvent(authenticator, jurisdiction, caseTypeId, exceptionRecordCcdId, caseDataContent);
 
-        log.info("Completed awaiting payment DCN processing");
+        log.info(
+            "Completed awaiting payment DCN processing. Exception record ID: {}, service {}",
+            exceptionRecordCcdId,
+            service
+        );
     }
 
     private StartEventResponse startEvent(
