@@ -32,7 +32,7 @@ public class PaymentMessageHandler {
         this.payHubClient = payHubClient;
     }
 
-    public CreatePaymentResponse handlePaymentMessage(CreatePaymentMessage paymentMessage) {
+    public void handlePaymentMessage(CreatePaymentMessage paymentMessage) {
         CreatePaymentRequest request = paymentRequestMapper.mapPaymentMessage(paymentMessage);
 
         log.info(
@@ -53,8 +53,6 @@ public class PaymentMessageHandler {
             paymentMessage.envelopeId,
             paymentMessage.ccdReference
         );
-
-        return paymentResult;
     }
 
 
