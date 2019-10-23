@@ -204,7 +204,7 @@ public class PaymentMessageProcessor {
             description
         );
 
-        log.info(
+        log.error(
             "Payment Message with ID {} has been dead-lettered, reason {}, description {}",
             message.getMessageId(),
             reason,
