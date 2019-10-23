@@ -33,7 +33,7 @@ public class PayHubHealthIndicator implements HealthIndicator {
             return response.getStatusCode() == (HttpStatus.OK) ? statusHealthy() : statusDown();
         } catch (Exception ex) {
             log.error("Exception occurred while checking Pay hub health", ex);
-            return statusUnknown();
+            return statusUnknown(ex);
         }
     }
 
@@ -45,7 +45,7 @@ public class PayHubHealthIndicator implements HealthIndicator {
         return Health.down().build();
     }
 
-    private Health statusUnknown() {
-        return Health.unknown().build();
+    private Health statusUnknown(Throwable ex) {
+        return Health.unknown().withException(ex).build();
     }
 }

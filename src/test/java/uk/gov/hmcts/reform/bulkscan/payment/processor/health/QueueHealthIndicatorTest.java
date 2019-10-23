@@ -15,7 +15,7 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.doThrow;
 
 @ExtendWith(MockitoExtension.class)
-class PaymentsQueueHealthIndicatorTest {
+class QueueHealthIndicatorTest {
 
     @Mock
     private IMessageReceiver receiver;
@@ -24,7 +24,7 @@ class PaymentsQueueHealthIndicatorTest {
 
     @BeforeEach
     void setUp() {
-        healthIndicator = new PaymentsQueueHealthIndicator(receiver);
+        healthIndicator = new QueueHealthIndicator(receiver);
     }
 
     @Test

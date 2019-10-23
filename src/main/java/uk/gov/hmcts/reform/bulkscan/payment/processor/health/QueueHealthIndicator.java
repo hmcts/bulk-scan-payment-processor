@@ -9,12 +9,12 @@ import org.springframework.boot.actuate.health.HealthIndicator;
 import org.springframework.stereotype.Component;
 
 @Component
-public class PaymentsQueueHealthIndicator implements HealthIndicator {
-    private static final Logger log = LoggerFactory.getLogger(PaymentsQueueHealthIndicator.class);
+public class QueueHealthIndicator implements HealthIndicator {
+    private static final Logger log = LoggerFactory.getLogger(QueueHealthIndicator.class);
 
     private final IMessageReceiver messageReceiver;
 
-    public PaymentsQueueHealthIndicator(IMessageReceiver messageReceiver) {
+    public QueueHealthIndicator(IMessageReceiver messageReceiver) {
         this.messageReceiver = messageReceiver;
     }
 
@@ -24,9 +24,13 @@ public class PaymentsQueueHealthIndicator implements HealthIndicator {
             messageReceiver.peek();
             messageReceiver.close();
             return Health.up().build();
-        } catch (InterruptedException | ServiceBusException e) {
+        } catch (InterruptedException e) {
             log.error("Error occurred while reading messages from payments queue", e);
-            return Health.down().build();
+            Thread.currentThread().interrupt();
+            return Health.down().withException(e).build();
+        } catch (ServiceBusException e) {
+            log.error("Error occurred while reading messages from payments queue", e);
+            return Health.down().withException(e).build();
         }
     }
 }
