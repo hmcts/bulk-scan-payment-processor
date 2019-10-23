@@ -28,3 +28,8 @@ resource "azurerm_key_vault_secret" "bulk_scan_s2s_secret" {
   value        = "${data.azurerm_key_vault_secret.s2s_secret.value}"
   key_vault_id = "${data.azurerm_key_vault.bulk_scan_key_vault.id}"
 }
+
+data "azurerm_key_vault_secret" "payments_queue_listen_connection_string" {
+  key_vault_id = "${data.azurerm_key_vault.bulk_scan_key_vault.id}"
+  name         = "payments-queue-listen-connection-string"
+}

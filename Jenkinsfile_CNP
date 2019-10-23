@@ -2,6 +2,9 @@
 @Library("Infrastructure")
 
 import uk.gov.hmcts.contino.GradleBuilder
+import uk.gov.hmcts.contino.Kubectl
+import uk.gov.hmcts.contino.DockerImage
+import uk.gov.hmcts.pipeline.TeamConfig
 
 def type = "java"
 def product = "bulk-scan"
@@ -10,8 +13,44 @@ def component = "payment-processor"
 def channel = '#bsp-build-notices'
 GradleBuilder builder = new GradleBuilder(this, product)
 
+def secrets = [
+  'bulk-scan-${env}': [
+    secret('payments-queue-listen-connection-string', 'PAYMENTS_QUEUE_READ_CONNECTION_STRING')
+  ]
+]
+
+static LinkedHashMap<String, Object> secret(String secretName, String envVar) {
+  [ $class: 'AzureKeyVaultSecret',
+    secretType: 'Secret',
+    name: secretName,
+    version: '',
+    envVariable: envVar
+  ]
+}
+
 withPipeline(type, product, component) {
- after('test') {
+  // Vars needed for smoke / functional testing
+  env.TEST_PAY_HUB_URL = 'http://ccpay-bulkscanning-api-aat.service.core-compute-aat.internal'
+
+  before('smoketest:preview') {
+    withAksClient('nonprod') {
+      def dockerImage = new DockerImage(product, component, null, env.BRANCH_NAME, env.GIT_COMMIT)
+      def subscription = env.SUBSCRIPTION_NAME
+      def aksServiceName = dockerImage.getAksServiceName().toLowerCase()
+      def serviceBusSecret = "servicebus-secret-namespace-${aksServiceName}"
+
+      def namespace = new TeamConfig(this).getNameSpace(product)
+      def kubectl = new Kubectl(this, subscription, namespace)
+      kubectl.login()
+
+      // Get payments queue connection string
+      def sbConnectionStr = kubectl.getSecret(serviceBusSecret, namespace, "{.data.connectionString}")
+      env.PAYMENTS_QUEUE_READ_CONNECTION_STRING = "${sbConnectionStr};EntityPath=payments"
+      env.PAY_HUB_URL = "http://ccpay-bulkscanning-api-aat.service.core-compute-aat.internal"
+    }
+  }
+
+  after('test') {
     builder.gradle('integration')
   }
   enableDockerBuild()
@@ -19,4 +58,6 @@ withPipeline(type, product, component) {
   disableLegacyDeployment()
   installCharts()
   enableSlackNotifications(channel)
+  loadVaultSecrets(secrets)
+
 }
