@@ -15,9 +15,9 @@ class PayHubApiHealthTest {
 
     @Test
     void pay_hub_health_check() {
-
         RestAssured
             .given()
+            .relaxedHTTPSValidation()
             .baseUri(TEST_PAY_HUB_URL)
             .header(SyntheticHeaders.SYNTHETIC_TEST_SOURCE, "Bulk Scan Payment Processor smoke test")
             .get("/health")
@@ -25,5 +25,4 @@ class PayHubApiHealthTest {
             .statusCode(200)
             .body("status", is("UP"));
     }
-
 }
