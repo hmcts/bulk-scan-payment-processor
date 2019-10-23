@@ -28,7 +28,7 @@ class PaymentsQueueHealthIndicatorTest {
     }
 
     @Test
-    void should_be_healthy_if_peek_queue_message_does_not_throw_exception() throws ServiceBusException, InterruptedException {
+    void should_be_healthy_if_peek_queue_message_does_not_throw_exception() throws Exception {
         given(receiver.peek()).willReturn(null);
         assertThat(healthIndicator.health().getStatus()).isEqualTo(Status.UP);
     }
