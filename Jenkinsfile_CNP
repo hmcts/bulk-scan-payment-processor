@@ -32,27 +32,10 @@ withPipeline(type, product, component) {
   // Vars needed for smoke / functional testing
   env.TEST_PAY_HUB_URL = 'http://ccpay-bulkscanning-api-aat.service.core-compute-aat.internal'
 
-  before('smoketest:preview') {
-    withAksClient('nonprod') {
-      def dockerImage = new DockerImage(product, component, null, env.BRANCH_NAME, env.GIT_COMMIT)
-      def subscription = env.SUBSCRIPTION_NAME
-      def aksServiceName = dockerImage.getAksServiceName().toLowerCase()
-      def serviceBusSecret = "servicebus-secret-namespace-${aksServiceName}"
-
-      def namespace = new TeamConfig(this).getNameSpace(product)
-      def kubectl = new Kubectl(this, subscription, namespace)
-      kubectl.login()
-
-      // Get payments queue connection string
-      def sbConnectionStr = kubectl.getSecret(serviceBusSecret, namespace, "{.data.connectionString}")
-      env.PAYMENTS_QUEUE_READ_CONNECTION_STRING = "${sbConnectionStr};EntityPath=payments"
-      env.PAY_HUB_URL = "http://ccpay-bulkscanning-api-aat.service.core-compute-aat.internal"
-    }
-  }
-
   after('test') {
     builder.gradle('integration')
   }
+
   enableDockerBuild()
   enableAksStagingDeployment()
   disableLegacyDeployment()
