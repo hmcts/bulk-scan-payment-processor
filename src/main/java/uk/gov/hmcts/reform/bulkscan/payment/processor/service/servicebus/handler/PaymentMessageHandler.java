@@ -36,7 +36,7 @@ public class PaymentMessageHandler {
         CreatePaymentRequest request = paymentRequestMapper.mapPaymentMessage(paymentMessage);
 
         log.info(
-            "Sending Payment request with Document Control Numbers: {} Envelope id: {} poBox: {}",
+            "Sending Payment request with Document Control Numbers: {}, Envelope id: {}, poBox: {}",
             String.join(", ", request.documentControlNumbers),
             paymentMessage.envelopeId,
             paymentMessage.poBox
@@ -48,7 +48,7 @@ public class PaymentMessageHandler {
         ).getBody();
 
         log.info(
-            "Payment response received from PayHub: {} Envelope id: {} Ccd case reference: {}",
+            "Payment response received from PayHub: {}. Envelope id: {}. Ccd case reference: {}",
             paymentResult == null ? null : String.join(", ", paymentResult.paymentDcns),
             paymentMessage.envelopeId,
             paymentMessage.ccdReference
@@ -74,7 +74,7 @@ public class PaymentMessageHandler {
         );
 
         log.info(
-            "Payment update response from PayHub, envelope id: {}, http status: {} ",
+            "Payment update response from PayHub, envelope id: {}, http status: {}",
             paymentMessage.envelopeId,
             response.getStatusCode()
         );
