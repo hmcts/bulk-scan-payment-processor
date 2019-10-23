@@ -33,7 +33,7 @@ public class PaymentMessageParser {
             logMessageParsed(payment);
             return payment;
         } catch (IOException exc) {
-            LOGGER.error("Payment queue message, parse error ", exc);
+            LOGGER.error("Payment queue message, parse error", exc);
             throw new InvalidMessageException(exc);
         }
     }
@@ -47,7 +47,7 @@ public class PaymentMessageParser {
             logMessageParsed(payment);
             return payment;
         } catch (IOException exc) {
-            LOGGER.error("Payment queue message, parse error ", exc);
+            LOGGER.error("Payment queue message, parse error", exc);
             throw new InvalidMessageException(exc);
         }
     }
@@ -64,7 +64,7 @@ public class PaymentMessageParser {
     private void logMessageParsed(CreatePaymentMessage payment) {
         LOGGER.info(
             "Parsed Payment message, Envelope ID: {}, CCD Case Number: {}, Is Exception Record: {}, Jurisdiction: {}, "
-                + "PO Box: {}, Service {}, Document Control Numbers : {}",
+                + "PO Box: {}, Service: {}, Document Control Numbers: {}",
             payment.envelopeId,
             payment.ccdReference,
             payment.isExceptionRecord,
@@ -78,7 +78,7 @@ public class PaymentMessageParser {
     private void logMessageParsed(UpdatePaymentMessage payment) {
         LOGGER.info(
             "Parsed Payment message, Envelope ID: {}, Jurisdiction: {}, "
-                + "Exception Record Ref: {}, newCaseRef:{}",
+                + "Exception Record Ref: {}, newCaseRef: {}",
             payment.envelopeId,
             payment.jurisdiction,
             payment.exceptionRecordRef,
