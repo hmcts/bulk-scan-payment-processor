@@ -16,6 +16,10 @@ management:
 spring:
   application:
     name: Bulk Scan Payment Processor
+  main:
+    # without this, Spring can't properly resolve feign clients when IDAM and CCD clients are both included
+    # TODO: remove when possible
+    allow-bean-definition-overriding: true
 
 site-mappings:
   sites:
@@ -51,6 +55,10 @@ idam:
     id: 'bsp'
     secret: ${IDAM_CLIENT_SECRET}
     redirect_uri: ${IDAM_CLIENT_REDIRECT_URI}
+
+core_case_data:
+  api:
+    url: ${CORE_CASE_DATA_API_URL}
 
 scheduling:
   task:
