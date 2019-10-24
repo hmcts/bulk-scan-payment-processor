@@ -31,4 +31,5 @@ scheduling:
 spring:
   main:
     # without this, Spring can't properly resolve feign clients when IDAM and CCD clients are both included
+    # TODO: remove when possible
     allow-bean-definition-overriding: true
