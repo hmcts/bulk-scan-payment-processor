@@ -27,3 +27,8 @@ scheduling:
   task:
     consume-payments-queue:
       enabled: false
+
+spring:
+  main:
+    # without this, Spring can't properly resolve feign clients when IDAM and CCD clients are both included
+    allow-bean-definition-overriding: true

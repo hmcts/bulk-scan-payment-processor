@@ -16,6 +16,9 @@ management:
 spring:
   application:
     name: Bulk Scan Payment Processor
+  main:
+    # without this, Spring can't properly resolve feign clients when IDAM and CCD clients are both included
+    allow-bean-definition-overriding: true
 
 site-mappings:
   sites:
