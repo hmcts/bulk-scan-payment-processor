@@ -12,7 +12,6 @@ import org.springframework.boot.actuate.health.Status;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.doThrow;
 
 @ExtendWith(MockitoExtension.class)
 class QueueHealthIndicatorTest {
@@ -34,14 +33,14 @@ class QueueHealthIndicatorTest {
     }
 
     @Test
-    void should_be_unhealthy_if_peek_queue_message_throws_exception() throws Exception {
+    void should_be_unhealthy_when_peek_queue_message_throws_interrupted_exception() throws Exception {
         given(receiver.peek()).willThrow(InterruptedException.class);
         assertThat(healthIndicator.health().getStatus()).isEqualTo(Status.DOWN);
     }
 
     @Test
-    void should_be_unhealthy_if_exception_occurs_when_closing_queue_connection() throws Exception {
-        doThrow(ServiceBusException.class).when(receiver).close();
+    void should_be_unhealthy_when_peek_queue_message_throws_service_bus_exception() throws Exception {
+        given(receiver.peek()).willThrow(ServiceBusException.class);
         assertThat(healthIndicator.health().getStatus()).isEqualTo(Status.DOWN);
     }
 

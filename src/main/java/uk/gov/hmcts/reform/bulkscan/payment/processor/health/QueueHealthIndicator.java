@@ -22,7 +22,6 @@ public class QueueHealthIndicator implements HealthIndicator {
     public Health health() {
         try {
             messageReceiver.peek();
-            messageReceiver.close();
             return Health.up().build();
         } catch (InterruptedException e) {
             log.error("Error occurred while reading messages from payments queue", e);
