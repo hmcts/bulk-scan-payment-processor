@@ -219,10 +219,10 @@ public class PaymentMessageProcessor {
 
         String fullMessage = paymentMessage != null
             ? baseMessage + String.format(
-            " CCD Case Number: %s, Jurisdiction: %s",
-            paymentMessage.ccdReference,
-            paymentMessage.jurisdiction
-        )
+                " CCD Case Number: %s, Jurisdiction: %s",
+                paymentMessage.ccdReference,
+                paymentMessage.jurisdiction
+            )
             : baseMessage;
 
         log.error(fullMessage, exception);
@@ -241,11 +241,11 @@ public class PaymentMessageProcessor {
 
         String fullMessage = paymentMessage != null
             ? baseMessage + String.format(
-            " New Case Number: %s, Exception Record Ref: %s,Jurisdiction: %s",
-            paymentMessage.newCaseRef,
-            paymentMessage.exceptionRecordRef,
-            paymentMessage.jurisdiction
-        )
+                " New Case Number: %s, Exception Record Ref: %s, Jurisdiction: %s",
+                paymentMessage.newCaseRef,
+                paymentMessage.exceptionRecordRef,
+                paymentMessage.jurisdiction
+            )
             : baseMessage;
 
         log.error(fullMessage, exception);
