@@ -12,9 +12,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.client.HttpClientErrorException;
-import uk.gov.hmcts.reform.bulkscan.payment.processor.client.payhub.PayHubClientException;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.PaymentMessageParser;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.PaymentMessageProcessor;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.exceptions.InvalidMessageException;
@@ -115,7 +112,7 @@ public class PaymentMessageProcessorTest {
         willReturn(paymentMessage("32131", true)).given(paymentMessageParser).parse(any());
 
         // and
-        willThrow(new RuntimeException()).given(paymentMessageHandler).handlePaymentMessage(any());
+        willThrow(new RuntimeException()).given(paymentMessageHandler).handlePaymentMessage(any(), any());
 
         assertThatCode(() -> paymentMessageProcessor.processNextMessage()).doesNotThrowAnyException();
     }
@@ -154,25 +151,6 @@ public class PaymentMessageProcessorTest {
             "new-case-ref-12312"
         )).given(paymentMessageParser).parseUpdateMessage(any());
 
-
-        // when
-        paymentMessageProcessor.processNextMessage();
-
-        // then
-        verify(messageReceiver).receive();
-        verify(messageReceiver).complete(validMessage.getLockToken());
-    }
-
-    @Test
-    public void should_complete_the_message_when_processing_get_409_PayHubClientException() throws Exception {
-        // given
-        IMessage validMessage = getValidMessage();
-        given(messageReceiver.receive()).willReturn(validMessage);
-        willReturn(paymentMessage(CCD_CASE_NUMBER, IS_EXCEPTION_RECORD)).given(paymentMessageParser).parse(any());
-
-        HttpClientErrorException clientException = new HttpClientErrorException(HttpStatus.CONFLICT, "409_CONFLICT");
-
-        willThrow(new PayHubClientException(clientException)).given(paymentMessageHandler).handlePaymentMessage(any());
 
         // when
         paymentMessageProcessor.processNextMessage();
@@ -270,7 +248,7 @@ public class PaymentMessageProcessorTest {
         );
 
         // given an error occurs during message processing
-        willThrow(processingFailureCause).given(paymentMessageHandler).handlePaymentMessage(any());
+        willThrow(processingFailureCause).given(paymentMessageHandler).handlePaymentMessage(any(), any());
 
         // when
         paymentMessageProcessor.processNextMessage();
@@ -328,7 +306,7 @@ public class PaymentMessageProcessorTest {
         );
 
         // and an error occurs during message processing
-        willThrow(processingFailureCause).given(paymentMessageHandler).handlePaymentMessage(any());
+        willThrow(processingFailureCause).given(paymentMessageHandler).handlePaymentMessage(any(), any());
 
         // when
         paymentMessageProcessor.processNextMessage();
