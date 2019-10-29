@@ -223,7 +223,6 @@ dependencies {
 
   functionalTestCompile sourceSets.main.runtimeClasspath
   functionalTestCompile sourceSets.test.runtimeClasspath
-  functionalTestCompile group: 'uk.gov.hmcts.reform', name: 'document-management-client', version: '6.0.0'
 
   smokeTestCompile sourceSets.main.runtimeClasspath
   smokeTestCompile sourceSets.test.runtimeClasspath
