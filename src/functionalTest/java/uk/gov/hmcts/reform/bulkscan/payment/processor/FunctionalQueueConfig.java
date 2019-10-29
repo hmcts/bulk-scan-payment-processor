@@ -9,7 +9,7 @@ import org.springframework.context.annotation.Bean;
 
 public class FunctionalQueueConfig {
 
-    @Value("${queue.payments.write-connection-string}")
+    @Value("${azure.servicebus.payments.write-connection-string}")
     private String paymentsQueueWriteConnectionString;
 
     @Bean("payments")
