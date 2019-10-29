@@ -1,9 +1,10 @@
-#!groovy @Library("Infrastructure") @Library("Infrastructure") @Library("Infrastructure") @Library("Infrastructure") @Library("Infrastructure") @Library("Infrastructure") @Library("Infrastructure") @Library("Infrastructure") @Library("Infrastructure") @Library("Infrastructure") @Library("Infrastructure") @Library("Infrastructure") @Library("Infrastructure") @Library("Infrastructure") @Library("Infrastructure") @Library("Infrastructure") @Library("Infrastructure") @Library("Infrastructure")
-import uk.gov.hmcts.contino.GradleBuilder
+#!groovy
 @Library("Infrastructure")
 
 import uk.gov.hmcts.contino.GradleBuilder
 import uk.gov.hmcts.contino.Kubectl
+import uk.gov.hmcts.contino.DockerImage
+import uk.gov.hmcts.pipeline.TeamConfig
 
 def type = "java"
 def product = "bulk-scan"
@@ -66,5 +67,4 @@ withPipeline(type, product, component) {
   installCharts()
   enableSlackNotifications(channel)
   loadVaultSecrets(secrets)
-
 }
