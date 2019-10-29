@@ -1,12 +1,12 @@
-package uk.gov.hmcts.reform.bulkscan.orchestrator;
+package uk.gov.hmcts.reform.bulkscan.payment.processor;
 
 import com.google.common.collect.ImmutableMap;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import uk.gov.hmcts.reform.bulkscan.orchestrator.helper.CaseSearcher;
-import uk.gov.hmcts.reform.bulkscan.orchestrator.helper.ExceptionRecordCreator;
-import uk.gov.hmcts.reform.bulkscan.orchestrator.helper.PaymentsMessageSender;
+import uk.gov.hmcts.reform.bulkscan.payment.processor.helper.CaseSearcher;
+import uk.gov.hmcts.reform.bulkscan.payment.processor.helper.ExceptionRecordCreator;
+import uk.gov.hmcts.reform.bulkscan.payment.processor.helper.PaymentsMessageSender;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.ccd.CcdAuthenticator;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.ccd.CcdAuthenticatorFactory;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.model.CreatePaymentMessage;

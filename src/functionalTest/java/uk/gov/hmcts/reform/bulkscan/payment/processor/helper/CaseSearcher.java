@@ -1,4 +1,4 @@
-package uk.gov.hmcts.reform.bulkscan.orchestrator.helper;
+package uk.gov.hmcts.reform.bulkscan.payment.processor.helper;
 
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.ccd.CcdAuthenticator;

@@ -1,4 +1,4 @@
-package uk.gov.hmcts.reform.bulkscan.orchestrator;
+package uk.gov.hmcts.reform.bulkscan.payment.processor;
 
 import com.microsoft.azure.servicebus.QueueClient;
 import com.microsoft.azure.servicebus.ReceiveMode;

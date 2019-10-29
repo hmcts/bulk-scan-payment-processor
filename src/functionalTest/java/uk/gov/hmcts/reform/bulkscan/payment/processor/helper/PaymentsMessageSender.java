@@ -1,4 +1,4 @@
-package uk.gov.hmcts.reform.bulkscan.orchestrator.helper;
+package uk.gov.hmcts.reform.bulkscan.payment.processor.helper;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.microsoft.azure.servicebus.IMessage;
@@ -10,7 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Import;
 import org.springframework.stereotype.Service;
-import uk.gov.hmcts.reform.bulkscan.orchestrator.FunctionalQueueConfig;
+import uk.gov.hmcts.reform.bulkscan.payment.processor.FunctionalQueueConfig;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.model.CreatePaymentMessage;
 
 import java.time.Instant;
