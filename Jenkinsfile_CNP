@@ -1,10 +1,8 @@
-#!groovy
+#!groovy @Library("Infrastructure") @Library("Infrastructure") @Library("Infrastructure")
+import uk.gov.hmcts.contino.GradleBuilder
 @Library("Infrastructure")
 
 import uk.gov.hmcts.contino.GradleBuilder
-import uk.gov.hmcts.contino.Kubectl
-import uk.gov.hmcts.contino.DockerImage
-import uk.gov.hmcts.pipeline.TeamConfig
 
 def type = "java"
 def product = "bulk-scan"
@@ -29,6 +27,15 @@ static LinkedHashMap<String, Object> secret(String secretName, String envVar) {
 }
 
 withPipeline(type, product, component) {
+  after('akschartsinstall'){
+    // Vars needed for AKS testing
+    env.S2S_NAME = 'bulk_scan_orchestrator'
+    env.S2S_URL = 'http://rpe-service-auth-provider-aat.service.core-compute-aat.internal'
+    env.CORE_CASE_DATA_API_URL = 'http://ccd-data-store-api-aat.service.core-compute-aat.internal'
+    env.IDAM_API_URL = 'https://idam-api.aat.platform.hmcts.net'
+    env.IDAM_CLIENT_REDIRECT_URI = 'https://bulk-scan-orchestrator-aat.service.core-compute-aat.internal/oauth2/callback'
+  }
+
   // Vars needed for smoke / functional testing
   env.TEST_PAY_HUB_URL = 'http://ccpay-bulkscanning-api-aat.service.core-compute-aat.internal'
 
