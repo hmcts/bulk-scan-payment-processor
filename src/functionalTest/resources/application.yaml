@@ -1,6 +1,3 @@
-server:
-  port: 8583
-
 management:
   endpoint:
     health:
@@ -37,8 +34,9 @@ azure:
   servicebus:
     payments:
       connection-string: ${PAYMENTS_QUEUE_READ_CONNECTION_STRING}
+      write-connection-string: ${PAYMENTS_QUEUE_WRITE_CONNECTION_STRING}
       queue-name: payments
-      max-delivery-count: ${PAYMENTS_QUEUE_MAX_DELIVERY_COUNT}
+      max-delivery-count: 5
 
 pay-hub:
   api:
@@ -57,14 +55,15 @@ idam:
     redirect_uri: ${IDAM_CLIENT_REDIRECT_URI}
   users:
     bulkscan:
-      username: ${IDAM_USERS_BULKSCAN_USERNAME:notset}
-      password: ${IDAM_USERS_BULKSCAN_PASSWORD:notset}
+      username: ${IDAM_USER_NAME:bulkscan+ccd@gmail.com}
+      password: ${IDAM_USER_PASSWORD:Password12}
 
 core_case_data:
   api:
     url: ${CORE_CASE_DATA_API_URL}
 
 scheduling:
+  enabled: false
   task:
     consume-payments-queue:
-      time-interval-ms: 1000
+      enabled: false

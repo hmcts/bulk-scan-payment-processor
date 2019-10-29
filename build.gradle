@@ -210,6 +210,7 @@ dependencies {
   testCompile group: 'org.junit.platform', name: 'junit-platform-commons', version: versions.junitPlatform
   testCompile group: 'org.junit.platform', name: 'junit-platform-engine', version: versions.junitPlatform
   testCompile group: 'org.mockito', name: 'mockito-junit-jupiter', version: '3.1.0'
+  testCompile group: 'org.awaitility', name: 'awaitility', version: '4.0.1'
 
   testCompile group: 'org.springframework.boot', name: 'spring-boot-starter-test', withoutJunit4
 
@@ -221,6 +222,7 @@ dependencies {
   integrationTestCompile sourceSets.test.runtimeClasspath
 
   functionalTestCompile sourceSets.main.runtimeClasspath
+  functionalTestCompile sourceSets.test.runtimeClasspath
 
   smokeTestCompile sourceSets.main.runtimeClasspath
   smokeTestCompile sourceSets.test.runtimeClasspath
