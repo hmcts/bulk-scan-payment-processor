@@ -14,12 +14,14 @@ java:
     "bulk-scan":
       secrets:
         - idam-client-secret
+        - s2s-secret-payment-processor
         - site-id-probate
         - site-id-divorce
         - site-id-finrem
-        - s2s-secret-payment-processor
         - idam-users-bulkscan-username
         - idam-users-bulkscan-password
+        - idam-users-cmc-username # TODO: remove
+        - idam-users-cmc-password # TODO: remove
   # Don't modify below here
   image: ${IMAGE_NAME}
   ingressHost: ${SERVICE_FQDN}
