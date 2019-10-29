@@ -1,5 +1,6 @@
 package uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus;
 
+import feign.FeignException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -10,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.HttpClientErrorException;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
+import uk.gov.hmcts.reform.bulkscan.payment.processor.ccd.CcdClient;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.client.payhub.PayHubClient;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.client.payhub.PayHubClientException;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.client.payhub.request.CaseReferenceRequest;
@@ -27,6 +29,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.BDDMockito.willThrow;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -42,31 +48,133 @@ public class PaymentMessageHandlerTest {
     @Mock
     private PaymentRequestMapper requestMapper;
 
+    @Mock
+    private CcdClient ccdClient;
+
     private PaymentMessageHandler messageHandler;
 
     @BeforeEach
     void setUp() {
-        messageHandler = new PaymentMessageHandler(s2sTokenGenerator, requestMapper, payHubClient);
+        messageHandler = new PaymentMessageHandler(s2sTokenGenerator, requestMapper, payHubClient, ccdClient);
     }
 
     @Test
-    public void should_call_payhub_api_for_successful_payment_message() {
+    public void should_call_payhub_api_and_ccd_api_for_successful_payment_message() {
         // given
-        CreatePaymentMessage message = SamplePaymentMessageData.paymentMessage("1234", true);
+        String exceptionRecordCcdId = "1234123412341234";
+        CreatePaymentMessage message = SamplePaymentMessageData.paymentMessage(exceptionRecordCcdId, true);
         String s2sToken = "s2sToken1";
 
         when(s2sTokenGenerator.generate()).thenReturn(s2sToken);
-        CreatePaymentRequest request = new CreatePaymentRequest("1234", singletonList("1234"), true, "test-siteId");
+
+        CreatePaymentRequest request = new CreatePaymentRequest(
+            exceptionRecordCcdId,
+            singletonList("1234"),
+            true,
+            "test-siteId"
+        );
 
         when(requestMapper.mapPaymentMessage(message)).thenReturn(request);
         when(payHubClient.createPayment(any(), eq(request)))
             .thenReturn(ResponseEntity.of(Optional.of(new CreatePaymentResponse(singletonList("1234")))));
 
         // when
-        messageHandler.handlePaymentMessage(message);
+        messageHandler.handlePaymentMessage(message, "messageId1");
 
         // then
         verify(payHubClient).createPayment(s2sToken, request);
+        verify(ccdClient).completeAwaitingDcnProcessing(exceptionRecordCcdId, message.service, message.jurisdiction);
+    }
+
+    @Test
+    public void should_update_payment_processing_status_in_ccd_when_payhub_call_fails_with_409_response() {
+        // given
+        String exceptionRecordCcdId = "1234123412341234";
+        CreatePaymentMessage message = SamplePaymentMessageData.paymentMessage(exceptionRecordCcdId, true);
+        String s2sToken = "s2sToken1";
+
+        when(s2sTokenGenerator.generate()).thenReturn(s2sToken);
+
+        CreatePaymentRequest request = new CreatePaymentRequest(
+            exceptionRecordCcdId,
+            singletonList("1234"),
+            true,
+            "test-siteId"
+        );
+
+        when(requestMapper.mapPaymentMessage(message)).thenReturn(request);
+
+        PayHubClientException payHubException = mock(PayHubClientException.class);
+        when(payHubException.getStatus()).thenReturn(HttpStatus.CONFLICT);
+        willThrow(payHubException).given(payHubClient).createPayment(any(), any());
+
+        // when
+        messageHandler.handlePaymentMessage(message, "messageId1");
+
+        // then
+        verify(payHubClient).createPayment(s2sToken, request);
+        verify(ccdClient).completeAwaitingDcnProcessing(exceptionRecordCcdId, message.service, message.jurisdiction);
+    }
+
+    @Test
+    public void should_fail_when_payhub_call_fails_with_non_409_response() {
+        // given
+        String exceptionRecordCcdId = "1234123412341234";
+        CreatePaymentMessage message = SamplePaymentMessageData.paymentMessage(exceptionRecordCcdId, true);
+        String s2sToken = "s2sToken1";
+
+        when(s2sTokenGenerator.generate()).thenReturn(s2sToken);
+
+        CreatePaymentRequest request = new CreatePaymentRequest(
+            exceptionRecordCcdId,
+            singletonList("1234"),
+            true,
+            "test-siteId"
+        );
+
+        when(requestMapper.mapPaymentMessage(message)).thenReturn(request);
+
+        PayHubClientException payHubException = mock(PayHubClientException.class);
+        when(payHubException.getStatus()).thenReturn(HttpStatus.BAD_REQUEST);
+        doThrow(payHubException).when(payHubClient).createPayment(any(), any());
+
+        // when
+        assertThatThrownBy(
+            () -> messageHandler.handlePaymentMessage(message, "messageId1")
+        ).isSameAs(payHubException);
+
+        // then
+        verify(payHubClient).createPayment(s2sToken, request);
+        verify(ccdClient, never()).completeAwaitingDcnProcessing(any(), any(), any());
+    }
+
+    @Test
+    public void should_fail_when_updating_ccd_fails() {
+        // given
+        String exceptionRecordCcdId = "1234123412341234";
+        CreatePaymentMessage message = SamplePaymentMessageData.paymentMessage(exceptionRecordCcdId, true);
+        String s2sToken = "s2sToken1";
+
+        when(s2sTokenGenerator.generate()).thenReturn(s2sToken);
+
+        CreatePaymentRequest request = new CreatePaymentRequest(
+            exceptionRecordCcdId,
+            singletonList("1234"),
+            true,
+            "test-siteId"
+        );
+
+        when(requestMapper.mapPaymentMessage(message)).thenReturn(request);
+        when(payHubClient.createPayment(any(), eq(request)))
+            .thenReturn(ResponseEntity.of(Optional.of(new CreatePaymentResponse(singletonList("1234")))));
+
+        FeignException ccdCallException = new FeignException.InternalServerError("test exception", new byte[]{});
+        doThrow(ccdCallException).when(ccdClient).completeAwaitingDcnProcessing(any(), any(), any());
+
+        // when
+        assertThatThrownBy(
+            () -> messageHandler.handlePaymentMessage(message, "messageId1")
+        ).isSameAs(ccdCallException);
     }
 
     @Test
@@ -118,6 +226,5 @@ public class PaymentMessageHandlerTest {
         assertThatThrownBy(
             () -> messageHandler.updatePaymentCaseReference(message))
             .isInstanceOf(PayHubClientException.class);
-
     }
 }
