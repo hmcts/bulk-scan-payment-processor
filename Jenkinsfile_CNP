@@ -1,4 +1,4 @@
-#!groovy @Library("Infrastructure") @Library("Infrastructure") @Library("Infrastructure") @Library("Infrastructure") @Library("Infrastructure") @Library("Infrastructure") @Library("Infrastructure")
+#!groovy @Library("Infrastructure") @Library("Infrastructure") @Library("Infrastructure") @Library("Infrastructure") @Library("Infrastructure") @Library("Infrastructure") @Library("Infrastructure") @Library("Infrastructure") @Library("Infrastructure") @Library("Infrastructure") @Library("Infrastructure") @Library("Infrastructure") @Library("Infrastructure")
 import uk.gov.hmcts.contino.GradleBuilder
 @Library("Infrastructure")
 
@@ -38,6 +38,18 @@ withPipeline(type, product, component) {
     env.PAY_HUB_URL = "http://ccpay-bulkscanning-api-aat.service.core-compute-aat.internal"
     env.IDAM_API_URL = 'https://idam-api.aat.platform.hmcts.net'
     env.IDAM_CLIENT_REDIRECT_URI = 'https://bulk-scan-orchestrator-aat.service.core-compute-aat.internal/oauth2/callback'
+
+    def dockerImage = new DockerImage(product, component, null, env.BRANCH_NAME, env.GIT_COMMIT)
+    def subscription = env.SUBSCRIPTION_NAME
+    def aksServiceName = dockerImage.getAksServiceName().toLowerCase()
+    def sbNamespaceSecret = "servicebus-secret-namespace-${aksServiceName}"
+    def namespace = new TeamConfig(this).getNameSpace(product)
+
+    def kubectl = new Kubectl(this, subscription, namespace)
+    kubectl.login()
+
+    def sbConnectionStr = kubectl.getSecret(sbNamespaceSecret, namespace, "{.data.connectionString}")
+    env.PAYMENTS_QUEUE_WRITE_CONN_STRING = "${sbConnectionStr};EntityPath=payments"
   }
 
   // Vars needed for smoke / functional testing
