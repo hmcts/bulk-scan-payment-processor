@@ -24,6 +24,8 @@ public class PaymentsMessageSender {
 
     private static final Logger LOG = LoggerFactory.getLogger(PaymentsMessageSender.class);
 
+    private static final String CREATE = "CREATE";
+
     @Autowired
     @Qualifier("payments")
     private QueueClient queueClient;
@@ -39,12 +41,13 @@ public class PaymentsMessageSender {
                 messageContent,
                 APPLICATION_JSON.toString()
             );
-            message.setLabel("CREATE");
+            message.setLabel(CREATE);
 
-            queueClient.scheduleMessage(message, Instant.now().plusSeconds(10));
+            long res = queueClient.scheduleMessage(message, Instant.now());
 
             LOG.info(
-                "Sent message to payments queue. ID: {}, Label: {}, Content: {}",
+                "Sent message to payments queue. Result: {}, ID: {}, Label: {}, Content: {}",
+                res,
                 message.getMessageId(),
                 message.getLabel(),
                 messageContent
