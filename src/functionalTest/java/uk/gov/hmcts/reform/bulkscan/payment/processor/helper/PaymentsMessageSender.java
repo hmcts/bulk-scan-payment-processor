@@ -37,7 +37,7 @@ public class PaymentsMessageSender {
             final String messageContent = objectMapper.writeValueAsString(cmd);
 
             IMessage message = new Message(
-                UUID.randomUUID().toString(),
+                "test_msg_" + UUID.randomUUID().toString(),
                 messageContent,
                 APPLICATION_JSON.toString()
             );
