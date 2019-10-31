@@ -6,7 +6,7 @@
 
 Retrieve service bus queue messages from payments queue and process them by either creating a new payment record for an exception record in CCD or update an existing CCD exception record reference in payments to use service case reference.
 
-## Building and deploying the application
+## Building and deploying the application.
 
 ### Building the application
 
