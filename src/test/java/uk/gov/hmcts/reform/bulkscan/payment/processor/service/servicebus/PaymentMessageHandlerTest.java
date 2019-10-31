@@ -117,6 +117,34 @@ public class PaymentMessageHandlerTest {
     }
 
     @Test
+    public void should_not_update_status_in_ccd_when_message_does_not_represent_exception_record() {
+        // given
+        String caseId = "1234123412341234";
+        CreatePaymentMessage message = SamplePaymentMessageData.paymentMessage(caseId, false);
+
+        when(s2sTokenGenerator.generate()).thenReturn("s2sToken1");
+
+        CreatePaymentRequest request =
+            new CreatePaymentRequest(caseId, singletonList("1234"), false, "test-siteId");
+
+        when(requestMapper.mapPaymentMessage(message)).thenReturn(request);
+        when(payHubClient.createPayment(any(), any()))
+            .thenReturn(
+                ResponseEntity.of(
+                    Optional.of(
+                        new CreatePaymentResponse(singletonList("1234"))
+                    )
+                )
+            );
+
+        // when
+        messageHandler.handlePaymentMessage(message, "messageId1");
+
+        // then
+        verify(ccdClient, never()).completeAwaitingDcnProcessing(any(), any(), any());
+    }
+
+    @Test
     public void should_fail_when_payhub_call_fails_with_non_409_response() {
         // given
         String exceptionRecordCcdId = "1234123412341234";
