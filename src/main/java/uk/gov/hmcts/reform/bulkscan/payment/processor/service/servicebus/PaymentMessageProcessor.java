@@ -50,8 +50,10 @@ public class PaymentMessageProcessor {
      * @return false if there was no message to process. Otherwise true.
      */
     public boolean processNextMessage() throws ServiceBusException, InterruptedException {
+        log.info("Receiving message");
         IMessage message = messageReceiver.receive();
         if (message != null) {
+            log.info("Message received");
             if (message.getLabel() == null) {
                 deadLetterTheMessage(message, "Missing label", null);
             } else {
