@@ -1,7 +1,5 @@
 package uk.gov.hmcts.reform.bulkscan.payment.processor.config;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.ccd.Credential;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.exception.NoUserConfiguredException;
