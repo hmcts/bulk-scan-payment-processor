@@ -41,15 +41,16 @@ public class PaymentMessageHandler {
     public void handlePaymentMessage(CreatePaymentMessage paymentMessage, String messageId) {
         createPayment(paymentMessage, messageId);
 
-        ccdClient.completeAwaitingDcnProcessing(
-            paymentMessage.ccdReference,
-            paymentMessage.service,
-            paymentMessage.jurisdiction
-        );
+        if (paymentMessage.isExceptionRecord) {
+            ccdClient.completeAwaitingDcnProcessing(
+                paymentMessage.ccdReference,
+                paymentMessage.service,
+                paymentMessage.jurisdiction
+            );
+        }
     }
 
     public void updatePaymentCaseReference(UpdatePaymentMessage paymentMessage) {
-
         CaseReferenceRequest request = new CaseReferenceRequest(paymentMessage.newCaseRef);
 
         log.info(
