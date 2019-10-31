@@ -30,8 +30,6 @@ public class JurisdictionToUserMapping {
     }
 
     public Map<String, Credential> getUsers() {
-        users.entrySet().stream()
-            .forEach(e -> log.info("user details: " + e.getKey() + ": " + e.getValue().getUsername()));
         return users;
     }
 
@@ -43,6 +41,8 @@ public class JurisdictionToUserMapping {
     }
 
     public Credential getUser(String jurisdiction) {
+        users.entrySet().stream()
+            .forEach(e -> log.info("user details: " + e.getKey() + ": " + e.getValue().getUsername()));
         return users.computeIfAbsent(jurisdiction.toLowerCase(), this::throwNotFound);
     }
 
