@@ -6,6 +6,7 @@ import com.microsoft.azure.servicebus.primitives.ConnectionStringBuilder;
 import com.microsoft.azure.servicebus.primitives.ServiceBusException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Profile;
 
 public class FunctionalQueueConfig {
 
@@ -13,6 +14,7 @@ public class FunctionalQueueConfig {
     private String paymentsQueueWriteConnectionString;
 
     @Bean("payments")
+    @Profile("nosb")
     public QueueClient paymentsWriteClient() throws ServiceBusException, InterruptedException {
         return new QueueClient(
             new ConnectionStringBuilder(paymentsQueueWriteConnectionString),
