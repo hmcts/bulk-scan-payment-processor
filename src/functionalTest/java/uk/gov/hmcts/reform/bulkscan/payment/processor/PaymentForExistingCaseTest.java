@@ -69,7 +69,7 @@ class PaymentForExistingCaseTest {
 
         //then
         await("Case is updated")
-            .atMost(30, TimeUnit.SECONDS)
+            .atMost(120, TimeUnit.SECONDS)
             .pollDelay(1, TimeUnit.SECONDS)
             .until(() -> casePaymentStatusUpdated(caseDetails));
     }
