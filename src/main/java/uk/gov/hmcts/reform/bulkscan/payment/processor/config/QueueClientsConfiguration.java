@@ -20,7 +20,7 @@ public class QueueClientsConfiguration {
     public IMessageReceiver paymentMessageReceiver(
         @Value("${azure.servicebus.payments.connection-string}") String connectionString
     ) throws InterruptedException, ServiceBusException {
-        log.info("connection-string: " + connectionString);
+        log.info("payments-connection-string: " + connectionString);
         return ClientFactory.createMessageReceiverFromConnectionString(
             connectionString,
             ReceiveMode.PEEKLOCK
