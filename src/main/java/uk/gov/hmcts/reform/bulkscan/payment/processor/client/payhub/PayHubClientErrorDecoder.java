@@ -21,6 +21,7 @@ public class PayHubClientErrorDecoder implements ErrorDecoder {
     public Exception decode(String methodKey, Response response) {
         HttpStatus statusCode = HttpStatus.valueOf(response.status());
         String statusText = Optional.ofNullable(response.reason()).orElse(statusCode.getReasonPhrase());
+        log.error("statusText: " + statusText);
 
         if (statusCode.is4xxClientError()) {
             HttpClientErrorException clientException = new HttpClientErrorException(
@@ -36,7 +37,6 @@ public class PayHubClientErrorDecoder implements ErrorDecoder {
                 statusCode,
                 statusText
             );
-            log.error("statusText: " + statusText);
             return new PayHubClientException(serverException);
         }
 
