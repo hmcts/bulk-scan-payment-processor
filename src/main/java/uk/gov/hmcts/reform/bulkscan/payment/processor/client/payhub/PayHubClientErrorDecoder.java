@@ -1,5 +1,6 @@
 package uk.gov.hmcts.reform.bulkscan.payment.processor.client.payhub;
 
+import com.google.common.io.CharStreams;
 import feign.Response;
 import feign.codec.ErrorDecoder;
 import org.slf4j.Logger;
@@ -8,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 
+import java.io.IOException;
 import java.util.Optional;
 
 public class PayHubClientErrorDecoder implements ErrorDecoder {
@@ -21,7 +23,11 @@ public class PayHubClientErrorDecoder implements ErrorDecoder {
     public Exception decode(String methodKey, Response response) {
         HttpStatus statusCode = HttpStatus.valueOf(response.status());
         String statusText = Optional.ofNullable(response.reason()).orElse(statusCode.getReasonPhrase());
-        log.error("statusText: " + statusText + " " + response.toString());
+        try {
+            log.error("statusText: {}, body: {}", statusText, CharStreams.toString(response.body().asReader()));
+        } catch(IOException ex) {
+            log.error("IOEx: " + ex);
+        }
 
         if (statusCode.is4xxClientError()) {
             HttpClientErrorException clientException = new HttpClientErrorException(
