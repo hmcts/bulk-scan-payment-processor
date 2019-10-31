@@ -147,7 +147,7 @@ public class PaymentMessageProcessor {
             case UNRECOVERABLE_FAILURE:
                 deadLetterTheMessage(
                     message,
-                    "Payment Message processing error |" + processingResult.exception.getMessage() + "|",
+                    "Payment Message processing error",
                     processingResult.exception.getMessage()
                 );
                 break;

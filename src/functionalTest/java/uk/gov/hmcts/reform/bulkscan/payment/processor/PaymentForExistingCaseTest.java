@@ -9,8 +9,8 @@ import uk.gov.hmcts.reform.bulkscan.payment.processor.ccd.CcdAuthenticatorFactor
 import uk.gov.hmcts.reform.bulkscan.payment.processor.helper.CaseSearcher;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.helper.ExceptionRecordCreator;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.helper.PaymentsMessageSender;
-import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.model.CreatePaymentMessage;
-import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.model.PaymentInfo;
+import uk.gov.hmcts.reform.bulkscan.payment.processor.model.CreatePaymentsCommand;
+import uk.gov.hmcts.reform.bulkscan.payment.processor.model.PaymentData;
 import uk.gov.hmcts.reform.ccd.client.CoreCaseDataApi;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
 
@@ -56,14 +56,14 @@ class PaymentForExistingCaseTest {
         // when
         // payment sent to payments queue
         paymentsMessageSender.send(
-            new CreatePaymentMessage(
+            new CreatePaymentsCommand(
                 "some_envelope_id",
                 Long.toString(caseDetails.getId()),
-                true,
-                PROBATE_PO_BOX,
                 caseDetails.getJurisdiction(),
                 "bulkscan",
-                asList(new PaymentInfo("154565768"))
+                PROBATE_PO_BOX,
+                true,
+                asList(new PaymentData("154565768"))
             )
         );
 

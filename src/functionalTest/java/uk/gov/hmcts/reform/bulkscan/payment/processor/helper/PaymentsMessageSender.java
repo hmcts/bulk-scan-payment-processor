@@ -11,7 +11,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Import;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.FunctionalQueueConfig;
-import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.model.CreatePaymentMessage;
+import uk.gov.hmcts.reform.bulkscan.payment.processor.model.CreatePaymentsCommand;
 
 import java.time.Instant;
 import java.util.UUID;
@@ -32,7 +32,7 @@ public class PaymentsMessageSender {
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    public void send(CreatePaymentMessage cmd) {
+    public void send(CreatePaymentsCommand cmd) {
         try {
             final String messageContent = objectMapper.writeValueAsString(cmd);
 
