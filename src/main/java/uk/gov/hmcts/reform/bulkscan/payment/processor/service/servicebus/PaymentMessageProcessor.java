@@ -6,7 +6,6 @@ import com.microsoft.azure.servicebus.primitives.ServiceBusException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.exceptions.InvalidMessageException;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.exceptions.UnknownMessageProcessingResultException;
@@ -22,7 +21,6 @@ import static uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.
 
 
 @Service
-@Profile("!nosb") // do not register for the nosb (test) profile
 public class PaymentMessageProcessor {
 
     private static final Logger log = LoggerFactory.getLogger(PaymentMessageProcessor.class);
