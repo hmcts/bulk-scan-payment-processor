@@ -38,8 +38,7 @@ azure:
     payments:
       connection-string: ${PAYMENTS_QUEUE_READ_CONNECTION_STRING}
       queue-name: payments
-      # TODO revert to configurable
-      max-delivery-count: 5
+      max-delivery-count: ${PAYMENTS_QUEUE_MAX_DELIVERY_COUNT}
 
 pay-hub:
   api:
