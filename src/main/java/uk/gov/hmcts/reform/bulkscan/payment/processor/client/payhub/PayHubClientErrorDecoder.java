@@ -25,7 +25,7 @@ public class PayHubClientErrorDecoder implements ErrorDecoder {
         String statusText = Optional.ofNullable(response.reason()).orElse(statusCode.getReasonPhrase());
         try {
             log.error("statusText: {}, body: {}", statusText, CharStreams.toString(response.body().asReader()));
-        } catch(IOException ex) {
+        } catch (IOException ex) {
             log.error("IOEx: " + ex);
         }
 
