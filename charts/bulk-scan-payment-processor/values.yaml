@@ -16,7 +16,7 @@ java:
     "bulk-scan":
       resourceGroup: bulk-scan
       secrets:
-        - s2s-secret-payment-processor
+        - s2s-secret-bulk-scan-orchestrator
         - site-id-probate
         - site-id-divorce
         - site-id-finrem
