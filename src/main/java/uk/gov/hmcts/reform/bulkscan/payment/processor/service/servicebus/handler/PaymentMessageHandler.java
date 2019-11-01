@@ -2,6 +2,7 @@ package uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.handle
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -17,6 +18,7 @@ import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.model.C
 import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.model.UpdatePaymentMessage;
 
 @Service
+@Profile({"integration", "!nosb"})
 public class PaymentMessageHandler {
 
     private static final Logger log = LoggerFactory.getLogger(PaymentMessageHandler.class);
