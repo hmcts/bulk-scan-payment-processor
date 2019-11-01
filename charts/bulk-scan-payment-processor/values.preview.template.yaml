@@ -14,6 +14,9 @@ java:
     "bulk-scan":
       secrets:
         - idam-client-secret
+        - site-id-probate
+        - site-id-divorce
+        - site-id-finrem
         - s2s-secret-payment-processor
         - idam-users-bulkscan-username
         - idam-users-bulkscan-password
