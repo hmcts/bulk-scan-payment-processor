@@ -15,7 +15,7 @@ GradleBuilder builder = new GradleBuilder(this, product)
 
 def secrets = [
   's2s-${env}': [
-    secret('microservicekey-bulk-scan-orchestrator', 'S2S_SECRET')
+    secret('microservicekey-bulk-scan-payment-processor', 'S2S_SECRET')
   ],
   'bulk-scan-${env}': [
     secret('payments-queue-listen-connection-string', 'PAYMENTS_QUEUE_READ_CONNECTION_STRING'),
