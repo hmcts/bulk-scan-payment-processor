@@ -18,8 +18,6 @@ def secrets = [
     secret('microservicekey-bulk-scan-orchestrator', 'S2S_SECRET')
   ],
   'bulk-scan-${env}': [
-    secret('idam-users-bulkscan-username', 'IDAM_USER_NAME'),
-    secret('idam-users-bulkscan-password', 'IDAM_USER_PASSWORD'),
     secret('idam-client-secret', 'IDAM_CLIENT_SECRET')
   ]
 ]
