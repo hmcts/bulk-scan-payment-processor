@@ -6,6 +6,8 @@ import com.microsoft.azure.servicebus.ReceiveMode;
 import com.microsoft.azure.servicebus.primitives.ConnectionStringBuilder;
 import com.microsoft.azure.servicebus.primitives.ServiceBusException;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.actuate.health.Health;
+import org.springframework.boot.actuate.health.HealthIndicator;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.ResponseEntity;
@@ -54,6 +56,17 @@ public class FunctionalQueueConfig {
                 String exceptionReference,
                 CaseReferenceRequest caseReferenceRequest
             ) {
+                return null;
+            }
+        };
+    }
+
+    @Bean
+    @Profile("nosb") // apply only when Service Bus should not be used
+    HealthIndicator healthIndicator() {
+        return new HealthIndicator() {
+            @Override
+            public Health health() {
                 return null;
             }
         };
