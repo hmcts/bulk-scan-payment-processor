@@ -14,6 +14,9 @@ def channel = '#bsp-build-notices'
 GradleBuilder builder = new GradleBuilder(this, product)
 
 def secrets = [
+  's2s-${env}': [
+    secret('microservicekey-bulk-scan-orchestrator', 'S2S_SECRET')
+  ],
   'bulk-scan-${env}': [
     secret('idam-users-bulkscan-username', 'IDAM_USERS_BULKSCAN_USERNAME'),
     secret('idam-users-bulkscan-password', 'IDAM_USERS_BULKSCAN_PASSWORD'),
