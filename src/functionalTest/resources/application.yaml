@@ -38,10 +38,6 @@ azure:
       queue-name: payments
       max-delivery-count: 5
 
-pay-hub:
-  api:
-    url: ${PAY_HUB_URL}
-
 idam:
   s2s-auth:
     url: ${S2S_URL:http://localhost:4552}
