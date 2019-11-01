@@ -41,12 +41,19 @@ public class FunctionalQueueConfig {
     PayHubClient payHubClient() {
         return new PayHubClient() {
             @Override
-            public ResponseEntity<CreatePaymentResponse> createPayment(String serviceAuthorisation, CreatePaymentRequest paymentRequest) {
+            public ResponseEntity<CreatePaymentResponse> createPayment(
+                String serviceAuthorisation,
+                CreatePaymentRequest paymentRequest
+            ) {
                 return null;
             }
 
             @Override
-            public ResponseEntity<Void> updateCaseReference(String serviceAuthorisation, String exceptionReference, CaseReferenceRequest caseReferenceRequest) {
+            public ResponseEntity<Void> updateCaseReference(
+                String serviceAuthorisation,
+                String exceptionReference,
+                CaseReferenceRequest caseReferenceRequest
+            ) {
                 return null;
             }
         };
