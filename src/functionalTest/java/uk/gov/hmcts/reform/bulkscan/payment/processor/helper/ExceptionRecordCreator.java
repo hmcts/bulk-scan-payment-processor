@@ -2,6 +2,7 @@ package uk.gov.hmcts.reform.bulkscan.payment.processor.helper;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.ccd.CcdAuthenticator;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.ccd.CcdAuthenticatorFactory;
@@ -14,6 +15,7 @@ import uk.gov.hmcts.reform.ccd.client.model.StartEventResponse;
 import java.util.Map;
 
 @Service
+@Profile("!nosb")
 public class ExceptionRecordCreator {
 
     private static final Logger log = LoggerFactory.getLogger(ExceptionRecordCreator.class);

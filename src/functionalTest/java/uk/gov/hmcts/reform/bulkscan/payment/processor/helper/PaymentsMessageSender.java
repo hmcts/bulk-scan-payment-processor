@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.FunctionalQueueConfig;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.model.CreatePaymentsCommand;
@@ -20,6 +21,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON;
 
 @Service
 @Import(FunctionalQueueConfig.class)
+@Profile("!nosb")
 public class PaymentsMessageSender {
 
     private static final Logger LOG = LoggerFactory.getLogger(PaymentsMessageSender.class);
