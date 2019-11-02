@@ -6,9 +6,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.actuate.health.Health;
 import org.springframework.boot.actuate.health.HealthIndicator;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 @Component
+@Profile({"integration", "!nosb"})
 public class QueueHealthIndicator implements HealthIndicator {
     private static final Logger log = LoggerFactory.getLogger(QueueHealthIndicator.class);
 
