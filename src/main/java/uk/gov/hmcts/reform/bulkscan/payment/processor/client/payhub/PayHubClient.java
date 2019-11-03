@@ -1,6 +1,7 @@
 package uk.gov.hmcts.reform.bulkscan.payment.processor.client.payhub;
 
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.context.annotation.Profile;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.MimeTypeUtils;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -17,6 +18,7 @@ import uk.gov.hmcts.reform.bulkscan.payment.processor.client.payhub.response.Cre
     url = "${pay-hub.api.url}",
     configuration = PayHubClientConfiguration.class
 )
+@Profile({"integration", "!nosb"})
 public interface PayHubClient {
 
     @RequestMapping(
