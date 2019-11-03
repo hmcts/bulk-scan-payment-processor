@@ -39,7 +39,6 @@ withPipeline(type, product, component) {
     env.S2S_NAME = 'bulk_scan_orchestrator'
     env.S2S_URL = 'http://rpe-service-auth-provider-aat.service.core-compute-aat.internal'
     env.CORE_CASE_DATA_API_URL = 'http://ccd-data-store-api-aat.service.core-compute-aat.internal'
-    env.PAY_HUB_URL = "http://ccpay-bulkscanning-api-aat.service.core-compute-aat.internal"
     env.IDAM_API_URL = 'https://idam-api.aat.platform.hmcts.net'
     env.IDAM_CLIENT_REDIRECT_URI = 'https://bulk-scan-orchestrator-aat.service.core-compute-aat.internal/oauth2/callback'
   }
