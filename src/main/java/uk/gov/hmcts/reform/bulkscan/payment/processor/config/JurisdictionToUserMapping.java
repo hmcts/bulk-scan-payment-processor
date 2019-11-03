@@ -1,8 +1,5 @@
 package uk.gov.hmcts.reform.bulkscan.payment.processor.config;
 
-import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.ccd.Credential;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.exception.NoUserConfiguredException;
@@ -11,15 +8,12 @@ import java.util.AbstractMap;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import static java.util.Map.Entry;
 import static java.util.stream.Collectors.toMap;
 
 @ConfigurationProperties(prefix = "idam")
 public class JurisdictionToUserMapping {
-
-    private static final Logger log = LoggerFactory.getLogger(JurisdictionToUserMapping.class);
 
     private Map<String, Credential> users = new HashMap<>();
 
@@ -43,18 +37,6 @@ public class JurisdictionToUserMapping {
     }
 
     public Credential getUser(String jurisdiction) {
-        log.info(
-            "Users configured: {}",
-            StringUtils.join(
-                users
-                    .entrySet()
-                    .stream()
-                    .map(entry -> entry.getKey() + ":" + entry.getValue().getUsername())
-                    .collect(Collectors.toList()),
-                "|"
-            )
-        );
-
         return users.computeIfAbsent(jurisdiction.toLowerCase(), this::throwNotFound);
     }
 
