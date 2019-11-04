@@ -45,11 +45,11 @@ public class PaymentsMessageSender {
             );
             message.setLabel(CREATE);
 
-            long res = queueClient.scheduleMessage(message, Instant.now());
+            long sentMessageSequenceNumber = queueClient.scheduleMessage(message, Instant.now());
 
             LOG.info(
                 "Sent message to payments queue. Result: {}, ID: {}, Label: {}, Content: {}",
-                res,
+                sentMessageSequenceNumber,
                 message.getMessageId(),
                 message.getLabel(),
                 messageContent
