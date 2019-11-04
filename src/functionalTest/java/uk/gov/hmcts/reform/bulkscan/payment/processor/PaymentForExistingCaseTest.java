@@ -26,8 +26,8 @@ import static org.awaitility.Awaitility.await;
 class PaymentForExistingCaseTest {
 
     private static final String AWAITING_PAYMENT_DCN_PROCESSING = "awaitingPaymentDCNProcessing";
-    private static final String YES = "YES";
-    private static final String NO = "NO";
+    private static final String YES = "Yes";
+    private static final String NO = "No";
     private static final String JURISDICTION = "BULKSCAN";
     private static final String PROBATE_PO_BOX = "12625";
 
