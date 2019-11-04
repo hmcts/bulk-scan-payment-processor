@@ -15,7 +15,7 @@ import uk.gov.hmcts.reform.ccd.client.model.StartEventResponse;
 import java.util.Map;
 
 @Service
-@Profile("nosb")
+@Profile("functional")
 public class ExceptionRecordCreator {
 
     private static final Logger log = LoggerFactory.getLogger(ExceptionRecordCreator.class);

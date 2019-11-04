@@ -22,14 +22,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
 
 @SpringBootTest
-@ActiveProfiles("nosb")
+@ActiveProfiles("functional")
 class PaymentForExistingCaseTest {
 
     private static final String AWAITING_PAYMENT_DCN_PROCESSING = "awaitingPaymentDCNProcessing";
     private static final String YES = "Yes";
     private static final String NO = "No";
     private static final String JURISDICTION = "BULKSCAN";
-    private static final String PROBATE_PO_BOX = "12625";
+    private static final String BULKSCAN_PO_BOX = "12625";
 
     @Autowired
     private CoreCaseDataApi coreCaseDataApi;
@@ -63,21 +63,24 @@ class PaymentForExistingCaseTest {
                 Long.toString(caseDetails.getId()),
                 caseDetails.getJurisdiction(),
                 "bulkscan",
-                PROBATE_PO_BOX,
+                BULKSCAN_PO_BOX,
                 true,
                 asList(new PaymentData("154565768"))
             )
         );
 
         //then
+        CcdAuthenticator authenticator = ccdAuthenticatorFactory.createForJurisdiction(JURISDICTION);
         await("Case is updated")
             .atMost(120, TimeUnit.SECONDS)
             .pollDelay(1, TimeUnit.SECONDS)
-            .until(() -> casePaymentStatusUpdated(caseDetails));
+            .until(() -> casePaymentStatusUpdated(authenticator, caseDetails));
     }
 
-    private Boolean casePaymentStatusUpdated(CaseDetails caseDetails) {
-        CcdAuthenticator authenticator = ccdAuthenticatorFactory.createForJurisdiction(JURISDICTION);
+    private Boolean casePaymentStatusUpdated(
+        CcdAuthenticator authenticator,
+        CaseDetails caseDetails
+    ) {
         CaseDetails caseDetailsUpdated =
             coreCaseDataApi.getCase(
                 authenticator.getUserToken(),

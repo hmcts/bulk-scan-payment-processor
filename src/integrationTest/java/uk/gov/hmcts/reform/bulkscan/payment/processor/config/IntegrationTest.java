@@ -27,5 +27,5 @@ import java.lang.annotation.Target;
 @AutoConfigureWireMock
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ContextConfiguration(initializers = IntegrationContextInitializer.class)
-@ActiveProfiles({"integration","nosb"}) // no servicebus queue handler registration
+@ActiveProfiles({"integration","functional"}) // no servicebus queue handler registration
 public @interface IntegrationTest {}

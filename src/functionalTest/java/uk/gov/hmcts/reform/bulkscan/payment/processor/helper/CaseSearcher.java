@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 @Service
-@Profile("nosb")
+@Profile("functional")
 public class CaseSearcher {
 
     private final CcdAuthenticatorFactory factory;

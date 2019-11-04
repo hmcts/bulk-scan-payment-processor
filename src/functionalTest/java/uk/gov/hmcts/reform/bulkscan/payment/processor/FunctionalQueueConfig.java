@@ -17,7 +17,7 @@ public class FunctionalQueueConfig {
     private String paymentsQueueWriteConnectionString;
 
     @Bean("payments")
-    @Profile("nosb")
+    @Profile("functional")
     public QueueClient paymentsWriteClient() throws ServiceBusException, InterruptedException {
         return new QueueClient(
             new ConnectionStringBuilder(paymentsQueueWriteConnectionString),
@@ -26,7 +26,7 @@ public class FunctionalQueueConfig {
     }
 
     @Bean
-    @Profile("nosb") // apply only when Service Bus should not be used
+    @Profile("functional") // apply only when Service Bus should not be used
     public IMessageReceiver testMessageReceiver() {
         return mock(IMessageReceiver.class);
     }

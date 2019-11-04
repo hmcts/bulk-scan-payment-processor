@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 @Component
-@Profile({"integration", "!nosb"})
+@Profile({"integration", "!functional"})
 public class QueueHealthIndicator implements HealthIndicator {
     private static final Logger log = LoggerFactory.getLogger(QueueHealthIndicator.class);
 

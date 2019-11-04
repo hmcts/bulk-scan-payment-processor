@@ -21,7 +21,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON;
 
 @Service
 @Import(FunctionalQueueConfig.class)
-@Profile("nosb")
+@Profile("functional")
 public class PaymentsMessageSender {
 
     private static final Logger LOG = LoggerFactory.getLogger(PaymentsMessageSender.class);

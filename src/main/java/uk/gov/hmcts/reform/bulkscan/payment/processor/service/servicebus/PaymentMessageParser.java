@@ -15,7 +15,7 @@ import java.io.IOException;
 import java.util.List;
 
 @Service
-@Profile({"integration", "!nosb"})
+@Profile({"integration", "!functional"})
 public class PaymentMessageParser {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PaymentMessageParser.class);
