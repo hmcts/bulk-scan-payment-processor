@@ -22,6 +22,7 @@ java:
         - site-id-finrem
         - payments-queue-listen-connection-string
         - app-insights-instrumentation-key
+        - payments-queue-listen-connection-string
         - idam-client-secret
         - idam-users-bulkscan-username
         - idam-users-bulkscan-password
