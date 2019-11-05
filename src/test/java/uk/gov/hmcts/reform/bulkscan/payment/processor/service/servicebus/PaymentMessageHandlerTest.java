@@ -9,7 +9,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.client.HttpClientErrorException;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.ccd.CcdClient;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.client.payhub.PayHubClient;
@@ -248,7 +247,7 @@ public class PaymentMessageHandlerTest {
 
         when(payHubClient.updateCaseReference(
             eq("test-service"), eq("exp-21321"), any(CaseReferenceRequest.class))
-        ).thenThrow(new PayHubClientException(new HttpClientErrorException(HttpStatus.BAD_REQUEST, "BAD_REQUEST")));
+        ).thenThrow(PayHubClientException.class);
 
         // when
         assertThatThrownBy(

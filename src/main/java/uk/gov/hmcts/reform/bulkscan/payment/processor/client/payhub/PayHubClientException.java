@@ -1,7 +1,7 @@
 package uk.gov.hmcts.reform.bulkscan.payment.processor.client.payhub;
 
+import feign.FeignException;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.client.HttpStatusCodeException;
 
 public class PayHubClientException extends RuntimeException {
 
@@ -9,9 +9,9 @@ public class PayHubClientException extends RuntimeException {
 
     private final HttpStatus status;
 
-    public PayHubClientException(HttpStatusCodeException cause) {
+    public PayHubClientException(FeignException cause) {
         super(cause);
-        this.status = cause.getStatusCode();
+        this.status = HttpStatus.resolve(cause.status());
     }
 
     public HttpStatus getStatus() {
