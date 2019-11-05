@@ -1,14 +1,13 @@
 package uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.handler;
 
+import feign.FeignException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.ccd.CcdClient;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.client.payhub.PayHubClient;
-import uk.gov.hmcts.reform.bulkscan.payment.processor.client.payhub.PayHubClientException;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.client.payhub.request.CaseReferenceRequest;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.client.payhub.request.CreatePaymentRequest;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.client.payhub.response.CreatePaymentResponse;
@@ -95,16 +94,12 @@ public class PaymentMessageHandler {
                 paymentMessage.envelopeId,
                 paymentMessage.ccdReference
             );
-        } catch (PayHubClientException ex) {
-            if (ex.getStatus() == HttpStatus.CONFLICT) {
-                log.info(
-                    "Payment Processed with Http 409, message ID {}. Envelope ID: {}",
-                    messageId,
-                    paymentMessage.envelopeId
-                );
-            } else {
-                throw ex;
-            }
+        } catch (FeignException.Conflict exc) {
+            log.info(
+                "Payment Processed with Http 409, message ID {}. Envelope ID: {}",
+                messageId,
+                paymentMessage.envelopeId
+            );
         }
     }
 }

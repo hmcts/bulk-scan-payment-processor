@@ -7,12 +7,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.ccd.CcdClient;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.client.payhub.PayHubClient;
-import uk.gov.hmcts.reform.bulkscan.payment.processor.client.payhub.PayHubClientException;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.client.payhub.request.CaseReferenceRequest;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.client.payhub.request.CreatePaymentRequest;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.client.payhub.response.CreatePaymentResponse;
@@ -103,9 +101,7 @@ public class PaymentMessageHandlerTest {
 
         when(requestMapper.mapPaymentMessage(message)).thenReturn(request);
 
-        PayHubClientException payHubException = mock(PayHubClientException.class);
-        when(payHubException.getStatus()).thenReturn(HttpStatus.CONFLICT);
-        willThrow(payHubException).given(payHubClient).createPayment(any(), any());
+        willThrow(FeignException.Conflict.class).given(payHubClient).createPayment(any(), any());
 
         // when
         messageHandler.handlePaymentMessage(message, "messageId1");
@@ -161,14 +157,13 @@ public class PaymentMessageHandlerTest {
 
         when(requestMapper.mapPaymentMessage(message)).thenReturn(request);
 
-        PayHubClientException payHubException = mock(PayHubClientException.class);
-        when(payHubException.getStatus()).thenReturn(HttpStatus.BAD_REQUEST);
-        doThrow(payHubException).when(payHubClient).createPayment(any(), any());
+        FeignException.BadRequest exception = mock(FeignException.BadRequest.class);
+        doThrow(exception).when(payHubClient).createPayment(any(), any());
 
         // when
         assertThatThrownBy(
             () -> messageHandler.handlePaymentMessage(message, "messageId1")
-        ).isSameAs(payHubException);
+        ).isSameAs(exception);
 
         // then
         verify(payHubClient).createPayment(s2sToken, request);
@@ -247,11 +242,11 @@ public class PaymentMessageHandlerTest {
 
         when(payHubClient.updateCaseReference(
             eq("test-service"), eq("exp-21321"), any(CaseReferenceRequest.class))
-        ).thenThrow(PayHubClientException.class);
+        ).thenThrow(FeignException.class);
 
         // when
         assertThatThrownBy(
             () -> messageHandler.updatePaymentCaseReference(message))
-            .isInstanceOf(PayHubClientException.class);
+            .isInstanceOf(FeignException.class);
     }
 }
