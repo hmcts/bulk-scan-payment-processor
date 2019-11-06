@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 @Component
-@Profile({"integration", "!functional"})
+@Profile("!functional")
 public class PayHubHealthIndicator implements HealthIndicator {
 
     private static final Logger log = LoggerFactory.getLogger(PayHubHealthIndicator.class);
