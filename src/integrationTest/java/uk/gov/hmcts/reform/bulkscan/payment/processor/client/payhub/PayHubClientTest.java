@@ -2,6 +2,7 @@ package uk.gov.hmcts.reform.bulkscan.payment.processor.client.payhub;
 
 import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder;
 import com.google.common.collect.ImmutableList;
+import feign.FeignException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -19,15 +20,11 @@ import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
 import static com.github.tomakehurst.wiremock.client.WireMock.equalToJson;
 import static com.github.tomakehurst.wiremock.client.WireMock.okJson;
 import static com.github.tomakehurst.wiremock.client.WireMock.post;
-import static com.github.tomakehurst.wiremock.client.WireMock.serverError;
 import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
 import static com.google.common.net.HttpHeaders.CONTENT_TYPE;
 import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;
-import static org.springframework.http.HttpStatus.BAD_REQUEST;
-import static org.springframework.http.HttpStatus.CONFLICT;
-import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static uk.gov.hmcts.reform.bulkscan.payment.processor.util.TestUtil.fileContentAsString;
 
 @IntegrationTest
@@ -86,7 +83,7 @@ public class PayHubClientTest {
 
 
     @Test
-    public void should_return_PayHubClientException_for_badRequest() throws IOException {
+    public void should_throw_exception_for_badRequest() throws IOException {
         // given
         String message = "error occurred";
         String s2sToken = randomUUID().toString();
@@ -101,60 +98,7 @@ public class PayHubClientTest {
         Throwable throwable = catchThrowable(() -> client.createPayment(s2sToken, getPaymentRequest()));
 
         // then
-        assertThat(throwable).isInstanceOf(PayHubClientException.class);
-
-        // and
-        PayHubClientException exception = (PayHubClientException) throwable;
-
-        assertThat(exception.getStatus()).isEqualTo(BAD_REQUEST);
-    }
-
-
-    @Test
-    public void should_return_PayHubClientException_for_conflict() throws IOException {
-        // given
-        String s2sToken = randomUUID().toString();
-
-        stubWithRequestAndResponse(
-            s2sToken,
-            fileContentAsString(PAYMENT_REQUEST_JSON),
-            aResponse().withStatus(409)
-                .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
-        );
-
-        // when
-        Throwable throwable = catchThrowable(() -> client.createPayment(s2sToken, getPaymentRequest()));
-
-        // then
-        assertThat(throwable).isInstanceOf(PayHubClientException.class);
-
-        // and
-        PayHubClientException exception = (PayHubClientException) throwable;
-
-        assertThat(exception.getStatus()).isEqualTo(CONFLICT);
-    }
-
-    @Test
-    public void should_return_PayHubClientException_for_serverError()
-        throws IOException {
-        // given
-        String s2sToken = randomUUID().toString();
-        stubWithRequestAndResponse(
-            s2sToken,
-            fileContentAsString(PAYMENT_REQUEST_JSON),
-            getServerErrorRequest()
-        );
-
-        // when
-        Throwable throwable = catchThrowable(() -> client.createPayment(s2sToken, getPaymentRequest()));
-
-        // then
-        assertThat(throwable).isInstanceOf(PayHubClientException.class);
-
-        // and
-        PayHubClientException exception = (PayHubClientException) throwable;
-
-        assertThat(exception.getStatus()).isEqualTo(INTERNAL_SERVER_ERROR);
+        assertThat(throwable).isInstanceOf(FeignException.BadRequest.class);
     }
 
 
@@ -162,11 +106,6 @@ public class PayHubClientTest {
         return badRequest()
             .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
             .withBody(get4xxResponseBody(bodyMessage));
-    }
-
-    private ResponseDefinitionBuilder getServerErrorRequest() {
-        return serverError()
-            .withHeader(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE);
     }
 
     private static byte[] get4xxResponseBody(String message) {
