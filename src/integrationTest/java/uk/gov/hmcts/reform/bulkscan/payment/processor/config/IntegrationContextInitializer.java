@@ -15,7 +15,7 @@ import static org.mockito.Mockito.mock;
 import static org.springframework.util.SocketUtils.findAvailableTcpPort;
 
 @Configuration
-@Profile({"integration", "functional"}) // no servicebus queue handler registration
+@Profile("integration") // no servicebus queue handler registration
 public class IntegrationContextInitializer implements ApplicationContextInitializer<ConfigurableApplicationContext> {
 
     public static final String PROFILE_WIREMOCK = "wiremock";
