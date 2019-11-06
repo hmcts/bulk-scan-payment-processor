@@ -1,12 +1,12 @@
 package uk.gov.hmcts.reform.bulkscan.payment.processor.client.payhub;
 
 import com.github.tomakehurst.wiremock.client.ResponseDefinitionBuilder;
+import feign.FeignException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.EnumSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.client.payhub.request.CaseReferenceRequest;
@@ -61,15 +61,15 @@ public class PayHubClientPutPaymentTest {
     }
 
     @ParameterizedTest
-    @EnumSource(value = HttpStatus.class, names = {"BAD_REQUEST", "NOT_FOUND", "INTERNAL_SERVER_ERROR"})
-    public void should_return_PayHubClientException_for_errors(HttpStatus httpStatus) {
+    @ValueSource(ints = {400, 404, 500})
+    public void should_return_FeignException_for_errors(int httpStatus) {
 
         String s2sToken = randomUUID().toString();
         stubWithRequestAndResponse(
             s2sToken,
             "exception_2132131",
             CASE_REF_REQUEST_JSON,
-            createErrorResponse(b -> b.withStatus(httpStatus.value()))
+            createErrorResponse(b -> b.withStatus(httpStatus))
         );
 
         // when
@@ -82,12 +82,12 @@ public class PayHubClientPutPaymentTest {
         );
 
         // then
-        assertThat(throwable).isInstanceOf(PayHubClientException.class);
+        assertThat(throwable).isInstanceOf(FeignException.class);
 
         // and
-        PayHubClientException exception = (PayHubClientException) throwable;
+        FeignException exception = (FeignException) throwable;
 
-        assertThat(exception.getStatus()).isEqualTo(httpStatus);
+        assertThat(exception.status()).isEqualTo(httpStatus);
 
     }
 
