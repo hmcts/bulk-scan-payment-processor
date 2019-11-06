@@ -10,7 +10,7 @@ import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.Payment
 
 @Service
 @ConditionalOnProperty(value = "scheduling.task.consume-payments-queue.enabled", matchIfMissing = true)
-@Profile({"integration", "!nosb"})
+@Profile("!functional")
 public class PaymentMessageProcessTask {
 
     private static final Logger log = LoggerFactory.getLogger(PaymentMessageProcessTask.class);

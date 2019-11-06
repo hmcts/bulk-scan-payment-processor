@@ -18,7 +18,7 @@ import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.model.C
 import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.model.UpdatePaymentMessage;
 
 @Service
-@Profile({"integration", "!nosb"})
+@Profile("!functional")
 public class PaymentMessageHandler {
 
     private static final Logger log = LoggerFactory.getLogger(PaymentMessageHandler.class);

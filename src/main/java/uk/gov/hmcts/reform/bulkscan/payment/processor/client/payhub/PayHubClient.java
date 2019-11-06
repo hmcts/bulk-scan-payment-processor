@@ -18,7 +18,7 @@ import uk.gov.hmcts.reform.bulkscan.payment.processor.client.payhub.response.Cre
     url = "${pay-hub.api.url}",
     configuration = PayHubClientConfiguration.class
 )
-@Profile({"integration", "!nosb"})
+@Profile({"integration", "!functional"})
 public interface PayHubClient {
 
     @RequestMapping(

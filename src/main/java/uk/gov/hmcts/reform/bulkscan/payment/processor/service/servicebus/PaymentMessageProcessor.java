@@ -22,7 +22,7 @@ import static uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.
 
 
 @Service
-@Profile({"integration", "!nosb"})
+@Profile("!functional")
 public class PaymentMessageProcessor {
 
     private static final Logger log = LoggerFactory.getLogger(PaymentMessageProcessor.class);
