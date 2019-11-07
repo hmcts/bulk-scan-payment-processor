@@ -27,5 +27,5 @@ import java.lang.annotation.Target;
 @AutoConfigureWireMock
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @ContextConfiguration(initializers = IntegrationContextInitializer.class)
-@ActiveProfiles({"integration", "functional"})
+@ActiveProfiles("integration")
 public @interface IntegrationTest {}
