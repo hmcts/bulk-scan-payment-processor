@@ -2,6 +2,7 @@ package uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus;
 
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.client.payhub.request.CreatePaymentRequest;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.config.SiteConfiguration;
@@ -14,6 +15,7 @@ import java.util.stream.Collectors;
 
 @Component
 @EnableConfigurationProperties(SiteConfiguration.class)
+@Profile("!functional")
 public class PaymentRequestMapper {
 
     private final SiteConfiguration siteConfiguration;
