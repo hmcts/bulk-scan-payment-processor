@@ -15,8 +15,7 @@ import uk.gov.hmcts.reform.bulkscan.payment.processor.client.payhub.response.Cre
 
 @FeignClient(
     name = "pay-hub-api",
-    url = "${pay-hub.api.url}",
-    configuration = PayHubClientConfiguration.class
+    url = "${pay-hub.api.url}"
 )
 @Profile({"integration", "!functional"})
 public interface PayHubClient {
