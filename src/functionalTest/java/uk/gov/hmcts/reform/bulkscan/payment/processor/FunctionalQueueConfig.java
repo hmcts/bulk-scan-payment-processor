@@ -11,13 +11,13 @@ import org.springframework.context.annotation.Profile;
 
 import static org.mockito.Mockito.mock;
 
+@Profile("functional")
 public class FunctionalQueueConfig {
 
     @Value("${azure.servicebus.payments.write-connection-string}")
     private String paymentsQueueWriteConnectionString;
 
     @Bean("payments")
-    @Profile("functional")
     public QueueClient paymentsWriteClient() throws ServiceBusException, InterruptedException {
         return new QueueClient(
             new ConnectionStringBuilder(paymentsQueueWriteConnectionString),
@@ -26,7 +26,6 @@ public class FunctionalQueueConfig {
     }
 
     @Bean
-    @Profile("functional") // apply only when Service Bus should not be used
     public IMessageReceiver testMessageReceiver() {
         return mock(IMessageReceiver.class);
     }
