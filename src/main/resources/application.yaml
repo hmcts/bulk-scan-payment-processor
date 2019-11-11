@@ -55,10 +55,6 @@ idam:
     id: 'bsp'
     secret: ${IDAM_CLIENT_SECRET}
     redirect_uri: ${IDAM_CLIENT_REDIRECT_URI}
-  users:
-    bulkscan:
-      username: ${IDAM_USERS_BULKSCAN_USERNAME:notset}
-      password: ${IDAM_USERS_BULKSCAN_PASSWORD:notset}
 
 core_case_data:
   api:
