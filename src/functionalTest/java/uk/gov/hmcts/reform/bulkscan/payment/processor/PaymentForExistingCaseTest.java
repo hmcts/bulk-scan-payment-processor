@@ -65,7 +65,8 @@ class PaymentForExistingCaseTest {
                 "bulkscan",
                 BULKSCAN_PO_BOX,
                 true,
-                asList(new PaymentData("154565768"))
+                // document_control_number length must be 17 Characters
+                asList(new PaymentData("15456576834512345"))
             )
         );
 
