@@ -29,13 +29,13 @@ public class CcdClient {
         this.authenticatorFactory = authenticatorFactory;
     }
 
-    public void completeAwaitingDcnProcessing(
+    public void completeDcnProcessing(
         String exceptionRecordCcdId,
         String service,
         String jurisdiction
     ) {
         log.info(
-            "Completing awaiting payment DCN processing. Exception record ID: {}, service: {}",
+            "Completing payment DCN processing. Exception record ID: {}, service: {}",
             exceptionRecordCcdId,
             service
         );
@@ -70,7 +70,7 @@ public class CcdClient {
                 service
             );
         } catch (FeignException ex) {
-            log.error("Feign exception. Body: {}", ex.contentUTF8(), ex);
+            log.error("Feign exception thrown. Body: {}", ex.contentUTF8(), ex);
             throw ex;
         }
     }

@@ -43,7 +43,7 @@ public class PaymentMessageHandler {
         createPayment(paymentMessage, messageId);
 
         if (paymentMessage.isExceptionRecord) {
-            ccdClient.completeAwaitingDcnProcessing(
+            ccdClient.completeDcnProcessing(
                 paymentMessage.ccdReference,
                 paymentMessage.service,
                 paymentMessage.jurisdiction

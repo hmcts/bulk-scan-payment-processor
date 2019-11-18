@@ -80,7 +80,7 @@ public class PaymentMessageHandlerTest {
 
         // then
         verify(payHubClient).createPayment(s2sToken, request);
-        verify(ccdClient).completeAwaitingDcnProcessing(exceptionRecordCcdId, message.service, message.jurisdiction);
+        verify(ccdClient).completeDcnProcessing(exceptionRecordCcdId, message.service, message.jurisdiction);
     }
 
     @Test
@@ -136,7 +136,7 @@ public class PaymentMessageHandlerTest {
 
         // then
         verify(payHubClient).createPayment(s2sToken, request);
-        verify(ccdClient).completeAwaitingDcnProcessing(exceptionRecordCcdId, message.service, message.jurisdiction);
+        verify(ccdClient).completeDcnProcessing(exceptionRecordCcdId, message.service, message.jurisdiction);
     }
 
     @Test
@@ -164,7 +164,7 @@ public class PaymentMessageHandlerTest {
         messageHandler.handlePaymentMessage(message, "messageId1");
 
         // then
-        verify(ccdClient, never()).completeAwaitingDcnProcessing(any(), any(), any());
+        verify(ccdClient, never()).completeDcnProcessing(any(), any(), any());
     }
 
     @Test
@@ -196,7 +196,7 @@ public class PaymentMessageHandlerTest {
 
         // then
         verify(payHubClient).createPayment(s2sToken, request);
-        verify(ccdClient, never()).completeAwaitingDcnProcessing(any(), any(), any());
+        verify(ccdClient, never()).completeDcnProcessing(any(), any(), any());
     }
 
     @Test
@@ -220,7 +220,7 @@ public class PaymentMessageHandlerTest {
             .thenReturn(ResponseEntity.of(Optional.of(new CreatePaymentResponse(singletonList("1234")))));
 
         FeignException ccdCallException = new FeignException.InternalServerError("test exception", new byte[]{});
-        doThrow(ccdCallException).when(ccdClient).completeAwaitingDcnProcessing(any(), any(), any());
+        doThrow(ccdCallException).when(ccdClient).completeDcnProcessing(any(), any(), any());
 
         // when
         assertThatThrownBy(
