@@ -65,7 +65,7 @@ public class CompleteAwaitingDcnProcessingTest {
             .willReturn(startEventResponse);
 
         // when
-        ccdClient.completeDcnProcessing(exceptionRecordId, service, jurisdiction);
+        ccdClient.completeAwaitingDcnProcessing(exceptionRecordId, service, jurisdiction);
 
         // then
         verify(ccdAuthenticatorFactory).createForJurisdiction(jurisdiction);
@@ -112,7 +112,7 @@ public class CompleteAwaitingDcnProcessingTest {
 
         // then
         assertThatThrownBy(() ->
-            ccdClient.completeDcnProcessing("1231244243242343", "bulkscan", "BULKSCAN")
+            ccdClient.completeAwaitingDcnProcessing("1231244243242343", "bulkscan", "BULKSCAN")
         ).isSameAs(startEventException);
     }
 
@@ -133,7 +133,7 @@ public class CompleteAwaitingDcnProcessingTest {
 
         // then
         assertThatThrownBy(() ->
-            ccdClient.completeDcnProcessing("1231244243242343", "bulkscan", "BULKSCAN")
+            ccdClient.completeAwaitingDcnProcessing("1231244243242343", "bulkscan", "BULKSCAN")
         ).isSameAs(submitEventException);
     }
 

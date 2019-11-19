@@ -29,7 +29,7 @@ public class CcdClient {
         this.authenticatorFactory = authenticatorFactory;
     }
 
-    public void completeDcnProcessing(
+    public void completeAwaitingDcnProcessing(
         String exceptionRecordCcdId,
         String service,
         String jurisdiction

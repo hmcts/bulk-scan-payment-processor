@@ -14,7 +14,7 @@ azure:
 
 idam:
   s2s-auth:
-    url: ${S2S_URL:http://localhost:4552}
+    url: ${S2S_URL}
     secret: ${S2S_SECRET}
     name: ${S2S_NAME:bulk_scan_payments_processor}
   api:
