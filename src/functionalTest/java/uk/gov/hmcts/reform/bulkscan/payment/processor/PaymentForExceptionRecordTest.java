@@ -23,7 +23,7 @@ import static org.awaitility.Awaitility.await;
 
 @SpringBootTest
 @ActiveProfiles("functional")
-class PaymentForExistingCaseTest {
+class PaymentForExceptionRecordTest {
 
     private static final String AWAITING_DNC_PROCESSING_FLAG_NAME = "awaitingPaymentDCNProcessing";
     private static final String YES = "Yes";
