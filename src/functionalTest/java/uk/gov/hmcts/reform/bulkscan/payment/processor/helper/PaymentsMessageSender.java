@@ -14,7 +14,6 @@ import org.springframework.stereotype.Service;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.FunctionalQueueConfig;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.model.CreatePaymentsCommand;
 
-import java.time.Instant;
 import java.util.UUID;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON;
@@ -24,9 +23,9 @@ import static org.springframework.http.MediaType.APPLICATION_JSON;
 @Profile("functional")
 public class PaymentsMessageSender {
 
-    private static final Logger LOG = LoggerFactory.getLogger(PaymentsMessageSender.class);
+    private static final Logger log = LoggerFactory.getLogger(PaymentsMessageSender.class);
 
-    private static final String CREATE = "CREATE";
+    private static final String CREATE_PAYMENT_LABEL = "CREATE";
 
     @Autowired
     @Qualifier("payments")
@@ -43,13 +42,12 @@ public class PaymentsMessageSender {
                 messageContent,
                 APPLICATION_JSON.toString()
             );
-            message.setLabel(CREATE);
+            message.setLabel(CREATE_PAYMENT_LABEL);
 
-            long sentMessageSequenceNumber = queueClient.scheduleMessage(message, Instant.now());
+            queueClient.send(message);
 
-            LOG.info(
-                "Sent message to payments queue. Result: {}, ID: {}, Label: {}, Content: {}",
-                sentMessageSequenceNumber,
+            log.info(
+                "Sent message to payments queue. ID: {}, Label: {}, Content: {}",
                 message.getMessageId(),
                 message.getLabel(),
                 messageContent

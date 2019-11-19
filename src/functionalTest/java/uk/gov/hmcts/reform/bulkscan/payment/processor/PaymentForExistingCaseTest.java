@@ -25,7 +25,7 @@ import static org.awaitility.Awaitility.await;
 @ActiveProfiles("functional")
 class PaymentForExistingCaseTest {
 
-    private static final String EXCEPTION_RECORD_AWAITING_PAYMENT_DCN_PROCESSING = "awaitingPaymentDCNProcessing";
+    private static final String AWAITING_DNC_PROCESSING_FLAG_NAME = "awaitingPaymentDCNProcessing";
     private static final String YES = "Yes";
     private static final String NO = "No";
     private static final String JURISDICTION = "BULKSCAN";
@@ -50,10 +50,10 @@ class PaymentForExistingCaseTest {
     public void should_set_awaiting_payment_false_after_payment_sent() throws Exception {
         // given
         CaseDetails caseDetails = exceptionRecordCreator.createExceptionRecord(
-            ImmutableMap.of(EXCEPTION_RECORD_AWAITING_PAYMENT_DCN_PROCESSING, YES)
+            ImmutableMap.of(AWAITING_DNC_PROCESSING_FLAG_NAME, YES)
         );
 
-        assertThat(caseDetails.getData().get(EXCEPTION_RECORD_AWAITING_PAYMENT_DCN_PROCESSING)).isEqualTo(YES);
+        assertThat(caseDetails.getData().get(AWAITING_DNC_PROCESSING_FLAG_NAME)).isEqualTo(YES);
 
         // when
         // payment sent to payments queue
@@ -88,6 +88,6 @@ class PaymentForExistingCaseTest {
                 authenticator.getServiceToken(),
                 Long.toString(caseDetails.getId())
             );
-        return caseDetailsUpdated.getData().get(EXCEPTION_RECORD_AWAITING_PAYMENT_DCN_PROCESSING).equals(NO);
+        return caseDetailsUpdated.getData().get(AWAITING_DNC_PROCESSING_FLAG_NAME).equals(NO);
     }
 }

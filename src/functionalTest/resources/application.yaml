@@ -1,18 +1,6 @@
-management:
-  endpoint:
-    health:
-      show-details: "always"
-  endpoints:
-    web:
-      base-path: "/"
-      exposure:
-        include: health, info, prometheus
-  security:
-    enabled: false
-
 spring:
   application:
-    name: Bulk Scan Payment Processor
+    name: Bulk Scan Payment Processor Functional Tests
   main:
     # without this, Spring can't properly resolve feign clients when IDAM and CCD clients are both included
     # TODO: remove when possible

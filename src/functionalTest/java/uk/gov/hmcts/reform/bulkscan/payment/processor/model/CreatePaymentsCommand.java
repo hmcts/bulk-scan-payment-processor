@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.List;
 
-public class CreatePaymentsCommand implements PaymentCommand {
+public class CreatePaymentsCommand {
 
     @JsonProperty("envelope_id")
     public final String envelopeId;
@@ -45,7 +45,6 @@ public class CreatePaymentsCommand implements PaymentCommand {
         this.payments = payments;
     }
 
-    @Override
     public String getLabel() {
         return "CREATE";
     }
