@@ -35,7 +35,7 @@ public class CcdClient {
         String jurisdiction
     ) {
         log.info(
-            "Completing payment DCN processing. Exception record ID: {}, service: {}",
+            "Completing awaiting payment DCN processing. Exception record ID: {}, service: {}",
             exceptionRecordCcdId,
             service
         );
