@@ -9,10 +9,8 @@ spring:
 azure:
   servicebus:
     payments:
-      connection-string: ${PAYMENTS_QUEUE_READ_CONNECTION_STRING}
       write-connection-string: ${PAYMENTS_QUEUE_WRITE_CONNECTION_STRING}
       queue-name: payments
-      max-delivery-count: 5
 
 idam:
   s2s-auth:
