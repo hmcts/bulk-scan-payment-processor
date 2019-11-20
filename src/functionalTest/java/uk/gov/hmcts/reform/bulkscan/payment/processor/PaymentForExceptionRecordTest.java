@@ -1,7 +1,6 @@
 package uk.gov.hmcts.reform.bulkscan.payment.processor;
 
 import com.google.common.collect.ImmutableMap;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -48,7 +47,6 @@ class PaymentForExceptionRecordTest {
     private CcdAuthenticatorFactory ccdAuthenticatorFactory;
 
     @Test
-    @Disabled
     public void should_set_awaiting_payment_false_after_payment_sent() throws Exception {
         // given
         CaseDetails caseDetails = exceptionRecordCreator.createExceptionRecord(
