@@ -102,16 +102,6 @@ public class PaymentMessageHandler {
                 messageId,
                 paymentMessage.envelopeId
             );
-        } catch (FeignException exc) {
-            String desc = exc.content() != null ? exc.contentUTF8() : exc.getMessage();
-            log.error(
-                "Payment Processed with error {}, status {}, message ID {}. Envelope ID: {}",
-                desc,
-                exc.status(),
-                messageId,
-                paymentMessage.envelopeId
-            );
-            throw exc;
         }
     }
 }

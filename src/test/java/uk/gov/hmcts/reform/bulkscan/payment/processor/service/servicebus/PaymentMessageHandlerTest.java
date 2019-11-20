@@ -102,7 +102,6 @@ public class PaymentMessageHandlerTest {
         when(requestMapper.mapPaymentMessage(message)).thenReturn(request);
 
         FeignException exception = mock(FeignException.class);
-        when(exception.content()).thenReturn("error message".getBytes());
         doThrow(exception).when(payHubClient).createPayment(any(), any());
 
         // when
@@ -186,7 +185,6 @@ public class PaymentMessageHandlerTest {
         when(requestMapper.mapPaymentMessage(message)).thenReturn(request);
 
         FeignException.BadRequest exception = mock(FeignException.BadRequest.class);
-        when(exception.content()).thenReturn("error message".getBytes());
         doThrow(exception).when(payHubClient).createPayment(any(), any());
 
         // when
