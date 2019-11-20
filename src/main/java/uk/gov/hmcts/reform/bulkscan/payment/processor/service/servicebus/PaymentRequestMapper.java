@@ -23,12 +23,24 @@ public class PaymentRequestMapper {
     }
 
     public CreatePaymentRequest mapPaymentMessage(CreatePaymentMessage message) {
-        return new CreatePaymentRequest(
-            message.ccdReference,
-            getPaymentDocumentControlNumbers(message),
-            message.isExceptionRecord,
-            getSiteIdForPoBox(message.poBox)
-        );
+        String siteId = siteConfiguration.getSiteIdByPoBox(message.poBox);
+        if (siteId == null) {
+            throw new SiteNotFoundException(
+                String.format(
+                    "Site not found for po box: %s. (Jurisdiction: %s. Service: %s)",
+                    message.poBox,
+                    message.jurisdiction,
+                    message.service
+                )
+            );
+        } else {
+            return new CreatePaymentRequest(
+                message.ccdReference,
+                getPaymentDocumentControlNumbers(message),
+                message.isExceptionRecord,
+                siteId
+            );
+        }
     }
 
     private List<String> getPaymentDocumentControlNumbers(CreatePaymentMessage message) {
@@ -44,12 +56,4 @@ public class PaymentRequestMapper {
             .collect(Collectors.toList());
     }
 
-    private String getSiteIdForPoBox(String poBox) {
-        String siteId = siteConfiguration.getSiteIdByPoBox(poBox);
-        if (siteId == null) {
-            throw new SiteNotFoundException("Site not Found for po box: " + poBox);
-        }
-
-        return siteId;
-    }
 }

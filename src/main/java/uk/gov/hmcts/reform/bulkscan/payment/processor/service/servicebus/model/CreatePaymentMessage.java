@@ -23,7 +23,8 @@ public class CreatePaymentMessage {
         @JsonProperty(value = "po_box", required = true) String poBox,
         @JsonProperty(value = "jurisdiction", required = true) String jurisdiction,
         @JsonProperty(value = "service", required = true) String service,
-        @JsonProperty(value = "payments", required = true) List<PaymentInfo> payments) {
+        @JsonProperty(value = "payments", required = true) List<PaymentInfo> payments
+    ) {
         this.envelopeId = envelopeId;
         this.ccdReference = ccdReference;
         this.isExceptionRecord = isExceptionRecord;
