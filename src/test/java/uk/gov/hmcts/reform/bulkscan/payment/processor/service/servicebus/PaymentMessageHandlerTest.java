@@ -84,6 +84,33 @@ public class PaymentMessageHandlerTest {
     }
 
     @Test
+    public void should_rethrow_feign_exception_when_payhub_call_fails() {
+        // given
+        String exceptionRecordCcdId = "1234123412341234";
+        CreatePaymentMessage message = SamplePaymentMessageData.paymentMessage(exceptionRecordCcdId, true);
+        String s2sToken = "s2sToken1";
+
+        when(s2sTokenGenerator.generate()).thenReturn(s2sToken);
+
+        CreatePaymentRequest request = new CreatePaymentRequest(
+            exceptionRecordCcdId,
+            singletonList("1234"),
+            true,
+            "test-siteId"
+        );
+
+        when(requestMapper.mapPaymentMessage(message)).thenReturn(request);
+
+        FeignException exception = mock(FeignException.class);
+        doThrow(exception).when(payHubClient).createPayment(any(), any());
+
+        // when
+        assertThatThrownBy(
+            () -> messageHandler.handlePaymentMessage(message, "messageId1")
+        ).isSameAs(exception);
+    }
+
+    @Test
     public void should_update_payment_processing_status_in_ccd_when_payhub_call_fails_with_409_response() {
         // given
         String exceptionRecordCcdId = "1234123412341234";

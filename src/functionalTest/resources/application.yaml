@@ -1,0 +1,39 @@
+spring:
+  application:
+    name: Bulk Scan Payment Processor Functional Tests
+  main:
+    # without this, Spring can't properly resolve feign clients when IDAM and CCD clients are both included
+    # TODO: remove when possible
+    allow-bean-definition-overriding: true
+
+azure:
+  servicebus:
+    payments:
+      write-connection-string: ${PAYMENTS_QUEUE_WRITE_CONNECTION_STRING}
+      queue-name: payments
+
+idam:
+  s2s-auth:
+    url: ${S2S_URL}
+    secret: ${S2S_SECRET}
+    name: ${S2S_NAME:bulk_scan_payments_processor}
+  api:
+    url: ${IDAM_API_URL}
+  client:
+    id: 'bsp'
+    secret: ${IDAM_CLIENT_SECRET}
+    redirect_uri: ${IDAM_CLIENT_REDIRECT_URI}
+  users:
+    bulkscan:
+      username: ${IDAM_USERS_BULKSCAN_USERNAME}
+      password: ${IDAM_USERS_BULKSCAN_PASSWORD}
+
+core_case_data:
+  api:
+    url: ${CORE_CASE_DATA_API_URL}
+
+scheduling:
+  enabled: false
+  task:
+    consume-payments-queue:
+      enabled: false

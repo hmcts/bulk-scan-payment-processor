@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.microsoft.azure.servicebus.MessageBody;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.exceptions.InvalidMessageException;
@@ -14,6 +15,7 @@ import java.io.IOException;
 import java.util.List;
 
 @Service
+@Profile("!functional")
 public class PaymentMessageParser {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PaymentMessageParser.class);

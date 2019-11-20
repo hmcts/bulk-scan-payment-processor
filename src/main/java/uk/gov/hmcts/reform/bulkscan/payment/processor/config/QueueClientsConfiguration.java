@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 
 @Configuration
-@Profile("!nosb") // do not register handler for the nosb (test) profile
+@Profile("!functional & !integration")
 public class QueueClientsConfiguration {
 
     @Bean
