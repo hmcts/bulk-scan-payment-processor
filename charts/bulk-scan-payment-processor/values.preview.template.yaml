@@ -32,6 +32,4 @@ servicebus:
   setup:
     queues:
       - name: payments
-bs-payment-processor:
-  servicebus:
-    enabled: true
+  enabled: true

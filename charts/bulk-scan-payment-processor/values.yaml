@@ -33,6 +33,5 @@ java:
         - idam-users-finrem-password
         - idam-users-probate-username
         - idam-users-probate-password
-bs-payment-processor:
-  servicebus:
-    enabled: false
+servicebus:
+  enabled: false
