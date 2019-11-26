@@ -3,18 +3,19 @@ provider "azurerm" {
 }
 
 locals {
-  s2s_rg   = "rpe-service-auth-provider-${var.env}"
-  s2s_url  = "http://${local.s2s_rg}.service.core-compute-${var.env}.internal"
+  s2s_rg  = "rpe-service-auth-provider-${var.env}"
+  s2s_url = "http://${local.s2s_rg}.service.core-compute-${var.env}.internal"
 
   users = {
     // configures a user for a service
     // add secrets to all bulk-scan vaults in the form idam-users-<service>-username idam-users-<service>-password
     SSCS = "idam-users-sscs"
+
     BULKSCAN = "idam-users-bulkscan"
-    DIVORCE = "idam-users-div"
-    PROBATE = "idam-users-probate"
-    FINREM = "idam-users-finrem"
-    CMC = "idam-users-cmc"
+    DIVORCE  = "idam-users-div"
+    PROBATE  = "idam-users-probate"
+    FINREM   = "idam-users-finrem"
+    CMC      = "idam-users-cmc"
   }
 
   # maps the names of environment variables representing PayHub site IDs to key vault secret names
@@ -24,12 +25,12 @@ locals {
     SITE_ID_FINREM  = "site-id-finrem"
   }
 
-  all_services     = "${keys(local.users)}"
+  all_services          = "${keys(local.users)}"
   supported_user_keys   = "${matchkeys(local.all_services, local.all_services, var.supported_services)}"
   supported_user_values = "${matchkeys(values(local.users), local.all_services, var.supported_services)}"
 
   # a subset of local.users, limited to the supported services
-  supported_users       = "${zipmap(local.supported_user_keys, local.supported_user_values)}"
+  supported_users = "${zipmap(local.supported_user_keys, local.supported_user_values)}"
 
   users_secret_names = "${values(local.supported_users)}"
 
@@ -51,15 +52,15 @@ locals {
                                 )}"
 
   core_app_settings = {
-    PAY_HUB_URL = "http://ccpay-bulkscanning-api-${var.env}.service.core-compute-${var.env}.internal"
-    S2S_URL = "${local.s2s_url}"
-    S2S_SECRET = "${data.azurerm_key_vault_secret.s2s_secret.value}"
-    IDAM_API_URL = "https://idam-api.${var.env}.platform.hmcts.net"
-    IDAM_CLIENT_REDIRECT_URI = "${var.idam_client_redirect_uri}"
-    CORE_CASE_DATA_API_URL = "http://ccd-data-store-api-${var.env}.service.core-compute-${var.env}.internal"
-    IDAM_CLIENT_SECRET = "${data.azurerm_key_vault_secret.idam_client_secret.value}"
+    PAY_HUB_URL                           = "http://ccpay-bulkscanning-api-${var.env}.service.core-compute-${var.env}.internal"
+    S2S_URL                               = "${local.s2s_url}"
+    S2S_SECRET                            = "${data.azurerm_key_vault_secret.s2s_secret.value}"
+    IDAM_API_URL                          = "https://idam-api.${var.env}.platform.hmcts.net"
+    IDAM_CLIENT_REDIRECT_URI              = "${var.idam_client_redirect_uri}"
+    CORE_CASE_DATA_API_URL                = "http://ccd-data-store-api-${var.env}.service.core-compute-${var.env}.internal"
+    IDAM_CLIENT_SECRET                    = "${data.azurerm_key_vault_secret.idam_client_secret.value}"
     PAYMENTS_QUEUE_READ_CONNECTION_STRING = "${data.azurerm_key_vault_secret.payments_queue_listen_connection_string.value}"
-    PAYMENTS_QUEUE_MAX_DELIVERY_COUNT = "5"
+    PAYMENTS_QUEUE_MAX_DELIVERY_COUNT     = "5"
   }
 }
 
@@ -79,8 +80,8 @@ module "bulk-scan-orchestrator" {
   instance_size                   = "I1"
   java_version                    = "11"
 
-  app_settings                    = "${merge(local.core_app_settings, local.users_usernames_settings, local.users_passwords_settings, local.payhub_site_settings)}"
-  enable_ase                      = "${var.enable_ase}"
+  app_settings = "${merge(local.core_app_settings, local.users_usernames_settings, local.users_passwords_settings, local.payhub_site_settings)}"
+  enable_ase   = "${var.enable_ase}"
 }
 
 # Make sure the resource group exists
