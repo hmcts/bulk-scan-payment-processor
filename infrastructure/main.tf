@@ -6,11 +6,10 @@ locals {
   s2s_rg  = "rpe-service-auth-provider-${var.env}"
   s2s_url = "http://${local.s2s_rg}.service.core-compute-${var.env}.internal"
 
+  // configures a user for a service
+  // add secrets to all bulk-scan vaults in the form idam-users-<service>-username idam-users-<service>-password
   users = {
-    // configures a user for a service
-    // add secrets to all bulk-scan vaults in the form idam-users-<service>-username idam-users-<service>-password
-    SSCS = "idam-users-sscs"
-
+    SSCS     = "idam-users-sscs"
     BULKSCAN = "idam-users-bulkscan"
     DIVORCE  = "idam-users-div"
     PROBATE  = "idam-users-probate"
