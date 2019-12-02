@@ -181,7 +181,7 @@ dependencies {
     exclude group: 'junit', module: 'junit'
   }
   def withoutMockitoStandAlone = {
-    exclude group: 'com.github.tomakehurst', module: 'wiremock-standalone'
+    exclude group: 'com.github.tomakehurst', module: 'wiremock-jre8-standalone'
   }
   compile group: 'org.springframework.boot', name: 'spring-boot-starter-web'
   compile group: 'org.springframework.boot', name: 'spring-boot-starter-actuator'
