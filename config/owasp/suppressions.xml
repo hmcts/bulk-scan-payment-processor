@@ -38,4 +38,17 @@
     <packageUrl regex="true">^pkg:maven/org\.springframework\.cloud/spring\-cloud\-contract\-wiremock@.*$</packageUrl>
     <cpe>cpe:/a:wiremock:wiremock</cpe>
   </suppress>
+
+  <suppress until="2020-01-06">
+    <notes><![CDATA[No fix available. Not used by server - comes with wiremock-jre8 used only in integration tests]]></notes>
+    <packageUrl regex="true">^pkg:maven/org\.eclipse\.jetty/jetty-(alpn-conscrypt-server|alpn-server|webapp|security|servlet|server|servlets|alpn-conscrypt-client|http|alpn-client|continuation|xml|util)@9\.4\.22\.v20191022.*$</packageUrl>
+    <cve>CVE-2019-17632</cve>
+  </suppress>
+
+  <suppress until="2020-01-06">
+    <notes><![CDATA[No fix available. Not used by server - comes with wiremock-jre8 used only in integration tests]]></notes>
+    <packageUrl regex="true">^pkg:maven/org\.eclipse\.jetty\.http2/http2-(server|common|hpack)@9\.4\.22\.v20191022.*$</packageUrl>
+    <cve>CVE-2019-17632</cve>
+  </suppress>
+
 </suppressions>
