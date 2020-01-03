@@ -51,4 +51,10 @@
     <cve>CVE-2019-17632</cve>
   </suppress>
 
+  <suppress>
+    <notes><![CDATA[Used only in tests .file name: handlebars-4.1.2.jar: handlebars-v4.0.4.js]]></notes>
+    <packageUrl regex="true">^pkg:javascript/handlebars\.js@.*$</packageUrl>
+    <vulnerabilityName>A prototype pollution vulnerability in handlebars is exploitable if an attacker can control the template</vulnerabilityName>
+  </suppress>
+
 </suppressions>
