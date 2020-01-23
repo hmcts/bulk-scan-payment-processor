@@ -3,3 +3,28 @@ java:
   image: ${IMAGE_NAME}
   ingressHost: ${SERVICE_FQDN}
   devApplicationInsightsInstrumentKey: "f666440f-43c0-4abb-9c20-2ce175a374f0"
+  secrets:
+    SB_CONN_STRING:
+      secretRef: servicebus-secret-namespace-{{ .Release.Name }}
+      key: connectionString
+  environment:
+    PAYMENTS_QUEUE_READ_CONNECTION_STRING: "$(SB_CONN_STRING);EntityPath=payments"
+  keyVaults:
+    "bulk-scan":
+      secrets:
+        - idam-client-secret
+        - site-id-probate
+        - site-id-divorce
+        - site-id-finrem
+        - s2s-secret-payment-processor
+        - idam-users-bulkscan-username
+        - idam-users-bulkscan-password
+servicebus:
+  resourceGroup: bulk-scan-aks
+  teamName: "Software Engineering"
+  location: uksouth
+  serviceplan: basic
+  setup:
+    queues:
+      - name: payments
+  enabled: true
