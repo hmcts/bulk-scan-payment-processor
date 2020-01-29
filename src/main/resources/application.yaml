@@ -34,6 +34,9 @@ site-mappings:
     - siteName: DIVORCE
       poBox: 12746
       siteId: ${SITE_ID_FINREM}
+    - siteName: BULKSCAN
+      poBox: BULKSCANPO
+      siteId: ${SITE_ID_PROBATE}
 
 azure:
   servicebus:
