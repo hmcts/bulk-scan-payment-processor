@@ -25,14 +25,11 @@ spring:
 
 site-mappings:
   sites:
-    - siteName: PROBATE
-      poBox: 12625
+    - poBox: 12625 # probate
       siteId: ${SITE_ID_PROBATE}
-    - siteName: DIVORCE
-      poBox: 12706
+    - poBox: 12706 # divorce
       siteId: ${SITE_ID_DIVORCE}
-    - siteName: DIVORCE
-      poBox: 12746
+    - poBox: 12746 # finrem
       siteId: ${SITE_ID_FINREM}
 
 azure:

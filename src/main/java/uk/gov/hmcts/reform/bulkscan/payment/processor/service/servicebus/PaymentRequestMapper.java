@@ -47,11 +47,8 @@ public class PaymentRequestMapper {
     }
 
     private String getSiteIdForPoBox(String poBox) {
-        String siteId = siteConfiguration.getSiteIdByPoBox(poBox);
-        if (siteId == null) {
-            throw new SiteNotFoundException("Site not Found for po box: " + poBox);
-        }
-
-        return siteId;
+        return siteConfiguration
+            .getSiteIdByPoBox(poBox)
+            .orElseThrow(() -> new SiteNotFoundException("Site not Found for po box: " + poBox));
     }
 }
