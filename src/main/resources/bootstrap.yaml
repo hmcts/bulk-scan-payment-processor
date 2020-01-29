@@ -8,6 +8,7 @@ spring:
         site-id-probate: SITE_ID_PROBATE
         site-id-divorce: SITE_ID_DIVORCE
         site-id-finrem: SITE_ID_FINREM
+        site-id-bulkscan: SITE_ID_BULKSCAN
         s2s-secret-payment-processor: S2S_SECRET
         app-insights-instrumentation-key: azure.application-insights.instrumentation-key
         idam-client-secret: IDAM_CLIENT_SECRET
