@@ -65,8 +65,8 @@ class PaymentForExceptionRecordTest {
                 "bulkscan",
                 BULKSCAN_PO_BOX,
                 true,
-                // document_control_number length must be 17 Characters
-                asList(new PaymentData("15456576834512345"))
+                // document_control_number length must be exactly 21 Characters
+                asList(new PaymentData("154565768345123456789"))
             )
         );
 
