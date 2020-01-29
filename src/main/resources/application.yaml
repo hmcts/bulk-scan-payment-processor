@@ -36,7 +36,7 @@ site-mappings:
       siteId: ${SITE_ID_FINREM}
     - siteName: BULKSCAN
       poBox: BULKSCANPO
-      # BULKSCAN to use PROBATE site ID at PayHub
+      # BULKSCAN to use PROBATE site ID because its own site ID is not configured at PayHub
       siteId: ${SITE_ID_PROBATE}
 
 azure:
