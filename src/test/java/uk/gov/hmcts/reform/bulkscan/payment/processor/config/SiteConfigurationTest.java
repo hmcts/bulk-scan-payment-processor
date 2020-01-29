@@ -15,9 +15,9 @@ public class SiteConfigurationTest {
         SiteConfiguration siteConfiguration = new SiteConfiguration();
         siteConfiguration.setSites(
             ImmutableList.of(
-                new SiteConfiguration.Sites("12345", "99"),
-                new SiteConfiguration.Sites("11111", "11"),
-                new SiteConfiguration.Sites("98756", "44")
+                new SiteConfiguration.Site("12345", "99"),
+                new SiteConfiguration.Site("11111", "11"),
+                new SiteConfiguration.Site("98756", "44")
             )
         );
 
@@ -29,7 +29,7 @@ public class SiteConfigurationTest {
 
     @Test
     public void should_throw_exception_when_sites_config_empty() {
-        SiteConfiguration siteConfiguration = new SiteConfiguration();
+        var siteConfiguration = new SiteConfiguration();
         assertThatThrownBy(() -> siteConfiguration.setSites(null))
             .isInstanceOf(SiteConfigurationException.class)
             .hasMessage("Site configuration missing");

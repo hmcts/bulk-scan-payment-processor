@@ -31,8 +31,7 @@ site-mappings:
       siteId: ${SITE_ID_DIVORCE}
     - poBox: 12746 # finrem
       siteId: ${SITE_ID_FINREM}
-    - siteName: BULKSCAN
-      poBox: BULKSCANPO
+    - poBox: BULKSCANPO
       siteId: ${SITE_ID_BULKSCAN}
 
 azure:

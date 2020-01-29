@@ -9,13 +9,13 @@ import java.util.Optional;
 
 @ConfigurationProperties(prefix = "site-mappings")
 public class SiteConfiguration {
-    private List<Sites> sites;
+    private List<Site> sites;
 
-    public List<Sites> getSites() {
+    public List<Site> getSites() {
         return sites;
     }
 
-    public void setSites(List<Sites> sites) {
+    public void setSites(List<Site> sites) {
         if (sites == null || sites.isEmpty()) {
             throw new SiteConfigurationException("Site configuration missing");
         } else {
@@ -31,16 +31,16 @@ public class SiteConfiguration {
             .findFirst();
     }
 
-    public static class Sites {
+    public static class Site {
         private String poBox;
         private String siteId;
 
-        public Sites(String poBox, String siteId) {
+        public Site(String poBox, String siteId) {
             this.poBox = poBox;
             this.siteId = siteId;
         }
 
-        public Sites() {
+        public Site() {
             // Spring needs it.
         }
 
