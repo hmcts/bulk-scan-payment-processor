@@ -29,7 +29,7 @@ class PaymentForExceptionRecordTest {
     private static final String YES = "Yes";
     private static final String NO = "No";
     private static final String JURISDICTION = "BULKSCAN";
-    private static final String BULKSCAN_PO_BOX = "BULKSCANPO";
+    private static final String BULKSCAN_PO_BOX = "12625";
 
     @Autowired
     private CoreCaseDataApi coreCaseDataApi;
