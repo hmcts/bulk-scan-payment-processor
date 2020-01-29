@@ -34,10 +34,10 @@ site-mappings:
     - siteName: DIVORCE
       poBox: 12746
       siteId: ${SITE_ID_FINREM}
-#    - siteName: BULKSCAN
-#      poBox: BULKSCANPO
-#      # BULKSCAN to use PROBATE site ID because its own site ID is not configured at PayHub
-#      siteId: ${SITE_ID_PROBATE}
+    - siteName: BULKSCAN
+      poBox: BULKSCANPO
+      # BULKSCAN to use PROBATE site ID because its own site ID is not configured at PayHub
+      siteId: ${SITE_ID_PROBATE}
 
 azure:
   servicebus:
