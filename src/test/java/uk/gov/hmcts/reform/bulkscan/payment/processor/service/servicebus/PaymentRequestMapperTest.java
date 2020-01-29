@@ -12,6 +12,8 @@ import uk.gov.hmcts.reform.bulkscan.payment.processor.exception.SiteNotFoundExce
 import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.exceptions.InvalidMessageException;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.model.CreatePaymentMessage;
 
+import java.util.Optional;
+
 import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -37,7 +39,7 @@ public class PaymentRequestMapperTest {
     @Test
     public void should_return_valid_PaymentRequest_when_PaymentMessage_is_valid() {
         // given
-        when(siteConfig.getSiteIdByPoBox(PO_BOX)).thenReturn("A123");
+        when(siteConfig.getSiteIdByPoBox(PO_BOX)).thenReturn(Optional.of("A123"));
         CreatePaymentRequest expectedPaymentRequest = new CreatePaymentRequest(
             "case_number_3333",
             ImmutableList.of(DCN_1, DCN_2),
@@ -58,7 +60,7 @@ public class PaymentRequestMapperTest {
     @Test
     public void should_throw_exception_when_site_not_found_for_the_poBox() {
         // given
-        when(siteConfig.getSiteIdByPoBox(PO_BOX)).thenReturn(null);
+        when(siteConfig.getSiteIdByPoBox(PO_BOX)).thenReturn(Optional.empty());
 
         // then
         assertThatThrownBy(

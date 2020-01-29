@@ -1,6 +1,7 @@
 package uk.gov.hmcts.reform.bulkscan.payment.processor.config;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import uk.gov.hmcts.reform.bulkscan.payment.processor.exception.SiteConfigurationException;
 
 import java.util.List;
 import java.util.Objects;
@@ -15,7 +16,11 @@ public class SiteConfiguration {
     }
 
     public void setSites(List<Sites> sites) {
-        this.sites = sites;
+        if (sites == null || sites.isEmpty()) {
+            throw new SiteConfigurationException("Site configuration missing");
+        } else {
+            this.sites = sites;
+        }
     }
 
     public Optional<String> getSiteIdByPoBox(String poBox) {
