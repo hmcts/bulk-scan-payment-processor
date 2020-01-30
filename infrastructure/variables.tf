@@ -50,6 +50,17 @@ variable "supported_services" {
   description = "Services to be supported by Bulk Scan in the given environment. Bulk Scan will only be able to map these ones to IDAM user credentials"
   default     = ["SSCS", "BULKSCAN", "PROBATE", "DIVORCE", "FINREM", "CMC"]
 }
+variable "payhub_sites" {
+  type = "map"
+  description = "maps the names of environment variables representing PayHub site IDs to key vault secret names"
+  default = {
+    SITE_ID_PROBATE = "site-id-probate"
+    SITE_ID_DIVORCE = "site-id-divorce"
+    SITE_ID_FINREM  = "site-id-finrem"
+    # site-id-bulkscan secret should not be defined in prod
+    SITE_ID_BULKSCAN = "site-id-bulkscan"
+  }
+}
 
 variable "enable_ase" {
   default = false

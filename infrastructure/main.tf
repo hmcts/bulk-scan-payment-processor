@@ -17,15 +17,6 @@ locals {
     CMC      = "idam-users-cmc"
   }
 
-  # maps the names of environment variables representing PayHub site IDs to key vault secret names
-  payhub_sites = {
-    SITE_ID_PROBATE = "site-id-probate"
-    SITE_ID_DIVORCE = "site-id-divorce"
-    SITE_ID_FINREM  = "site-id-finrem"
-    # site-id-bulkscan secret should not be defined in prod
-    SITE_ID_BULKSCAN = "site-id-bulkscan"
-  }
-
   all_services          = "${keys(local.users)}"
   supported_user_keys   = "${matchkeys(local.all_services, local.all_services, var.supported_services)}"
   supported_user_values = "${matchkeys(values(local.users), local.all_services, var.supported_services)}"
@@ -45,10 +36,10 @@ locals {
                                     data.azurerm_key_vault_secret.idam_users_passwords.*.value
                                 )}"
 
-  payhub_site_id_secret_names = "${values(local.payhub_sites)}"
+  payhub_site_id_secret_names = "${values(var.payhub_sites)}"
 
   payhub_site_settings = "${zipmap(
-                                    keys(local.payhub_sites),
+                                    keys(var.payhub_sites),
                                     data.azurerm_key_vault_secret.payhub_site_ids.*.value
                                 )}"
 
@@ -136,7 +127,7 @@ data "azurerm_key_vault_secret" "idam_users_passwords" {
 }
 
 data "azurerm_key_vault_secret" "payhub_site_ids" {
-  count        = "${length(local.payhub_sites)}"
+  count        = "${length(var.payhub_sites)}"
   key_vault_id = "${data.azurerm_key_vault.bulk_scan_key_vault.id}"
   name         = "${local.payhub_site_id_secret_names[count.index]}"
 }
