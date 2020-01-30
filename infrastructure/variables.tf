@@ -51,7 +51,7 @@ variable "supported_services" {
   default     = ["SSCS", "BULKSCAN", "PROBATE", "DIVORCE", "FINREM", "CMC"]
 }
 variable "payhub_sites" {
-  type = "map"
+  type        = "map"
   description = "maps the names of environment variables representing PayHub site IDs to key vault secret names"
   default = {
     SITE_ID_PROBATE = "site-id-probate"

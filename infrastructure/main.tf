@@ -27,21 +27,21 @@ locals {
   users_secret_names = "${values(local.supported_users)}"
 
   users_usernames_settings = "${zipmap(
-                                    formatlist("IDAM_USERS_%s_USERNAME", keys(local.supported_users)),
-                                    data.azurerm_key_vault_secret.idam_users_usernames.*.value
-                                )}"
+    formatlist("IDAM_USERS_%s_USERNAME", keys(local.supported_users)),
+    data.azurerm_key_vault_secret.idam_users_usernames.*.value
+  )}"
 
   users_passwords_settings = "${zipmap(
-                                    formatlist("IDAM_USERS_%s_PASSWORD", keys(local.supported_users)),
-                                    data.azurerm_key_vault_secret.idam_users_passwords.*.value
-                                )}"
+    formatlist("IDAM_USERS_%s_PASSWORD", keys(local.supported_users)),
+    data.azurerm_key_vault_secret.idam_users_passwords.*.value
+  )}"
 
   payhub_site_id_secret_names = "${values(var.payhub_sites)}"
 
   payhub_site_settings = "${zipmap(
-                                    keys(var.payhub_sites),
-                                    data.azurerm_key_vault_secret.payhub_site_ids.*.value
-                                )}"
+    keys(var.payhub_sites),
+    data.azurerm_key_vault_secret.payhub_site_ids.*.value
+  )}"
 
   core_app_settings = {
     PAY_HUB_URL                           = "http://ccpay-bulkscanning-api-${var.env}.service.core-compute-${var.env}.internal"
