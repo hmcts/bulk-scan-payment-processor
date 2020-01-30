@@ -17,6 +17,7 @@ java:
         - site-id-probate
         - site-id-divorce
         - site-id-finrem
+        - site-id-bulkscan
         - s2s-secret-payment-processor
         - idam-users-bulkscan-username
         - idam-users-bulkscan-password
