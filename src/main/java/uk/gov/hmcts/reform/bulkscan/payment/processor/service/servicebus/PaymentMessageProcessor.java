@@ -3,6 +3,7 @@ package uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus;
 import com.microsoft.azure.servicebus.IMessage;
 import com.microsoft.azure.servicebus.IMessageReceiver;
 import com.microsoft.azure.servicebus.primitives.ServiceBusException;
+import feign.FeignException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -215,17 +216,20 @@ public class PaymentMessageProcessor {
     }
 
     private void logMessageProcessingError(IMessage message, CreatePaymentMessage paymentMessage, Exception exception) {
-        String baseMessage = String.format("Failed to process payment message with ID %s.", message.getMessageId());
-
+        String baseMessage = String.format("Failed to process payment message with ID %s", message.getMessageId());
         String fullMessage = paymentMessage != null
-            ? baseMessage + String.format(
-                " CCD Case Number: %s, Jurisdiction: %s",
+            ? String.format(
+                "%s. CCD Case Number: %s, Jurisdiction: %s",
+                baseMessage,
                 paymentMessage.ccdReference,
                 paymentMessage.jurisdiction
             )
             : baseMessage;
+        String fullMessageWithClientResponse = exception instanceof FeignException
+            ? String.format("%s. Client response: %s", fullMessage, ((FeignException) exception).contentUTF8())
+            : fullMessage;
 
-        log.error(fullMessage, exception);
+        log.error(fullMessageWithClientResponse, exception);
     }
 
     private void logUpdateMessageProcessingError(
@@ -233,21 +237,23 @@ public class PaymentMessageProcessor {
         UpdatePaymentMessage paymentMessage,
         Exception exception
     ) {
-
         String baseMessage = String.format(
-            "Failed to process update payment message with ID %s.",
+            "Failed to process update payment message with ID %s",
             message.getMessageId()
         );
-
         String fullMessage = paymentMessage != null
-            ? baseMessage + String.format(
-                " New Case Number: %s, Exception Record Ref: %s, Jurisdiction: %s",
+            ? String.format(
+                "%s. New Case Number: %s, Exception Record Ref: %s, Jurisdiction: %s",
+                baseMessage,
                 paymentMessage.newCaseRef,
                 paymentMessage.exceptionRecordRef,
                 paymentMessage.jurisdiction
             )
             : baseMessage;
+        String fullMessageWithClientResponse = exception instanceof FeignException
+            ? String.format("%s. Client response: %s", fullMessage, ((FeignException) exception).contentUTF8())
+            : fullMessage;
 
-        log.error(fullMessage, exception);
+        log.error(fullMessageWithClientResponse, exception);
     }
 }
