@@ -54,3 +54,7 @@ variable "supported_services" {
 variable "enable_ase" {
   default = false
 }
+
+variable "deployment_namespace" {
+  default = ""
+}
