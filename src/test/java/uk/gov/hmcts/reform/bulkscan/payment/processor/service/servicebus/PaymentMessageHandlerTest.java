@@ -1,6 +1,7 @@
 package uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus;
 
 import feign.FeignException;
+import feign.Request;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -19,6 +20,8 @@ import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.handler
 import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.model.CreatePaymentMessage;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.model.UpdatePaymentMessage;
 
+import java.nio.charset.Charset;
+import java.util.Collections;
 import java.util.Optional;
 
 import static java.util.Collections.singletonList;
@@ -217,7 +220,17 @@ public class PaymentMessageHandlerTest {
         when(payHubClient.createPayment(any(), eq(request)))
             .thenReturn(ResponseEntity.of(Optional.of(new CreatePaymentResponse(singletonList("1234")))));
 
-        FeignException ccdCallException = new FeignException.InternalServerError("test exception", new byte[]{});
+        FeignException ccdCallException = new FeignException.InternalServerError(
+            "Test exception",
+            Request.create(
+                Request.HttpMethod.POST,
+                "/",
+                Collections.emptyMap(),
+                new byte[]{},
+                Charset.defaultCharset()
+            ),
+            new byte[]{}
+        );
         doThrow(ccdCallException).when(ccdClient).completeAwaitingDcnProcessing(any(), any(), any());
 
         // when
