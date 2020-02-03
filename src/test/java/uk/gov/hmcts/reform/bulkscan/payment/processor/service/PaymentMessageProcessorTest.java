@@ -47,6 +47,7 @@ public class PaymentMessageProcessorTest {
     private static final String DEAD_LETTER_REASON_PROCESSING_ERROR = "Payment Message processing error";
     private static final String MESSAGE_LABEL_CREATE = "CREATE";
     private static final String MESSAGE_LABEL_UPDATE = "UPDATE";
+    private static final String RECOVERABLE_EXCEPTION_MESSAGE = "exception of type treated as recoverable";
 
     @Mock
     private IMessageReceiver messageReceiver;
@@ -249,7 +250,7 @@ public class PaymentMessageProcessorTest {
         willReturn(paymentMessage(CCD_CASE_NUMBER, IS_EXCEPTION_RECORD)).given(paymentMessageParser).parse(any());
 
         Exception processingFailureCause = new FeignException.UnprocessableEntity(
-            "exception of type treated as recoverable",
+            RECOVERABLE_EXCEPTION_MESSAGE,
             Request.create(
                 Request.HttpMethod.POST,
                 "/ccd",
@@ -275,7 +276,7 @@ public class PaymentMessageProcessorTest {
         willReturn(getValidMessage(MESSAGE_LABEL_UPDATE)).given(messageReceiver).receive();
 
         Exception processingFailureCause = new FeignException.UnprocessableEntity(
-            "exception of type treated as recoverable",
+            RECOVERABLE_EXCEPTION_MESSAGE,
             Request.create(
                 Request.HttpMethod.POST,
                 "/ccd",
@@ -312,9 +313,7 @@ public class PaymentMessageProcessorTest {
             "new-case-ref-12312"
         )).given(paymentMessageParser).parseUpdateMessage(any());
 
-        Exception processingFailureCause = new RuntimeException(
-            "exception of type treated as recoverable"
-        );
+        Exception processingFailureCause = new RuntimeException(RECOVERABLE_EXCEPTION_MESSAGE);
 
         // given an error occurs during message processing
         willThrow(processingFailureCause).given(paymentMessageHandler).updatePaymentCaseReference(any());
@@ -340,9 +339,7 @@ public class PaymentMessageProcessorTest {
             paymentMessageParser,
             1
         );
-        Exception processingFailureCause = new RuntimeException(
-            "exception of type treated as recoverable"
-        );
+        Exception processingFailureCause = new RuntimeException(RECOVERABLE_EXCEPTION_MESSAGE);
 
         // and an error occurs during message processing
         willThrow(processingFailureCause).given(paymentMessageHandler).handlePaymentMessage(any(), any());
@@ -384,9 +381,7 @@ public class PaymentMessageProcessorTest {
             1
         );
 
-        Exception processingFailureCause = new RuntimeException(
-            "exception of type treated as recoverable"
-        );
+        Exception processingFailureCause = new RuntimeException(RECOVERABLE_EXCEPTION_MESSAGE);
 
         // and an error occurs during message processing
         willThrow(processingFailureCause).given(paymentMessageHandler).updatePaymentCaseReference(any());
