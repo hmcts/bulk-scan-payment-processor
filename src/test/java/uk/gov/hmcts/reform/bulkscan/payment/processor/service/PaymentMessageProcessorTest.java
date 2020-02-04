@@ -6,6 +6,8 @@ import com.microsoft.azure.servicebus.IMessage;
 import com.microsoft.azure.servicebus.IMessageReceiver;
 import com.microsoft.azure.servicebus.MessageBody;
 import com.microsoft.azure.servicebus.primitives.ServiceBusException;
+import feign.FeignException;
+import feign.Request;
 import org.json.JSONException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -19,6 +21,7 @@ import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.handler
 import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.model.UpdatePaymentMessage;
 
 import java.nio.charset.Charset;
+import java.util.Collections;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -42,6 +45,9 @@ import static uk.gov.hmcts.reform.bulkscan.payment.processor.data.producer.Sampl
 public class PaymentMessageProcessorTest {
 
     private static final String DEAD_LETTER_REASON_PROCESSING_ERROR = "Payment Message processing error";
+    private static final String MESSAGE_LABEL_CREATE = "CREATE";
+    private static final String MESSAGE_LABEL_UPDATE = "UPDATE";
+    private static final String RECOVERABLE_EXCEPTION_MESSAGE = "exception of type treated as recoverable";
 
     @Mock
     private IMessageReceiver messageReceiver;
@@ -71,7 +77,7 @@ public class PaymentMessageProcessorTest {
     @Test
     public void should_return_true_when_there_is_a_message_to_process() throws Exception {
         // given
-        willReturn(getValidMessage()).given(messageReceiver).receive();
+        willReturn(getValidMessage(MESSAGE_LABEL_CREATE)).given(messageReceiver).receive();
 
         // when
         boolean processedMessage = paymentMessageProcessor.processNextMessage();
@@ -99,7 +105,7 @@ public class PaymentMessageProcessorTest {
         IMessage invalidMessage = mock(IMessage.class);
         given(invalidMessage.getMessageBody())
             .willReturn(MessageBody.fromBinaryData(ImmutableList.of("foo".getBytes())));
-        given(invalidMessage.getLabel()).willReturn("CREATE");
+        given(invalidMessage.getLabel()).willReturn(MESSAGE_LABEL_CREATE);
         given(messageReceiver.receive()).willReturn(invalidMessage);
 
         assertThat(paymentMessageProcessor.processNextMessage()).isTrue();
@@ -108,7 +114,7 @@ public class PaymentMessageProcessorTest {
     @Test
     public void should_not_throw_exception_when_payment_handler_fails() throws Exception {
         // given
-        willReturn(getValidMessage()).given(messageReceiver).receive();
+        willReturn(getValidMessage(MESSAGE_LABEL_CREATE)).given(messageReceiver).receive();
         willReturn(paymentMessage("32131", true)).given(paymentMessageParser).parse(any());
 
         // and
@@ -120,7 +126,7 @@ public class PaymentMessageProcessorTest {
     @Test
     public void should_complete_the_message_when_processing_is_successful() throws Exception {
         // given
-        IMessage validMessage = getValidMessage();
+        IMessage validMessage = getValidMessage(MESSAGE_LABEL_CREATE);
         given(messageReceiver.receive()).willReturn(validMessage);
         willReturn(paymentMessage(CCD_CASE_NUMBER, IS_EXCEPTION_RECORD)).given(paymentMessageParser).parse(any());
 
@@ -167,7 +173,7 @@ public class PaymentMessageProcessorTest {
         given(message.getMessageBody()).willReturn(
             MessageBody.fromBinaryData(ImmutableList.of("invalid body".getBytes(Charset.defaultCharset())))
         );
-        given(message.getLabel()).willReturn("CREATE");
+        given(message.getLabel()).willReturn(MESSAGE_LABEL_CREATE);
         willThrow(new InvalidMessageException("JsonParseException")).given(paymentMessageParser).parse(any());
 
         given(message.getLockToken()).willReturn(UUID.randomUUID());
@@ -194,7 +200,7 @@ public class PaymentMessageProcessorTest {
         given(message.getMessageBody()).willReturn(
             MessageBody.fromBinaryData(ImmutableList.of("invalid body".getBytes(Charset.defaultCharset())))
         );
-        given(message.getLabel()).willReturn("UPDATE");
+        given(message.getLabel()).willReturn(MESSAGE_LABEL_UPDATE);
 
         willThrow(new InvalidMessageException("JsonParseException"))
             .given(paymentMessageParser).parseUpdateMessage(any());
@@ -239,16 +245,50 @@ public class PaymentMessageProcessorTest {
     }
 
     @Test
-    public void should_not_dead_letter_the_message_when_recoverable_failure() throws Exception {
-        willReturn(getValidMessage()).given(messageReceiver).receive();
+    public void should_not_dead_letter_create_message_when_recoverable_failure() throws Exception {
+        willReturn(getValidMessage(MESSAGE_LABEL_CREATE)).given(messageReceiver).receive();
         willReturn(paymentMessage(CCD_CASE_NUMBER, IS_EXCEPTION_RECORD)).given(paymentMessageParser).parse(any());
 
-        Exception processingFailureCause = new RuntimeException(
-            "exception of type treated as recoverable"
+        Exception processingFailureCause = new FeignException.UnprocessableEntity(
+            RECOVERABLE_EXCEPTION_MESSAGE,
+            Request.create(
+                Request.HttpMethod.POST,
+                "/ccd",
+                Collections.emptyMap(),
+                new byte[]{},
+                Charset.defaultCharset()
+            ),
+            new byte[]{}
         );
 
         // given an error occurs during message processing
         willThrow(processingFailureCause).given(paymentMessageHandler).handlePaymentMessage(any(), any());
+
+        // when
+        paymentMessageProcessor.processNextMessage();
+
+        // then the message is not finalised (completed/dead-lettered)
+        verify(messageReceiver).receive();
+    }
+
+    @Test
+    public void should_not_dead_letter_update_message_when_recoverable_failure() throws Exception {
+        willReturn(getValidMessage(MESSAGE_LABEL_UPDATE)).given(messageReceiver).receive();
+
+        Exception processingFailureCause = new FeignException.UnprocessableEntity(
+            RECOVERABLE_EXCEPTION_MESSAGE,
+            Request.create(
+                Request.HttpMethod.POST,
+                "/ccd",
+                Collections.emptyMap(),
+                new byte[]{},
+                Charset.defaultCharset()
+            ),
+            new byte[]{}
+        );
+
+        // given an error occurs during message processing
+        willThrow(processingFailureCause).given(paymentMessageHandler).updatePaymentCaseReference(any());
 
         // when
         paymentMessageProcessor.processNextMessage();
@@ -273,9 +313,7 @@ public class PaymentMessageProcessorTest {
             "new-case-ref-12312"
         )).given(paymentMessageParser).parseUpdateMessage(any());
 
-        Exception processingFailureCause = new RuntimeException(
-            "exception of type treated as recoverable"
-        );
+        Exception processingFailureCause = new RuntimeException(RECOVERABLE_EXCEPTION_MESSAGE);
 
         // given an error occurs during message processing
         willThrow(processingFailureCause).given(paymentMessageHandler).updatePaymentCaseReference(any());
@@ -291,7 +329,7 @@ public class PaymentMessageProcessorTest {
     @Test
     public void should_dead_letter_the_message_when_recoverable_failure_but_delivery_maxed() throws Exception {
         // given
-        IMessage validMessage = getValidMessage();
+        IMessage validMessage = getValidMessage(MESSAGE_LABEL_CREATE);
         given(messageReceiver.receive()).willReturn(validMessage);
         willReturn(paymentMessage(CCD_CASE_NUMBER, IS_EXCEPTION_RECORD)).given(paymentMessageParser).parse(any());
 
@@ -301,9 +339,7 @@ public class PaymentMessageProcessorTest {
             paymentMessageParser,
             1
         );
-        Exception processingFailureCause = new RuntimeException(
-            "exception of type treated as recoverable"
-        );
+        Exception processingFailureCause = new RuntimeException(RECOVERABLE_EXCEPTION_MESSAGE);
 
         // and an error occurs during message processing
         willThrow(processingFailureCause).given(paymentMessageHandler).handlePaymentMessage(any(), any());
@@ -345,9 +381,7 @@ public class PaymentMessageProcessorTest {
             1
         );
 
-        Exception processingFailureCause = new RuntimeException(
-            "exception of type treated as recoverable"
-        );
+        Exception processingFailureCause = new RuntimeException(RECOVERABLE_EXCEPTION_MESSAGE);
 
         // and an error occurs during message processing
         willThrow(processingFailureCause).given(paymentMessageHandler).updatePaymentCaseReference(any());
@@ -372,11 +406,11 @@ public class PaymentMessageProcessorTest {
             .isSameAs(receiverException);
     }
 
-    private IMessage getValidMessage() throws JSONException {
+    private IMessage getValidMessage(String label) throws JSONException {
         IMessage message = mock(IMessage.class);
         given(message.getMessageBody())
             .willReturn(MessageBody.fromBinaryData(ImmutableList.of(paymentJsonToByte())));
-        given(message.getLabel()).willReturn("CREATE");
+        given(message.getLabel()).willReturn(label);
         return message;
     }
 
