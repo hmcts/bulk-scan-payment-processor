@@ -74,7 +74,6 @@ withPipeline(type, product, component) {
     builder.gradle('integration')
   }
 
-  enableDockerBuild()
   enableAksStagingDeployment()
   disableLegacyDeployment()
   installCharts()
