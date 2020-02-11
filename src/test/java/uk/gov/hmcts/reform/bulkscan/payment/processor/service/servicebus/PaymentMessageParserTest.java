@@ -1,7 +1,6 @@
 package uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import com.google.common.collect.ImmutableList;
 import com.microsoft.azure.servicebus.MessageBody;
 import org.json.JSONException;
