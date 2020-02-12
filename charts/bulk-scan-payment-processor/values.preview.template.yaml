@@ -24,7 +24,6 @@ java:
   # Don't modify below here
   image: ${IMAGE_NAME}
   ingressHost: ${SERVICE_FQDN}
-  aadIdentityName:
 servicebus:
   resourceGroup: bulk-scan-aks
   teamName: "Software Engineering"
