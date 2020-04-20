@@ -204,7 +204,7 @@ dependencies {
   compile group: 'org.springframework.cloud', name: 'spring-cloud-starter-netflix-hystrix', version: '2.2.2.RELEASE'
   compile group: 'com.microsoft.azure', name: 'azure-servicebus', version: '1.2.18'
   compile group: 'org.springframework.cloud', name: 'spring-cloud-starter-openfeign', version: '2.2.2.RELEASE'
-  compile group: 'io.github.openfeign', name: 'feign-httpclient', version: '10.9'
+  compile group: 'io.github.openfeign', name: 'feign-httpclient', version: '11.0'
   compile group: 'io.github.openfeign', name: 'feign-jackson', version: '10.9'
 
   testCompile group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: versions.junit
