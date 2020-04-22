@@ -1,7 +1,6 @@
 package uk.gov.hmcts.reform.bulkscan.payment.processor;
 
 import com.google.common.collect.ImmutableMap;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -24,7 +23,6 @@ import static org.awaitility.Awaitility.await;
 
 @SpringBootTest
 @ActiveProfiles("functional")
-@Disabled
 class PaymentForExceptionRecordTest {
 
     private static final String AWAITING_DNC_PROCESSING_FLAG_NAME = "awaitingPaymentDCNProcessing";
