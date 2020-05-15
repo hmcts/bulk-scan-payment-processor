@@ -76,7 +76,6 @@ withPipeline(type, product, component) {
 
   enableAksStagingDeployment()
   disableLegacyDeployment()
-  installCharts()
   enableSlackNotifications(channel)
 
   onPR() {
