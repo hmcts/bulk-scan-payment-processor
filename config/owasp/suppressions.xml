@@ -59,4 +59,10 @@
     <vulnerabilityName>Prototype pollution</vulnerabilityName>
   </suppress>
 
+  <suppress>
+    <notes><![CDATA[Used only in tests]]></notes>
+    <packageUrl regex="true">^pkg:javascript/jquery@.*$</packageUrl>
+    <vulnerabilityName>Regex in its jQuery.htmlPrefilter  sometimes may introduce XSS</vulnerabilityName>
+  </suppress>
+
 </suppressions>
