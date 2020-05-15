@@ -13,7 +13,7 @@ def component = "payment-processor"
 def channel = '#bsp-build-notices'
 GradleBuilder builder = new GradleBuilder(this, product)
 
-def secrets = [
+def previewSecrets = [
   'bulk-scan-${env}': [
     secret('s2s-secret-payment-processor', 'S2S_SECRET'),
     secret('idam-users-bulkscan-username', 'IDAM_USERS_BULKSCAN_USERNAME'),
@@ -22,7 +22,7 @@ def secrets = [
   ]
 ]
 
-def prodSecrets = [
+def nonPreviewSecrets = [
   'bulk-scan-${env}': [
     secret('s2s-secret-payment-processor', 'S2S_SECRET'),
     secret('idam-users-bulkscan-username', 'IDAM_USERS_BULKSCAN_USERNAME'),
@@ -80,10 +80,10 @@ withPipeline(type, product, component) {
   enableSlackNotifications(channel)
 
   onPR() {
-    loadVaultSecrets(secrets)
+    loadVaultSecrets(previewSecrets)
   }
 
   onNonPR() {
-    loadVaultSecrets(prodSecrets)
+    loadVaultSecrets(nonPreviewSecrets)
   }
 }
