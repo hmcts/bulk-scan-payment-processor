@@ -4,6 +4,8 @@ server:
 management:
   endpoint:
     health:
+      cache:
+        time-to-live: 30s
       show-details: "always"
   endpoints:
     web:
