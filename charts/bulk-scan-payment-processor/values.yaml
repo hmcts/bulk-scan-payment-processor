@@ -2,6 +2,7 @@ java:
   applicationPort: 8583
   aadIdentityName: bsp
   ingressHost: bulk-scan-payment-processor-{{ .Values.global.environment }}.service.core-compute-{{ .Values.global.environment }}.internal
+  readinessPath: '/health/readiness'
   environment:
     PAYMENTS_QUEUE_MAX_DELIVERY_COUNT: "5"
     S2S_NAME: "bulk_scan_payment_processor"
