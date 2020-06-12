@@ -14,6 +14,7 @@ import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.Payment
 public class PaymentMessageProcessTask {
 
     private static final Logger log = LoggerFactory.getLogger(PaymentMessageProcessTask.class);
+    private static final String TASK_NAME = "consume-payments-queue";
 
     private final PaymentMessageProcessor paymentMessageProcessor;
 
@@ -25,7 +26,7 @@ public class PaymentMessageProcessTask {
 
     @Scheduled(fixedDelayString = "${scheduling.task.consume-payments-queue.time-interval-ms}")
     public void consumeMessages() {
-        log.info("Started the job consuming payment messages");
+        log.info("Started {} job", TASK_NAME);
 
         try {
             boolean queueMayHaveMessages = true;
@@ -34,7 +35,7 @@ public class PaymentMessageProcessTask {
                 queueMayHaveMessages = paymentMessageProcessor.processNextMessage();
             }
 
-            log.info("Finished the job consuming payment messages");
+            log.info("Finished {} job", TASK_NAME);
         } catch (InterruptedException exception) {
             logTaskError(exception);
             Thread.currentThread().interrupt();
