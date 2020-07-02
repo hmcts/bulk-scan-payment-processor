@@ -42,11 +42,20 @@ public class PaymentMessageHandler {
         createPayment(paymentMessage, messageId);
 
         if (paymentMessage.isExceptionRecord) {
-            ccdClient.completeAwaitingDcnProcessing(
-                paymentMessage.ccdReference,
-                paymentMessage.service,
-                paymentMessage.jurisdiction
-            );
+            try {
+                ccdClient.completeAwaitingDcnProcessing(
+                    paymentMessage.ccdReference,
+                    paymentMessage.service,
+                    paymentMessage.jurisdiction
+                );
+            } catch (FeignException exception) {
+                log.debug(
+                    "Failed to call 'completeAwaitingDcnProcessing' method. CCD response: {}",
+                    exception.responseBody().map(b -> new String(b.array())).orElseGet(exception::getMessage)
+                );
+
+                throw exception;
+            }
         }
     }
 
