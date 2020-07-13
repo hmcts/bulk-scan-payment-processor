@@ -148,7 +148,7 @@ dependencyManagement {
     dependencySet(group: 'com.google.guava', version: '29.0-jre') {
       entry 'guava'
     }
-    dependencySet(group: 'org.mockito', version: '3.3.3') {
+    dependencySet(group: 'org.mockito', version: '3.4.0') {
       entry 'mockito-core'
     }
   }
@@ -164,8 +164,8 @@ repositories {
 }
 
 def versions = [
-  junit           : '5.6.1',
-  junitPlatform   : '1.6.1',
+  junit           : '5.6.2',
+  junitPlatform   : '1.6.2',
   reformLogging   : '5.1.6',
   springBoot      : springBoot.class.package.implementationVersion,
   springfoxSwagger: '2.9.2'
@@ -211,12 +211,12 @@ dependencies {
   testCompile group: 'org.junit.jupiter', name: 'junit-jupiter-params', version: versions.junit
   testCompile group: 'org.junit.platform', name: 'junit-platform-commons', version: versions.junitPlatform
   testCompile group: 'org.junit.platform', name: 'junit-platform-engine', version: versions.junitPlatform
-  testCompile group: 'org.mockito', name: 'mockito-junit-jupiter', version: '3.3.3'
+  testCompile group: 'org.mockito', name: 'mockito-junit-jupiter', version: '3.4.0'
   testCompile group: 'org.awaitility', name: 'awaitility', version: '4.0.3'
 
   testCompile group: 'org.springframework.boot', name: 'spring-boot-starter-test', withoutJunit4
 
-  integrationTestCompile group: 'com.github.tomakehurst', name: 'wiremock', version: '2.26.3', withoutJunit4
+  integrationTestCompile group: 'com.github.tomakehurst', name: 'wiremock', version: '2.27.1', withoutJunit4
 
   integrationTestCompile group: 'org.springframework.cloud', name: 'spring-cloud-contract-wiremock', version: '2.2.3.RELEASE', withoutMockitoStandAlone
 
