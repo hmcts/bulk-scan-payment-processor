@@ -4,7 +4,9 @@ java:
   ingressHost: bulk-scan-payment-processor-{{ .Values.global.environment }}.service.core-compute-{{ .Values.global.environment }}.internal
   readinessPath: '/health/readiness'
   environment:
+    PAYMENTS_QUEUE_ACCESS_KEY_LISTEN_NAME: "ListenSharedAccessKey"
     PAYMENTS_QUEUE_MAX_DELIVERY_COUNT: "5"
+    PAYMENTS_QUEUE_NAMESPACE: bulk-scan-servicebus-{{ .Values.global.environment }}
     S2S_NAME: "bulk_scan_payment_processor"
     S2S_URL: http://rpe-service-auth-provider-{{ .Values.global.environment }}.service.core-compute-{{ .Values.global.environment }}.internal
     PAY_HUB_URL: http://ccpay-bulkscanning-api-{{ .Values.global.environment }}.service.core-compute-{{ .Values.global.environment }}.internal
@@ -23,6 +25,7 @@ java:
         - site-id-finrem
         - site-id-bulkscan
         - payments-queue-listen-connection-string
+        - payments-queue-listen-shared-access-key
         - app-insights-instrumentation-key
         - idam-client-secret
         - idam-users-bulkscan-username

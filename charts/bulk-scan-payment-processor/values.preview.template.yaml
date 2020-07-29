@@ -3,8 +3,16 @@ java:
     SB_CONN_STRING:
       secretRef: servicebus-secret-namespace-{{ .Release.Name }}
       key: connectionString
+    PAYMENTS_QUEUE_READ_ACCESS_KEY:
+      secretRef: servicebus-secret-namespace-{{ .Release.Name }}
+      key: primaryKey
+    PAYMENTS_QUEUE_NAMESPACE:
+      secretRef: servicebus-secret-namespace-{{ .Release.Name }}
+      key: namespaceName
   environment:
     S2S_URL: "http://rpe-service-auth-provider-aat.service.core-compute-aat.internal"
+    PAYMENTS_QUEUE_ACCESS_KEY_LISTEN_NAME: "RootManageSharedAccessKey"
+    PAYMENTS_QUEUE_ACCESS_KEY_SEND_NAME: "RootManageSharedAccessKey"
     PAYMENTS_QUEUE_READ_CONNECTION_STRING: "$(SB_CONN_STRING);EntityPath=payments"
     PAY_HUB_URL: "http://ccpay-bulkscanning-api-aat.service.core-compute-aat.internal"
     IDAM_API_URL: "https://idam-api.aat.platform.hmcts.net"
