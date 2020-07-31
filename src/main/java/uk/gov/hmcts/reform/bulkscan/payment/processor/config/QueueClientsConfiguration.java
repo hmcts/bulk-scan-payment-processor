@@ -23,14 +23,14 @@ public class QueueClientsConfiguration {
 
     @Bean
     public IMessageReceiver paymentMessageReceiver() throws InterruptedException, ServiceBusException {
-        return ClientFactory.createMessageReceiverFromConnectionStringBuilder(
-            new ConnectionStringBuilder(
-                queueProperties.getNamespace(),
-                queueProperties.getQueueName(),
-                queueProperties.getAccessKeyName(),
-                queueProperties.getAccessKey()
-            ),
-            ReceiveMode.PEEKLOCK
+        // looks like `from connection string builder` is not properly implemented and does not include auth
+        var builder = new ConnectionStringBuilder(
+            queueProperties.getNamespace(),
+            queueProperties.getQueueName(),
+            queueProperties.getAccessKeyName(),
+            queueProperties.getAccessKey()
         );
+
+        return ClientFactory.createMessageReceiverFromConnectionString(builder.toString(), ReceiveMode.PEEKLOCK);
     }
 }
