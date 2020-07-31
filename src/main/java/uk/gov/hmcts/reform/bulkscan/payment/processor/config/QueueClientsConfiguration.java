@@ -14,9 +14,12 @@ import org.springframework.context.annotation.Profile;
 @Profile("!functional & !integration")
 public class QueueClientsConfiguration {
 
+    // BeanDefinitionParsingException:
+    // Configuration problem: @Bean method 'paymentQueueConfig' must not be private or final;
+    // change the method's modifiers to continue
     @Bean
     @ConfigurationProperties(prefix = "azure.servicebus.payments")
-    private QueueConfig paymentQueueConfig() {
+    protected QueueConfig paymentQueueConfig() {
         return new QueueConfig();
     }
 
