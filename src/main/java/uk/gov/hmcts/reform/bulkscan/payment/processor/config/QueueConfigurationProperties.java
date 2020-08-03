@@ -1,9 +1,6 @@
 package uk.gov.hmcts.reform.bulkscan.payment.processor.config;
 
-import org.springframework.boot.context.properties.ConfigurationProperties;
-
-@ConfigurationProperties(prefix = "azure.servicebus.payments")
-public class QueueConfigurationProperties {
+class QueueConfigurationProperties {
 
     private String accessKey;
     private String accessKeyName;
