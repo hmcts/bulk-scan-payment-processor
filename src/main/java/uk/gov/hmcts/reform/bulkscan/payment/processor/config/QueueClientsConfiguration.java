@@ -31,8 +31,6 @@ public class QueueClientsConfiguration {
             queueProperties.getAccessKey()
         );
 
-        var string = builder.toString();
-        org.slf4j.LoggerFactory.getLogger(QueueClientsConfiguration.class).warn("HERE IT IS: {}", string);
-        return ClientFactory.createMessageReceiverFromConnectionString(string, ReceiveMode.PEEKLOCK);
+        return ClientFactory.createMessageReceiverFromConnectionString(builder.toString(), ReceiveMode.PEEKLOCK);
     }
 }
