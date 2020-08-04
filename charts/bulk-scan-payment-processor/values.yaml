@@ -23,7 +23,6 @@ java:
         - site-id-divorce
         - site-id-finrem
         - site-id-bulkscan
-        - payments-queue-listen-connection-string
         - payments-queue-listen-shared-access-key
         - app-insights-instrumentation-key
         - idam-client-secret
