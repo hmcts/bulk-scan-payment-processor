@@ -7,20 +7,24 @@ import com.microsoft.azure.servicebus.primitives.ConnectionStringBuilder;
 import com.microsoft.azure.servicebus.primitives.ServiceBusException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 
 import static org.mockito.Mockito.mock;
 
+@Configuration
 @Profile("functional")
 public class FunctionalQueueConfig {
 
-    @Value("${azure.servicebus.payments.write-connection-string}")
-    private String paymentsQueueWriteConnectionString;
-
     @Bean("payments")
-    public QueueClient paymentsWriteClient() throws ServiceBusException, InterruptedException {
+    public QueueClient paymentsWriteClient(
+        @Value("${azure.servicebus.payments.namespace}") String namespace,
+        @Value("${azure.servicebus.payments.write-access-key}") String accessKey,
+        @Value("${azure.servicebus.payments.write-access-key-name}") String accessKeyName,
+        @Value("${azure.servicebus.payments.queue-name}") String queueName
+    ) throws ServiceBusException, InterruptedException {
         return new QueueClient(
-            new ConnectionStringBuilder(paymentsQueueWriteConnectionString),
+            new ConnectionStringBuilder(namespace, queueName, accessKeyName, accessKey),
             ReceiveMode.PEEKLOCK
         );
     }
