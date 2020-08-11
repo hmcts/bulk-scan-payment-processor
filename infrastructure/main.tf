@@ -60,7 +60,6 @@ locals {
     IDAM_CLIENT_REDIRECT_URI              = "${var.idam_client_redirect_uri}"
     CORE_CASE_DATA_API_URL                = "http://ccd-data-store-api-${var.env}.service.core-compute-${var.env}.internal"
     IDAM_CLIENT_SECRET                    = "${data.azurerm_key_vault_secret.idam_client_secret.value}"
-    PAYMENTS_QUEUE_READ_CONNECTION_STRING = "${data.azurerm_key_vault_secret.payments_queue_listen_connection_string.value}"
     PAYMENTS_QUEUE_MAX_DELIVERY_COUNT     = "5"
   }
 }
@@ -116,11 +115,6 @@ resource "azurerm_key_vault_secret" "bulk_scan_s2s_secret" {
   name         = "s2s-secret-payment-processor"
   value        = "${data.azurerm_key_vault_secret.s2s_secret.value}"
   key_vault_id = "${data.azurerm_key_vault.bulk_scan_key_vault.id}"
-}
-
-data "azurerm_key_vault_secret" "payments_queue_listen_connection_string" {
-  key_vault_id = "${data.azurerm_key_vault.bulk_scan_key_vault.id}"
-  name         = "payments-queue-listen-connection-string"
 }
 
 data "azurerm_key_vault_secret" "idam_users_usernames" {
