@@ -1,6 +1,28 @@
 java:
   environment:
     PAYMENTS_QUEUE_NAME: payments-staging
+  keyVaults:
+    "bulk-scan":
+      resourceGroup: bulk-scan
+      secrets:
+        - s2s-secret-payment-processor
+        - site-id-probate
+        - site-id-divorce
+        - site-id-finrem
+        - site-id-bulkscan
+        - payments-staging-queue-listen-shared-access-key
+        - app-insights-instrumentation-key
+        - idam-client-secret
+        - idam-users-bulkscan-username
+        - idam-users-bulkscan-password
+        - idam-users-cmc-username
+        - idam-users-cmc-password
+        - idam-users-div-username
+        - idam-users-div-password
+        - idam-users-finrem-username
+        - idam-users-finrem-password
+        - idam-users-probate-username
+        - idam-users-probate-password
   # Don't modify below here
   image: ${IMAGE_NAME}
   ingressHost: ${SERVICE_FQDN}
