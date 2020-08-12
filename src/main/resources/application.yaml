@@ -46,7 +46,7 @@ azure:
       access-key: ${PAYMENTS_QUEUE_READ_ACCESS_KEY}
       access-key-name: ${PAYMENTS_QUEUE_ACCESS_KEY_LISTEN_NAME}
       namespace: ${PAYMENTS_QUEUE_NAMESPACE}
-      queue-name: payments
+      queue-name: ${PAYMENTS_QUEUE_NAME}
       max-delivery-count: ${PAYMENTS_QUEUE_MAX_DELIVERY_COUNT}
 
 pay-hub:

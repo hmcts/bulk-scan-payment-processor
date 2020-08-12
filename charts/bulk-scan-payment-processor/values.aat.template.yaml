@@ -1,4 +1,6 @@
 java:
+  environment:
+    PAYMENTS_QUEUE_NAME: payments-staging
   # Don't modify below here
   image: ${IMAGE_NAME}
   ingressHost: ${SERVICE_FQDN}
