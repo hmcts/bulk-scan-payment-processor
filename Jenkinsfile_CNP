@@ -1,5 +1,5 @@
 #!groovy
-@Library("Infrastructure@docker-agent-container-select")
+@Library("Infrastructure@docker-agent-container-select-for-real")
 
 import uk.gov.hmcts.contino.GradleBuilder
 import uk.gov.hmcts.contino.Kubectl
