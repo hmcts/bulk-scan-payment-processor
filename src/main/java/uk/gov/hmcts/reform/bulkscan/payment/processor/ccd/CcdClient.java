@@ -106,7 +106,12 @@ public class CcdClient {
         } catch (FeignException ex) {
             debugCcdException(ex, "Failed to call 'startCompleteAwaitingDcnProcessing'");
             throw new CcdCallException(
-                format("Internal Error: start event call failed case: %s Error: %s", caseRef, ex.status()), ex
+                format(
+                    "Internal Error: Failed starting event in CCD for completing payment DCN processing "
+                        + "case: %s Error: %s", caseRef,
+                    ex.status()
+                ),
+                ex
             );
         }
     }
@@ -140,7 +145,12 @@ public class CcdClient {
         } catch (FeignException ex) {
             debugCcdException(ex, "Failed to call 'submitCompleteAwaitingDcnProcessing'");
             throw new CcdCallException(
-                format("Internal Error: submit event call failed case: %s Error: %s", caseRef, ex.status()), ex
+                format(
+                    "Internal Error: Failed submitting event in CCD for completing payment DCN processing "
+                        + "case: %s Error: %s", caseRef,
+                    ex.status()
+                ),
+                ex
             );
         }
     }
