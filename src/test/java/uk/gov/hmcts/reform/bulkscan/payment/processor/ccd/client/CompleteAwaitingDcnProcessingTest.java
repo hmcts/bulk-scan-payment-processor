@@ -11,6 +11,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.ccd.CcdAuthenticator;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.ccd.CcdAuthenticatorFactory;
+import uk.gov.hmcts.reform.bulkscan.payment.processor.ccd.CcdCallException;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.ccd.CcdClient;
 import uk.gov.hmcts.reform.ccd.client.CoreCaseDataApi;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDataContent;
@@ -22,7 +23,7 @@ import java.nio.charset.Charset;
 import java.util.Collections;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.catchThrowableOfType;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.eq;
@@ -30,6 +31,7 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.willThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 @ExtendWith(MockitoExtension.class)
 public class CompleteAwaitingDcnProcessingTest {
@@ -124,10 +126,18 @@ public class CompleteAwaitingDcnProcessingTest {
             .given(ccdApi)
             .startEventForCaseWorker(any(), any(), any(), any(), any(), any(), any());
 
+        // when
+        CcdCallException exception = catchThrowableOfType(
+            () -> ccdClient.completeAwaitingDcnProcessing("1231244243242343", "bulkscan", "BULKSCAN"),
+            CcdCallException.class
+        );
+
         // then
-        assertThatThrownBy(() ->
-            ccdClient.completeAwaitingDcnProcessing("1231244243242343", "bulkscan", "BULKSCAN")
-        ).isSameAs(FEIGN_EXCEPTION);
+        assertThat(exception.getMessage())
+            .isEqualTo("Internal Error: start event call failed case: 1231244243242343 Error: 500");
+        assertThat(exception.getCause()).isEqualTo(FEIGN_EXCEPTION);
+
+        verifyNoMoreInteractions(ccdApi);
     }
 
     @Test
@@ -143,10 +153,15 @@ public class CompleteAwaitingDcnProcessingTest {
             .given(ccdApi)
             .submitEventForCaseWorker(any(), any(), any(), any(), any(), any(), anyBoolean(), any());
 
-        // then
-        assertThatThrownBy(() ->
-            ccdClient.completeAwaitingDcnProcessing("1231244243242343", "bulkscan", "BULKSCAN")
-        ).isSameAs(FEIGN_EXCEPTION);
+        // when
+        CcdCallException exception = catchThrowableOfType(
+            () -> ccdClient.completeAwaitingDcnProcessing("1231244243242343", "bulkscan", "BULKSCAN"),
+            CcdCallException.class
+        );
+
+        assertThat(exception.getMessage())
+            .isEqualTo("Internal Error: submit event call failed case: 1231244243242343 Error: 500");
+        assertThat(exception.getCause()).isEqualTo(FEIGN_EXCEPTION);
     }
 
     private StartEventResponse mockStartEventResponse(String eventToken) {
