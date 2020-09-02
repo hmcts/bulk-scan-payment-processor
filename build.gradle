@@ -148,7 +148,7 @@ dependencyManagement {
     dependencySet(group: 'com.google.guava', version: '29.0-jre') {
       entry 'guava'
     }
-    dependencySet(group: 'org.mockito', version: '3.5.7') {
+    dependencySet(group: 'org.mockito', version: '3.5.9') {
       entry 'mockito-core'
     }
   }
