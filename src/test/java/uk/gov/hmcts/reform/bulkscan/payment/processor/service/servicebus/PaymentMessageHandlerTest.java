@@ -11,6 +11,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.ResponseEntity;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.ccd.CcdClient;
+import uk.gov.hmcts.reform.bulkscan.payment.processor.client.payhub.PayHubCallException;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.client.payhub.PayHubClient;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.client.payhub.request.CaseReferenceRequest;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.client.payhub.request.CreatePaymentRequest;
@@ -27,6 +28,7 @@ import java.util.Optional;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.ThrowableAssert.catchThrowableOfType;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.willThrow;
@@ -52,6 +54,18 @@ public class PaymentMessageHandlerTest {
     private CcdClient ccdClient;
 
     private PaymentMessageHandler messageHandler;
+
+    private static final FeignException.InternalServerError FEIGN_EXCEPTION = new FeignException.InternalServerError(
+        "Test exception",
+        Request.create(
+            Request.HttpMethod.POST,
+            "/",
+            Collections.emptyMap(),
+            new byte[]{},
+            Charset.defaultCharset()
+        ),
+        new byte[]{}
+    );
 
     @BeforeEach
     void setUp() {
@@ -108,9 +122,15 @@ public class PaymentMessageHandlerTest {
         doThrow(exception).when(payHubClient).createPayment(any(), any());
 
         // when
-        assertThatThrownBy(
-            () -> messageHandler.handlePaymentMessage(message, "messageId1")
-        ).isSameAs(exception);
+        PayHubCallException ex = catchThrowableOfType(
+            () -> messageHandler.handlePaymentMessage(message, "messageId1"),
+            PayHubCallException.class
+        );
+
+        // then
+        assertThat(ex.getMessage())
+            .isEqualTo("Failed creating payment, message ID messageId1. Envelope ID: 99999ZS");
+        assertThat(ex.getCause()).isEqualTo(exception);
     }
 
     @Test
@@ -191,11 +211,16 @@ public class PaymentMessageHandlerTest {
         doThrow(exception).when(payHubClient).createPayment(any(), any());
 
         // when
-        assertThatThrownBy(
-            () -> messageHandler.handlePaymentMessage(message, "messageId1")
-        ).isSameAs(exception);
+        PayHubCallException ex = catchThrowableOfType(
+            () -> messageHandler.handlePaymentMessage(message, "messageId1"),
+            PayHubCallException.class
+        );
 
         // then
+        assertThat(ex.getMessage())
+            .isEqualTo("Failed creating payment, message ID messageId1. Envelope ID: 99999ZS");
+        assertThat(ex.getCause()).isEqualTo(exception);
+
         verify(payHubClient).createPayment(s2sToken, request);
         verify(ccdClient, never()).completeAwaitingDcnProcessing(any(), any(), any());
     }
@@ -282,11 +307,20 @@ public class PaymentMessageHandlerTest {
 
         when(payHubClient.updateCaseReference(
             eq("test-service"), eq("exp-21321"), any(CaseReferenceRequest.class))
-        ).thenThrow(FeignException.class);
+        ).thenThrow(FEIGN_EXCEPTION);
 
         // when
-        assertThatThrownBy(
-            () -> messageHandler.updatePaymentCaseReference(message))
-            .isInstanceOf(FeignException.class);
+        PayHubCallException exception = catchThrowableOfType(
+            () -> messageHandler.updatePaymentCaseReference(message),
+            PayHubCallException.class
+        );
+
+        // then
+        assertThat(exception.getMessage())
+            .isEqualTo(
+                "Failed updating payment. "
+                    + "Envelope id: env-id-12321, Exception record ref: exp-21321, New case ref: cas-ref-9999"
+            );
+        assertThat(exception.getCause()).isEqualTo(FEIGN_EXCEPTION);
     }
 }
