@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.ccd.CcdClient;
+import uk.gov.hmcts.reform.bulkscan.payment.processor.client.payhub.PayHubCallException;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.client.payhub.PayHubClient;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.client.payhub.request.CaseReferenceRequest;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.client.payhub.request.CreatePaymentRequest;
@@ -14,6 +15,8 @@ import uk.gov.hmcts.reform.bulkscan.payment.processor.client.payhub.response.Cre
 import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.PaymentRequestMapper;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.model.CreatePaymentMessage;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.model.UpdatePaymentMessage;
+
+import static java.lang.String.format;
 
 @Service
 @Profile("!functional")
@@ -60,18 +63,31 @@ public class PaymentMessageHandler {
             paymentMessage.exceptionRecordRef
         );
 
-        payHubClient.updateCaseReference(
-            authTokenGenerator.generate(),
-            paymentMessage.exceptionRecordRef,
-            request
-        );
+        try {
+            payHubClient.updateCaseReference(
+                authTokenGenerator.generate(),
+                paymentMessage.exceptionRecordRef,
+                request
+            );
 
-        log.info(
-            "Payments have been reassigned in PayHub. Envelope id: {}, Exception record ref: {}, New case ref: {}",
-            paymentMessage.envelopeId,
-            paymentMessage.exceptionRecordRef,
-            paymentMessage.newCaseRef
-        );
+            log.info(
+                "Payments have been reassigned in PayHub. Envelope id: {}, Exception record ref: {}, New case ref: {}",
+                paymentMessage.envelopeId,
+                paymentMessage.exceptionRecordRef,
+                paymentMessage.newCaseRef
+            );
+        } catch (FeignException ex) {
+            debugPayHubException(ex, "Failed to call 'updatePaymentCaseReference'");
+            throw new PayHubCallException(
+                format(
+                    "Failed updating payment. Envelope id: %s, Exception record ref: %s, New case ref: %s",
+                    paymentMessage.envelopeId,
+                    paymentMessage.exceptionRecordRef,
+                    paymentMessage.newCaseRef
+                ),
+                ex
+            );
+        }
     }
 
     private void createPayment(CreatePaymentMessage paymentMessage, String messageId) {
@@ -102,6 +118,24 @@ public class PaymentMessageHandler {
                 messageId,
                 paymentMessage.envelopeId
             );
+        } catch (FeignException ex) {
+            debugPayHubException(ex, "Failed to call 'createPayment'");
+            throw new PayHubCallException(
+                format(
+                    "Failed creating payment, message ID %s. Envelope ID: %s",
+                    messageId,
+                    paymentMessage.envelopeId
+                ),
+                ex
+            );
         }
+    }
+
+    private void debugPayHubException(FeignException exception, String introMessage) {
+        log.debug(
+            "{}. PayHub response: {}",
+            introMessage,
+            exception.responseBody().map(b -> new String(b.array())).orElseGet(exception::getMessage)
+        );
     }
 }
