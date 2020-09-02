@@ -64,18 +64,18 @@ public class PaymentMessageHandler {
         );
 
         try {
-        payHubClient.updateCaseReference(
-            authTokenGenerator.generate(),
-            paymentMessage.exceptionRecordRef,
-            request
-        );
+            payHubClient.updateCaseReference(
+                authTokenGenerator.generate(),
+                paymentMessage.exceptionRecordRef,
+                request
+            );
 
-        log.info(
-            "Payments have been reassigned in PayHub. Envelope id: {}, Exception record ref: {}, New case ref: {}",
-            paymentMessage.envelopeId,
-            paymentMessage.exceptionRecordRef,
-            paymentMessage.newCaseRef
-        );
+            log.info(
+                "Payments have been reassigned in PayHub. Envelope id: {}, Exception record ref: {}, New case ref: {}",
+                paymentMessage.envelopeId,
+                paymentMessage.exceptionRecordRef,
+                paymentMessage.newCaseRef
+            );
         } catch (FeignException ex) {
             debugPayHubException(ex, "Failed to call 'updatePaymentCaseReference'");
             throw new PayHubCallException(
