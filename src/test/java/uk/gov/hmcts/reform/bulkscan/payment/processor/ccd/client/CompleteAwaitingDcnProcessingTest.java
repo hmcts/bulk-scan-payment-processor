@@ -135,8 +135,7 @@ public class CompleteAwaitingDcnProcessingTest {
         // then
         assertThat(exception.getMessage())
             .isEqualTo(
-                "Internal Error: Failed starting event in CCD for completing payment DCN processing "
-                    + "case: 1231244243242343 Error: 500"
+                "Failed starting event in CCD for completing payment DCN processing case: 1231244243242343 Error: 500"
             );
         assertThat(exception.getCause()).isEqualTo(FEIGN_EXCEPTION);
 
@@ -165,8 +164,7 @@ public class CompleteAwaitingDcnProcessingTest {
         // then
         assertThat(exception.getMessage())
             .isEqualTo(
-                "Internal Error: Failed submitting event in CCD for completing payment DCN processing "
-                    + "case: 1231244243242343 Error: 500"
+                "Failed submitting event in CCD for completing payment DCN processing case: 1231244243242343 Error: 500"
             );
         assertThat(exception.getCause()).isEqualTo(FEIGN_EXCEPTION);
     }

@@ -107,7 +107,7 @@ public class CcdClient {
             debugCcdException(ex, "Failed to call 'startCompleteAwaitingDcnProcessing'");
             throw new CcdCallException(
                 format(
-                    "Internal Error: Failed starting event in CCD for completing payment DCN processing "
+                    "Failed starting event in CCD for completing payment DCN processing "
                         + "case: %s Error: %s", caseRef,
                     ex.status()
                 ),
@@ -146,7 +146,7 @@ public class CcdClient {
             debugCcdException(ex, "Failed to call 'submitCompleteAwaitingDcnProcessing'");
             throw new CcdCallException(
                 format(
-                    "Internal Error: Failed submitting event in CCD for completing payment DCN processing "
+                    "Failed submitting event in CCD for completing payment DCN processing "
                         + "case: %s Error: %s", caseRef,
                     ex.status()
                 ),
