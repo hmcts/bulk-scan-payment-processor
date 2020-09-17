@@ -30,25 +30,6 @@ variable "common_tags" {
   type = map(string)
 }
 
-variable "appinsights_instrumentation_key" {
-  description = "Instrumentation key of the App Insights instance this webapp should use. Module will create own App Insights resource if this is not provided"
-  default     = ""
-}
-
-variable "idam_client_redirect_uri" {
-  default = "https://bulk-scan-orchestrator-sandbox.service.core-compute-sandbox.internal/oauth2/callback"
-}
-
-variable "supported_services" {
-  type        = list(string)
-  description = "Services to be supported by Bulk Scan in the given environment. Bulk Scan will only be able to map these ones to IDAM user credentials"
-  default     = ["SSCS", "BULKSCAN", "PROBATE", "DIVORCE", "FINREM", "CMC"]
-}
-
-variable "enable_ase" {
-  default = false
-}
-
 variable "deployment_namespace" {
   default = ""
 }
