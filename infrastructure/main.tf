@@ -5,7 +5,7 @@ provider "azurerm" {
 # Make sure the resource group exists
 resource "azurerm_resource_group" "rg" {
   name     = "${var.product}-${var.component}-${var.env}"
-  location = "${var.location_app}"
+  location = var.location_app
 }
 
 data "azurerm_key_vault" "s2s_key_vault" {
@@ -14,12 +14,12 @@ data "azurerm_key_vault" "s2s_key_vault" {
 }
 
 data "azurerm_key_vault_secret" "s2s_secret" {
-  key_vault_id = "${data.azurerm_key_vault.s2s_key_vault.id}"
+  key_vault_id = data.azurerm_key_vault.s2s_key_vault.id
   name         = "microservicekey-bulk-scan-payment-processor"
 }
 
 data "azurerm_key_vault_secret" "idam_client_secret" {
-  key_vault_id = "${data.azurerm_key_vault.bulk_scan_key_vault.id}"
+  key_vault_id = data.azurerm_key_vault.bulk_scan_key_vault.id
   name         = "idam-client-secret"
 }
 
@@ -31,6 +31,6 @@ data "azurerm_key_vault" "bulk_scan_key_vault" {
 
 resource "azurerm_key_vault_secret" "bulk_scan_s2s_secret" {
   name         = "s2s-secret-payment-processor"
-  value        = "${data.azurerm_key_vault_secret.s2s_secret.value}"
-  key_vault_id = "${data.azurerm_key_vault.bulk_scan_key_vault.id}"
+  value        = data.azurerm_key_vault_secret.s2s_secret.value
+  key_vault_id = data.azurerm_key_vault.bulk_scan_key_vault.id
 }
