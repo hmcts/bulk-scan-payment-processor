@@ -70,7 +70,7 @@ module "bulk-scan-orchestrator" {
   location                        = "${var.location_app}"
   env                             = "${var.env}"
   ilbIp                           = "${var.ilbIp}"
-  resource_group_name             = "${azurerm_resource_group.rg.name}"
+  resource_group_name             = "${var.product}-${var.component}-${var.env}"
   subscription                    = "${var.subscription}"
   capacity                        = "${var.capacity}"
   common_tags                     = "${var.common_tags}"
@@ -82,12 +82,6 @@ module "bulk-scan-orchestrator" {
 
   app_settings = "${merge(local.core_app_settings, local.users_usernames_settings, local.users_passwords_settings, local.payhub_site_settings)}"
   enable_ase   = "${var.enable_ase}"
-}
-
-# Make sure the resource group exists
-resource "azurerm_resource_group" "rg" {
-  name     = "${var.product}-${var.component}-${var.env}"
-  location = var.location_app
 }
 
 data "azurerm_key_vault" "s2s_key_vault" {
