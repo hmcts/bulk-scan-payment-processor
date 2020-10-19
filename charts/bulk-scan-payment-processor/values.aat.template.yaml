@@ -2,8 +2,8 @@ java:
   environment:
     PAYMENTS_QUEUE_NAME: payments-staging
   keyVaults:
-    "bulk-scan":
-      resourceGroup: bulk-scan
+    "bulk-scan-v2":
+      resourceGroup: bulk-scan-v2
       secrets:
         - s2s-secret-payment-processor
         - site-id-probate

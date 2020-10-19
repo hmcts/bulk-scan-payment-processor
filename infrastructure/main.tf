@@ -101,7 +101,7 @@ data "azurerm_key_vault_secret" "idam_client_secret" {
 
 # Copy s2s secret from s2s key vault to bulkscan key vault
 data "azurerm_key_vault" "bulk_scan_key_vault" {
-  name                = "bulk-scan-${var.env}"
+  name                = "bulk-scan-v2-${var.env}"
   resource_group_name = "bulk-scan-${var.env}"
 }
 

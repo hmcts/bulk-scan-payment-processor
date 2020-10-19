@@ -7,7 +7,7 @@ java:
     PAYMENTS_QUEUE_ACCESS_KEY_LISTEN_NAME: "ListenSharedAccessKey"
     PAYMENTS_QUEUE_MAX_DELIVERY_COUNT: "5"
     PAYMENTS_QUEUE_NAME: payments
-    PAYMENTS_QUEUE_NAMESPACE: bulk-scan-servicebus-{{ .Values.global.environment }}
+    PAYMENTS_QUEUE_NAMESPACE: bulk-scan-servicebus-v2-{{ .Values.global.environment }}
     S2S_NAME: "bulk_scan_payment_processor"
     S2S_URL: http://rpe-service-auth-provider-{{ .Values.global.environment }}.service.core-compute-{{ .Values.global.environment }}.internal
     PAY_HUB_URL: http://ccpay-bulkscanning-api-{{ .Values.global.environment }}.service.core-compute-{{ .Values.global.environment }}.internal
@@ -16,8 +16,8 @@ java:
     CORE_CASE_DATA_API_URL: http://ccd-data-store-api-{{ .Values.global.environment }}.service.core-compute-{{ .Values.global.environment }}.internal
   image: hmctspublic.azurecr.io/bulk-scan/payment-processor:latest
   keyVaults:
-    "bulk-scan":
-      resourceGroup: bulk-scan
+    "bulk-scan-v2":
+      resourceGroup: bulk-scan-v2
       secrets:
         - s2s-secret-payment-processor
         - site-id-probate

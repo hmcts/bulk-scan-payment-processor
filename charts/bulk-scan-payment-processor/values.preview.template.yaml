@@ -17,7 +17,7 @@ java:
     IDAM_CLIENT_REDIRECT_URI: "https://bulk-scan-orchestrator-aat.service.core-compute-aat.internal/oauth2/callback"
     CORE_CASE_DATA_API_URL: "http://ccd-data-store-api-aat.service.core-compute-aat.internal"
   keyVaults:
-    "bulk-scan":
+    "bulk-scan-v2":
       secrets:
         - idam-client-secret
         - site-id-probate

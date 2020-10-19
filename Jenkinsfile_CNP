@@ -14,7 +14,7 @@ def channel = '#bsp-build-notices'
 GradleBuilder builder = new GradleBuilder(this, product)
 
 def previewSecrets = [
-  'bulk-scan-${env}': [
+  'bulk-scan-v2-${env}': [
     secret('s2s-secret-payment-processor', 'S2S_SECRET'),
     secret('idam-users-bulkscan-username', 'IDAM_USERS_BULKSCAN_USERNAME'),
     secret('idam-users-bulkscan-password', 'IDAM_USERS_BULKSCAN_PASSWORD'),
@@ -23,7 +23,7 @@ def previewSecrets = [
 ]
 
 def nonPreviewSecrets = [
-  'bulk-scan-${env}': [
+  'bulk-scan-v2-${env}': [
     secret('s2s-secret-payment-processor', 'S2S_SECRET'),
     secret('idam-users-bulkscan-username', 'IDAM_USERS_BULKSCAN_USERNAME'),
     secret('idam-users-bulkscan-password', 'IDAM_USERS_BULKSCAN_PASSWORD'),
@@ -50,7 +50,7 @@ withPipeline(type, product, component) {
     env.IDAM_API_URL = 'https://idam-api.aat.platform.hmcts.net'
     env.IDAM_CLIENT_REDIRECT_URI = 'https://bulk-scan-orchestrator-aat.service.core-compute-aat.internal/oauth2/callback'
     env.PAYMENTS_QUEUE_NAME = "payments-staging"
-    env.PAYMENTS_QUEUE_NAMESPACE = "bulk-scan-servicebus-aat"
+    env.PAYMENTS_QUEUE_NAMESPACE = "bulk-scan-servicebus-v2-aat"
     env.PAYMENTS_QUEUE_WRITE_ACCESS_KEY_NAME = "SendSharedAccessKey"
   }
 
