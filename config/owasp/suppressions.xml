@@ -1,44 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.3.xsd">
-  <suppress>
+
+  <suppress until="2021-03-05">
     <notes><![CDATA[
-     Suppressing as it seems a false positive
+   file name: spring-security-crypto
    ]]></notes>
-    <gav regex="true">^org\.springframework\.security:spring-security-crypto:5.3.4.RELEASE</gav>
-    <cpe>cpe:/a:pivotal_software:spring_security</cpe>
+    <packageUrl regex="true">^pkg:maven/org\.springframework\.security/spring\-security\-crypto@.*$</packageUrl>
     <cve>CVE-2018-1258</cve>
   </suppress>
-
-  <suppress>
-    <notes><![CDATA[
-   Only used in smoke tests
-   ]]></notes>
-    <packageUrl regex="true">^pkg:maven/org\.codehaus\.groovy/groovy\-(json|xml)@.*$</packageUrl>
-    <cve>CVE-2016-6497</cve>
-  </suppress>
-  <suppress>
+  <suppress until="2021-03-05">
     <notes><![CDATA[
    Only used in smoke tests
    ]]></notes>
     <packageUrl regex="true">^pkg:maven/org\.apache\.sling/org\.apache\.sling\.javax\.activation@.*$</packageUrl>
     <cve>CVE-2016-5394</cve>
     <cve>CVE-2016-6798</cve>
-  </suppress>
-
-  <suppress>
-    <notes><![CDATA[Used only in tests .file name: handlebars-4.1.2.jar: handlebars-v4.0.4.js]]></notes>
-    <packageUrl regex="true">^pkg:javascript/handlebars@.*$</packageUrl>
-    <vulnerabilityName>A prototype pollution vulnerability in handlebars is exploitable if an attacker can control the template</vulnerabilityName>
-    <vulnerabilityName>Disallow calling helperMissing and blockHelperMissing directly</vulnerabilityName>
-    <vulnerabilityName>Prototype pollution</vulnerabilityName>
-  </suppress>
-
-  <suppress>
-    <notes><![CDATA[Used only in tests]]></notes>
-    <packageUrl regex="true">^pkg:javascript/jquery@.*$</packageUrl>
-    <vulnerabilityName>Regex in its jQuery.htmlPrefilter  sometimes may introduce XSS</vulnerabilityName>
-    <cve>CVE-2020-11022</cve>
-    <cve>CVE-2020-11023</cve>
   </suppress>
 
   <suppress until="2021-01-05">
