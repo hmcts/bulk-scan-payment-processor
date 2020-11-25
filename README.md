@@ -1,6 +1,6 @@
 # bulk-scan-payment-processor
 
-[![Build Status](https://travis-ci.org/hmcts/bulk-scan-payment-processor.svg?branch=master)](https://travis-ci.org/hmcts/bulk-scan-payment-processor)
+[![Build Status](https://build.platform.hmcts.net/job/HMCTS_BSP/job/bulk-scan-payment-processor/job/master/)
 
 ## Purpose
 
