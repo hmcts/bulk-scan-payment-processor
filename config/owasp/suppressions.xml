@@ -16,41 +16,7 @@
     <cve>CVE-2016-5394</cve>
     <cve>CVE-2016-6798</cve>
   </suppress>
-
-  <suppress until="2021-01-05">
-    <notes><![CDATA[
-   file name: json-smart-2.3.jar
-   ]]></notes>
-    <packageUrl regex="true">^pkg:maven/net\.minidev/json\-smart@.*$</packageUrl>
-    <cve>CVE-2020-7712</cve>
-  </suppress>
-
-  <suppress until="2021-01-05">
-    <notes><![CDATA[
-   file name: accessors-smart-1.2.jar
-   ]]></notes>
-    <packageUrl regex="true">^pkg:maven/net\.minidev/accessors\-smart@.*$</packageUrl>
-    <cve>CVE-2020-7712</cve>
-  </suppress>
-
-  <suppress until="2021-01-05">
-    <notes><![CDATA[
-   file name: oauth2-oidc-sdk-7.1.1.jar
-   ]]></notes>
-    <packageUrl regex="true">^pkg:maven/com\.nimbusds/oauth2\-oidc\-sdk@.*$</packageUrl>
-    <cve>CVE-2007-1651</cve>
-    <cve>CVE-2007-1652</cve>
-  </suppress>
-
-  <suppress until="2021-01-05">
-    <notes><![CDATA[
-   file name: spring-boot-starter-json-2.3.4.RELEASE.jar
-   ]]></notes>
-    <packageUrl regex="true">^pkg:maven/org\.springframework\.boot/spring\-boot\-starter\-json@.*$</packageUrl>
-    <cve>CVE-2020-7712</cve>
-  </suppress>
-
-  <suppress until="2021-02-01">
+  <suppress until="2021-04-01">
     <notes><![CDATA[
    file name: httpclient-4.5.12.jar
    ]]></notes>
