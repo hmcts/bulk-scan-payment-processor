@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.3.xsd">
 
-  <suppress until="2021-03-05">
+  <suppress until="2021-06-05">
     <notes><![CDATA[
    file name: spring-security-crypto
    ]]></notes>
@@ -23,7 +23,7 @@
     <packageUrl regex="true">^pkg:maven/org\.apache\.httpcomponents/httpclient@.*$</packageUrl>
     <cve>CVE-2020-13956</cve>
   </suppress>
-  
+
   <suppress until="2021-03-01">
     <notes><![CDATA[
    file name: lang-tag-1.4.4.jar
