@@ -151,10 +151,6 @@ dependencyManagement {
     dependencySet(group: 'org.mockito', version: '3.8.0') {
       entry 'mockito-core'
     }
-    //avoid   CVE-2020-13943 and CVE-2020-17527
-    dependency group: 'org.apache.tomcat.embed', name: 'tomcat-embed-core', version: '10.0.2'
-    //avoid   CVE-2020-13943 and CVE-2020-17527
-    dependency group: 'org.apache.tomcat.embed', name: 'tomcat-embed-websocket', version: '10.0.2'
     //avoid   CVE-2021-21290
     dependencySet(group: 'io.netty', version: '4.1.59.Final') {
       entry 'netty-buffer'
