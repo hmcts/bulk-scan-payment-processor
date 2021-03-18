@@ -12,8 +12,11 @@ import org.json.JSONException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import uk.gov.hmcts.reform.bulkscan.payment.processor.logging.AppInsights;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.PaymentMessageParser;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.PaymentMessageProcessor;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.exceptions.InvalidMessageException;
@@ -23,6 +26,7 @@ import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.model.U
 import java.nio.charset.Charset;
 import java.util.Collections;
 import java.util.UUID;
+import java.util.function.Supplier;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
@@ -41,6 +45,7 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static uk.gov.hmcts.reform.bulkscan.payment.processor.data.producer.SamplePaymentMessageData.paymentMessage;
 import static uk.gov.hmcts.reform.bulkscan.payment.processor.data.producer.SamplePaymentMessageData.paymentMessageJsonAsByte;
 import static uk.gov.hmcts.reform.bulkscan.payment.processor.data.producer.SamplePaymentMessageData.updatePaymentMessageJsonAsByte;
+import static uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.PaymentMessageProcessor.NOT_AVAILABLE;
 
 @ExtendWith(MockitoExtension.class)
 public class PaymentMessageProcessorTest {
@@ -59,11 +64,29 @@ public class PaymentMessageProcessorTest {
     @Mock
     private PaymentMessageParser paymentMessageParser;
 
+    @Mock
+    private AppInsights appInsights;
+
     private PaymentMessageProcessor paymentMessageProcessor;
 
     private static final String CCD_CASE_NUMBER = "213132131";
 
     private static final boolean IS_EXCEPTION_RECORD = true;
+
+    @Captor
+    ArgumentCaptor<Supplier<String>> jurisdictionSup;
+
+    @Captor
+    ArgumentCaptor<Supplier<String>> descriptionSup;
+
+    @Captor
+    ArgumentCaptor<Supplier<String>> envelopeIdSup;
+
+    @Captor
+    ArgumentCaptor<Supplier<String>> exceptionRecordRefSup;
+
+    @Captor
+    ArgumentCaptor<Supplier<String>> ccdCaseNumberSup;
 
     @BeforeEach
     public void before() throws Exception {
@@ -71,7 +94,8 @@ public class PaymentMessageProcessorTest {
             paymentMessageHandler,
             messageReceiver,
             paymentMessageParser,
-            10
+            10,
+            appInsights
         );
     }
 
@@ -192,6 +216,17 @@ public class PaymentMessageProcessorTest {
             contains(JsonParseException.class.getSimpleName())
         );
         verifyNoMoreInteractions(messageReceiver);
+
+        verify(appInsights).tracePaymentFailure(eq(message),
+                                                eq(DEAD_LETTER_REASON_PROCESSING_ERROR),
+                                                descriptionSup.capture(), envelopeIdSup.capture(),
+                                                jurisdictionSup.capture(), exceptionRecordRefSup.capture(),
+                                                ccdCaseNumberSup.capture());
+        assertThat(descriptionSup.getValue().get()).isEqualTo("JsonParseException");
+        assertThat(jurisdictionSup.getValue().get()).isEqualTo(NOT_AVAILABLE);
+        assertThat(envelopeIdSup.getValue().get()).isEqualTo(NOT_AVAILABLE);
+        assertThat(exceptionRecordRefSup.getValue().get()).isEqualTo(NOT_AVAILABLE);
+        assertThat(ccdCaseNumberSup.getValue().get()).isEqualTo(NOT_AVAILABLE);
     }
 
     @Test
@@ -221,6 +256,17 @@ public class PaymentMessageProcessorTest {
             contains(JsonParseException.class.getSimpleName())
         );
         verifyNoMoreInteractions(messageReceiver);
+
+        verify(appInsights).tracePaymentFailure(eq(message),
+                                                eq(DEAD_LETTER_REASON_PROCESSING_ERROR),
+                                                descriptionSup.capture(), envelopeIdSup.capture(),
+                                                jurisdictionSup.capture(), exceptionRecordRefSup.capture(),
+                                                ccdCaseNumberSup.capture());
+        assertThat(descriptionSup.getValue().get()).isEqualTo("JsonParseException");
+        assertThat(jurisdictionSup.getValue().get()).isEqualTo(NOT_AVAILABLE);
+        assertThat(envelopeIdSup.getValue().get()).isEqualTo(NOT_AVAILABLE);
+        assertThat(exceptionRecordRefSup.getValue().get()).isEqualTo(NOT_AVAILABLE);
+        assertThat(ccdCaseNumberSup.getValue().get()).isEqualTo(NOT_AVAILABLE);
     }
 
     @Test
@@ -243,6 +289,17 @@ public class PaymentMessageProcessorTest {
             eq("Missing label"),
             eq(null)
         );
+
+        verify(appInsights).tracePaymentFailure(eq(message),
+                                                eq("Missing label"),
+                                                descriptionSup.capture(), envelopeIdSup.capture(),
+                                                jurisdictionSup.capture(), exceptionRecordRefSup.capture(),
+                                                ccdCaseNumberSup.capture());
+        assertThat(descriptionSup.getValue().get()).isEqualTo(NOT_AVAILABLE);
+        assertThat(jurisdictionSup.getValue().get()).isEqualTo(NOT_AVAILABLE);
+        assertThat(envelopeIdSup.getValue().get()).isEqualTo(NOT_AVAILABLE);
+        assertThat(exceptionRecordRefSup.getValue().get()).isEqualTo(NOT_AVAILABLE);
+        assertThat(ccdCaseNumberSup.getValue().get()).isEqualTo(NOT_AVAILABLE);
     }
 
     @Test
@@ -325,6 +382,7 @@ public class PaymentMessageProcessorTest {
         // then the message is not finalised (completed/dead-lettered)
         verify(messageReceiver).receive();
         verify(messageReceiver, never()).deadLetter(any(), anyString(), anyString());
+        verify(appInsights, never()).tracePaymentFailure(any(), any(), any(), any(), any(), any(), any());
     }
 
     @Test
@@ -338,7 +396,8 @@ public class PaymentMessageProcessorTest {
             paymentMessageHandler,
             messageReceiver,
             paymentMessageParser,
-            1
+            1,
+            appInsights
         );
         Exception processingFailureCause = new RuntimeException(RECOVERABLE_EXCEPTION_MESSAGE);
 
@@ -354,6 +413,17 @@ public class PaymentMessageProcessorTest {
             eq("Too many deliveries"),
             eq("Reached limit of message delivery count of 1")
         );
+
+        verify(appInsights).tracePaymentFailure(eq(validMessage),
+                                                eq("Too many deliveries"),
+                                                descriptionSup.capture(), envelopeIdSup.capture(),
+                                                jurisdictionSup.capture(), exceptionRecordRefSup.capture(),
+                                                ccdCaseNumberSup.capture());
+        assertThat(descriptionSup.getValue().get()).isEqualTo("Reached limit of message delivery count of 1");
+        assertThat(jurisdictionSup.getValue().get()).isEqualTo("BULKSCAN");
+        assertThat(envelopeIdSup.getValue().get()).isEqualTo("99999ZS");
+        assertThat(exceptionRecordRefSup.getValue().get()).isEqualTo(NOT_AVAILABLE);
+        assertThat(ccdCaseNumberSup.getValue().get()).isEqualTo("213132131");
     }
 
     @Test
@@ -379,7 +449,8 @@ public class PaymentMessageProcessorTest {
             paymentMessageHandler,
             messageReceiver,
             paymentMessageParser,
-            1
+            1,
+            appInsights
         );
 
         Exception processingFailureCause = new RuntimeException(RECOVERABLE_EXCEPTION_MESSAGE);
@@ -396,6 +467,17 @@ public class PaymentMessageProcessorTest {
             eq("Too many deliveries"),
             eq("Reached limit of message delivery count of 1")
         );
+
+        verify(appInsights).tracePaymentFailure(eq(validMessage),
+            eq("Too many deliveries"),
+            descriptionSup.capture(), envelopeIdSup.capture(),
+            jurisdictionSup.capture(), exceptionRecordRefSup.capture(),
+            ccdCaseNumberSup.capture());
+        assertThat(descriptionSup.getValue().get()).isEqualTo("Reached limit of message delivery count of 1");
+        assertThat(jurisdictionSup.getValue().get()).isEqualTo("PROBATE");
+        assertThat(envelopeIdSup.getValue().get()).isEqualTo("env-12312");
+        assertThat(exceptionRecordRefSup.getValue().get()).isEqualTo("excp-ref-9999");
+        assertThat(ccdCaseNumberSup.getValue().get()).isEqualTo("new-case-ref-12312");
     }
 
     @Test
