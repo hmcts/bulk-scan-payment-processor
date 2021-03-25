@@ -22,6 +22,7 @@ import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.handler
 import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.model.CreatePaymentMessage;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.model.UpdatePaymentMessage;
 
+import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.Collections;
 import java.util.UUID;
@@ -118,7 +119,6 @@ public class PaymentMessageProcessorTest {
         verify(processorClient, never()).updatePayments(any());
     }
 
-    //TODO:Ask Mustafa/Andrea
     @Test
     public void should_not_throw_exception_when_queue_message_is_invalid() throws Exception {
         IMessage invalidMessage = mock(IMessage.class);
@@ -126,8 +126,10 @@ public class PaymentMessageProcessorTest {
             .willReturn(MessageBody.fromBinaryData(ImmutableList.of("foo".getBytes())));
         given(invalidMessage.getLabel()).willReturn(MESSAGE_LABEL_CREATE);
         given(messageReceiver.receive()).willReturn(invalidMessage);
+        given((paymentMessageParser.parse(invalidMessage.getMessageBody()))).willThrow(new InvalidMessageException("Can't parse"));
 
         assertThat(paymentMessageProcessor.processNextMessage()).isTrue();
+        verify(paymentMessageParser).parse(invalidMessage.getMessageBody());
     }
 
     @Test
