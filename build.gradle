@@ -204,7 +204,9 @@ dependencies {
   compile group: 'org.springframework.boot', name: 'spring-boot-starter-actuator'
   compile group: 'org.springframework.boot', name: 'spring-boot-starter-aop'
   compile group: 'org.springframework.boot', name: 'spring-boot-starter-json'
-
+  compile group: 'org.springframework.boot', name: 'spring-boot-starter-batch', {
+    exclude group: 'org.springframework.boot', module: 'spring-boot-starter-jdbc'
+  }
   compile group: 'javax.xml.bind', name: 'jaxb-api', version: '2.3.1' // Needed for openjdk 11 to execute test
 
   compile group: 'io.springfox', name: 'springfox-swagger2', version: versions.springfoxSwagger

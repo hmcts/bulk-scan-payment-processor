@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
-import uk.gov.hmcts.reform.bulkscan.payment.processor.logging.AppInsights;
+import uk.gov.hmcts.reform.bulkscan.payment.processor.client.processor.ProcessorClient;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.exceptions.InvalidMessageException;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.exceptions.UnknownMessageProcessingResultException;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.handler.MessageProcessingResult;
@@ -17,8 +17,6 @@ import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.handler
 import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.handler.PaymentMessageHandler;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.model.CreatePaymentMessage;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.model.UpdatePaymentMessage;
-
-import java.util.function.Consumer;
 
 import static uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.handler.MessageProcessingResultType.POTENTIALLY_RECOVERABLE_FAILURE;
 import static uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.handler.MessageProcessingResultType.SUCCESS;
@@ -29,28 +27,26 @@ import static uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.
 @Profile("!functional & !integration")
 public class PaymentMessageProcessor {
 
-    public static final String NOT_AVAILABLE = "Not available";
-    public static final String LETTER_REASON_PROCESSING_ERROR = "Payment Message processing error";
     private static final Logger log = LoggerFactory.getLogger(PaymentMessageProcessor.class);
 
     private final PaymentMessageHandler paymentMessageHandler;
     private final IMessageReceiver messageReceiver;
     private final PaymentMessageParser paymentMessageParser;
+    private final ProcessorClient processorClient;
     private final int maxDeliveryCount;
-    private final AppInsights appInsights;
 
     public PaymentMessageProcessor(
         PaymentMessageHandler paymentMessageHandler,
         IMessageReceiver messageReceiver,
         PaymentMessageParser paymentMessageParser,
-        @Value("${azure.servicebus.payments.max-delivery-count}") int maxDeliveryCount,
-        AppInsights appInsights
+        ProcessorClient processorClient,
+        @Value("${azure.servicebus.payments.max-delivery-count}") int maxDeliveryCount
     ) {
         this.paymentMessageHandler = paymentMessageHandler;
         this.messageReceiver = messageReceiver;
         this.paymentMessageParser = paymentMessageParser;
+        this.processorClient = processorClient;
         this.maxDeliveryCount = maxDeliveryCount;
-        this.appInsights = appInsights;
     }
 
     /**
@@ -92,7 +88,7 @@ public class PaymentMessageProcessor {
         try {
             payment = paymentMessageParser.parse(message.getMessageBody());
             paymentMessageHandler.handlePaymentMessage(payment, message.getMessageId());
-
+            processorClient.updatePayments(payment.payments);
             log.info(
                 "Processed payment message with ID {}. Envelope ID: {}",
                 message.getMessageId(),
@@ -208,43 +204,6 @@ public class PaymentMessageProcessor {
             reason,
             description
         );
-        logEvent(message, reason, description);
-    }
-
-    private void logEvent(IMessage message, String reason, String description) {
-
-        if (message.getLabel() == null) {
-            appInsights.tracePaymentFailure(message, reason, () -> NOT_AVAILABLE, () -> NOT_AVAILABLE,
-                () -> NOT_AVAILABLE, () -> NOT_AVAILABLE,  () -> NOT_AVAILABLE);
-        } else {
-            switch (message.getLabel()) {
-                case "CREATE":
-                    executeEvent(message, (imessage) -> {
-                        var createPaymentMessage = paymentMessageParser.parse(message.getMessageBody());
-                        appInsights.tracePaymentFailure(message, reason, () -> description,
-                            () -> createPaymentMessage.envelopeId, () -> createPaymentMessage.jurisdiction,
-                            () -> NOT_AVAILABLE, () -> createPaymentMessage.ccdReference); });
-                    break;
-                case "UPDATE":
-                    executeEvent(message, (imessage) -> {
-                        var payment = paymentMessageParser.parseUpdateMessage(message.getMessageBody());
-                        appInsights.tracePaymentFailure(message, reason, () -> description, () -> payment.envelopeId,
-                            () -> payment.jurisdiction, () -> payment.exceptionRecordRef, () -> payment.newCaseRef); });
-                    break;
-                default:
-                    appInsights.tracePaymentFailure(message, reason, () -> NOT_AVAILABLE, () -> NOT_AVAILABLE,
-                        () -> NOT_AVAILABLE, () -> NOT_AVAILABLE,  () -> NOT_AVAILABLE);
-            }
-        }
-    }
-
-    private void executeEvent(IMessage message, Consumer<IMessage> consume) {
-        try {
-            consume.accept(message);
-        } catch (Exception exception) {
-            appInsights.tracePaymentFailure(message, LETTER_REASON_PROCESSING_ERROR, exception::getMessage,
-                () -> NOT_AVAILABLE, () -> NOT_AVAILABLE, () -> NOT_AVAILABLE, () -> NOT_AVAILABLE);
-        }
     }
 
     private void logMessageFinaliseError(

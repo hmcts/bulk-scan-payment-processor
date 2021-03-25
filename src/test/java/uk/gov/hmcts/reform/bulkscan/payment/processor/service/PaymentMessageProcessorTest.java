@@ -12,21 +12,19 @@ import org.json.JSONException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import uk.gov.hmcts.reform.bulkscan.payment.processor.logging.AppInsights;
+import uk.gov.hmcts.reform.bulkscan.payment.processor.client.processor.ProcessorClient;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.PaymentMessageParser;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.PaymentMessageProcessor;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.exceptions.InvalidMessageException;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.handler.PaymentMessageHandler;
+import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.model.CreatePaymentMessage;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.model.UpdatePaymentMessage;
 
 import java.nio.charset.Charset;
 import java.util.Collections;
 import java.util.UUID;
-import java.util.function.Supplier;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
@@ -35,6 +33,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.contains;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.willReturn;
 import static org.mockito.BDDMockito.willThrow;
@@ -45,7 +44,6 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static uk.gov.hmcts.reform.bulkscan.payment.processor.data.producer.SamplePaymentMessageData.paymentMessage;
 import static uk.gov.hmcts.reform.bulkscan.payment.processor.data.producer.SamplePaymentMessageData.paymentMessageJsonAsByte;
 import static uk.gov.hmcts.reform.bulkscan.payment.processor.data.producer.SamplePaymentMessageData.updatePaymentMessageJsonAsByte;
-import static uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.PaymentMessageProcessor.NOT_AVAILABLE;
 
 @ExtendWith(MockitoExtension.class)
 public class PaymentMessageProcessorTest {
@@ -65,7 +63,10 @@ public class PaymentMessageProcessorTest {
     private PaymentMessageParser paymentMessageParser;
 
     @Mock
-    private AppInsights appInsights;
+    private CreatePaymentMessage paymentMessage;
+
+    @Mock
+    private ProcessorClient processorClient;
 
     private PaymentMessageProcessor paymentMessageProcessor;
 
@@ -73,35 +74,25 @@ public class PaymentMessageProcessorTest {
 
     private static final boolean IS_EXCEPTION_RECORD = true;
 
-    @Captor
-    ArgumentCaptor<Supplier<String>> jurisdictionSup;
-
-    @Captor
-    ArgumentCaptor<Supplier<String>> descriptionSup;
-
-    @Captor
-    ArgumentCaptor<Supplier<String>> envelopeIdSup;
-
-    @Captor
-    ArgumentCaptor<Supplier<String>> exceptionRecordRefSup;
-
-    @Captor
-    ArgumentCaptor<Supplier<String>> ccdCaseNumberSup;
-
     @BeforeEach
     public void before() throws Exception {
         paymentMessageProcessor = new PaymentMessageProcessor(
             paymentMessageHandler,
             messageReceiver,
             paymentMessageParser,
-            10,
-            appInsights
+            processorClient,
+            10
         );
+
+
     }
+
 
     @Test
     public void should_return_true_when_there_is_a_message_to_process() throws Exception {
         // given
+        given(paymentMessageParser.parse(isA(MessageBody.class))).willReturn(paymentMessage);
+
         willReturn(getValidMessage(MESSAGE_LABEL_CREATE)).given(messageReceiver).receive();
 
         // when
@@ -111,6 +102,7 @@ public class PaymentMessageProcessorTest {
 
         // then
         assertThat(processedMessage).isTrue();
+        verify(processorClient).updatePayments(any());
     }
 
     @Test
@@ -123,8 +115,10 @@ public class PaymentMessageProcessorTest {
 
         // then
         assertThat(processedMessage).isFalse();
+        verify(processorClient, never()).updatePayments(any());
     }
 
+    //TODO:Ask Mustafa/Andrea
     @Test
     public void should_not_throw_exception_when_queue_message_is_invalid() throws Exception {
         IMessage invalidMessage = mock(IMessage.class);
@@ -146,6 +140,7 @@ public class PaymentMessageProcessorTest {
         willThrow(new RuntimeException()).given(paymentMessageHandler).handlePaymentMessage(any(), any());
 
         assertThatCode(() -> paymentMessageProcessor.processNextMessage()).doesNotThrowAnyException();
+        verify(processorClient, never()).updatePayments(any());
     }
 
     @Test
@@ -161,6 +156,7 @@ public class PaymentMessageProcessorTest {
         // then
         verify(messageReceiver).receive();
         verify(messageReceiver).complete(validMessage.getLockToken());
+        verify(processorClient).updatePayments(any());
     }
 
     @Test
@@ -216,17 +212,7 @@ public class PaymentMessageProcessorTest {
             contains(JsonParseException.class.getSimpleName())
         );
         verifyNoMoreInteractions(messageReceiver);
-
-        verify(appInsights).tracePaymentFailure(eq(message),
-                                                eq(DEAD_LETTER_REASON_PROCESSING_ERROR),
-                                                descriptionSup.capture(), envelopeIdSup.capture(),
-                                                jurisdictionSup.capture(), exceptionRecordRefSup.capture(),
-                                                ccdCaseNumberSup.capture());
-        assertThat(descriptionSup.getValue().get()).isEqualTo("JsonParseException");
-        assertThat(jurisdictionSup.getValue().get()).isEqualTo(NOT_AVAILABLE);
-        assertThat(envelopeIdSup.getValue().get()).isEqualTo(NOT_AVAILABLE);
-        assertThat(exceptionRecordRefSup.getValue().get()).isEqualTo(NOT_AVAILABLE);
-        assertThat(ccdCaseNumberSup.getValue().get()).isEqualTo(NOT_AVAILABLE);
+        verify(processorClient, never()).updatePayments(any());
     }
 
     @Test
@@ -256,17 +242,6 @@ public class PaymentMessageProcessorTest {
             contains(JsonParseException.class.getSimpleName())
         );
         verifyNoMoreInteractions(messageReceiver);
-
-        verify(appInsights).tracePaymentFailure(eq(message),
-                                                eq(DEAD_LETTER_REASON_PROCESSING_ERROR),
-                                                descriptionSup.capture(), envelopeIdSup.capture(),
-                                                jurisdictionSup.capture(), exceptionRecordRefSup.capture(),
-                                                ccdCaseNumberSup.capture());
-        assertThat(descriptionSup.getValue().get()).isEqualTo("JsonParseException");
-        assertThat(jurisdictionSup.getValue().get()).isEqualTo(NOT_AVAILABLE);
-        assertThat(envelopeIdSup.getValue().get()).isEqualTo(NOT_AVAILABLE);
-        assertThat(exceptionRecordRefSup.getValue().get()).isEqualTo(NOT_AVAILABLE);
-        assertThat(ccdCaseNumberSup.getValue().get()).isEqualTo(NOT_AVAILABLE);
     }
 
     @Test
@@ -289,17 +264,6 @@ public class PaymentMessageProcessorTest {
             eq("Missing label"),
             eq(null)
         );
-
-        verify(appInsights).tracePaymentFailure(eq(message),
-                                                eq("Missing label"),
-                                                descriptionSup.capture(), envelopeIdSup.capture(),
-                                                jurisdictionSup.capture(), exceptionRecordRefSup.capture(),
-                                                ccdCaseNumberSup.capture());
-        assertThat(descriptionSup.getValue().get()).isEqualTo(NOT_AVAILABLE);
-        assertThat(jurisdictionSup.getValue().get()).isEqualTo(NOT_AVAILABLE);
-        assertThat(envelopeIdSup.getValue().get()).isEqualTo(NOT_AVAILABLE);
-        assertThat(exceptionRecordRefSup.getValue().get()).isEqualTo(NOT_AVAILABLE);
-        assertThat(ccdCaseNumberSup.getValue().get()).isEqualTo(NOT_AVAILABLE);
     }
 
     @Test
@@ -327,6 +291,7 @@ public class PaymentMessageProcessorTest {
 
         // then the message is not finalised (completed/dead-lettered)
         verify(messageReceiver).receive();
+        verify(processorClient, never()).updatePayments(any());
     }
 
     @Test
@@ -382,7 +347,6 @@ public class PaymentMessageProcessorTest {
         // then the message is not finalised (completed/dead-lettered)
         verify(messageReceiver).receive();
         verify(messageReceiver, never()).deadLetter(any(), anyString(), anyString());
-        verify(appInsights, never()).tracePaymentFailure(any(), any(), any(), any(), any(), any(), any());
     }
 
     @Test
@@ -396,8 +360,8 @@ public class PaymentMessageProcessorTest {
             paymentMessageHandler,
             messageReceiver,
             paymentMessageParser,
-            1,
-            appInsights
+            processorClient,
+            1
         );
         Exception processingFailureCause = new RuntimeException(RECOVERABLE_EXCEPTION_MESSAGE);
 
@@ -414,16 +378,7 @@ public class PaymentMessageProcessorTest {
             eq("Reached limit of message delivery count of 1")
         );
 
-        verify(appInsights).tracePaymentFailure(eq(validMessage),
-                                                eq("Too many deliveries"),
-                                                descriptionSup.capture(), envelopeIdSup.capture(),
-                                                jurisdictionSup.capture(), exceptionRecordRefSup.capture(),
-                                                ccdCaseNumberSup.capture());
-        assertThat(descriptionSup.getValue().get()).isEqualTo("Reached limit of message delivery count of 1");
-        assertThat(jurisdictionSup.getValue().get()).isEqualTo("BULKSCAN");
-        assertThat(envelopeIdSup.getValue().get()).isEqualTo("99999ZS");
-        assertThat(exceptionRecordRefSup.getValue().get()).isEqualTo(NOT_AVAILABLE);
-        assertThat(ccdCaseNumberSup.getValue().get()).isEqualTo("213132131");
+        verify(processorClient, never()).updatePayments(any());
     }
 
     @Test
@@ -449,8 +404,8 @@ public class PaymentMessageProcessorTest {
             paymentMessageHandler,
             messageReceiver,
             paymentMessageParser,
-            1,
-            appInsights
+            processorClient,
+            1
         );
 
         Exception processingFailureCause = new RuntimeException(RECOVERABLE_EXCEPTION_MESSAGE);
@@ -468,16 +423,7 @@ public class PaymentMessageProcessorTest {
             eq("Reached limit of message delivery count of 1")
         );
 
-        verify(appInsights).tracePaymentFailure(eq(validMessage),
-            eq("Too many deliveries"),
-            descriptionSup.capture(), envelopeIdSup.capture(),
-            jurisdictionSup.capture(), exceptionRecordRefSup.capture(),
-            ccdCaseNumberSup.capture());
-        assertThat(descriptionSup.getValue().get()).isEqualTo("Reached limit of message delivery count of 1");
-        assertThat(jurisdictionSup.getValue().get()).isEqualTo("PROBATE");
-        assertThat(envelopeIdSup.getValue().get()).isEqualTo("env-12312");
-        assertThat(exceptionRecordRefSup.getValue().get()).isEqualTo("excp-ref-9999");
-        assertThat(ccdCaseNumberSup.getValue().get()).isEqualTo("new-case-ref-12312");
+        verify(processorClient, never()).updatePayments(any());
     }
 
     @Test
