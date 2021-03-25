@@ -54,7 +54,6 @@ locals {
 
   core_app_settings = {
     PAY_HUB_URL                           = "http://ccpay-bulkscanning-api-${var.env}.service.core-compute-${var.env}.internal"
-    PROCESSOR_URL                         = "http://bulk-scan-processor-${var.env}.service.core-compute-${var.env}.internal"
     S2S_URL                               = "${local.s2s_url}"
     S2S_SECRET                            = "${data.azurerm_key_vault_secret.s2s_secret.value}"
     IDAM_API_URL                          = "https://idam-api.${var.env}.platform.hmcts.net"
