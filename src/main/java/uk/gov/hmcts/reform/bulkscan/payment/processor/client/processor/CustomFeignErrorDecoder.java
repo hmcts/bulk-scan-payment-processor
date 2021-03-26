@@ -16,7 +16,6 @@ import java.util.ArrayList;
 import java.util.Optional;
 
 public class CustomFeignErrorDecoder implements ErrorDecoder {
-    private static final Logger logger = LoggerFactory.getLogger(CustomFeignErrorDecoder.class);
     private ErrorDecoder delegate = new Default();
 
     @Override
@@ -34,7 +33,7 @@ public class CustomFeignErrorDecoder implements ErrorDecoder {
             try (InputStream body = response.body().asInputStream()) {
                 responseBody = IOUtils.toByteArray(body);
             } catch (IOException e) {
-                throw new RuntimeException("Failed to process response body.", e);
+                return new RuntimeException("Failed to process response body.", e);
             }
         }
 

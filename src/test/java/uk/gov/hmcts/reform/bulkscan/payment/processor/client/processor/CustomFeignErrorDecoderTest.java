@@ -16,7 +16,6 @@ import java.util.Collections;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
@@ -80,7 +79,7 @@ class CustomFeignErrorDecoderTest {
 
         when(body.asInputStream()).thenThrow(IOException.class);
 
-        assertThatCode(() -> decode(response))
+        assertThat(decode(response))
             .isInstanceOf(RuntimeException.class)
             .hasMessage("Failed to process response body.")
             .hasCauseInstanceOf(IOException.class);
