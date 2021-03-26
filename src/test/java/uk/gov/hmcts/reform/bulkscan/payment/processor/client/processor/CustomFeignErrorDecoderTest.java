@@ -35,7 +35,7 @@ class CustomFeignErrorDecoderTest {
 
     @DisplayName("Should parse response and return Client specific exception")
     @Test
-    public void should_throw_Client_Exception() {
+    void should_throw_Client_Exception() {
         Response response = Response.builder()
             .request(REQUEST)
             .headers(Collections.singletonMap("AcceptTest", Collections.singletonList("Yes")))
@@ -51,7 +51,7 @@ class CustomFeignErrorDecoderTest {
 
     @DisplayName("Should parse response and return Server specific exception")
     @Test
-    public void should_throw_Server_Exception() {
+    void should_throw_Server_Exception() {
         Response response = Response.builder()
             .request(REQUEST)
             .headers(Collections.emptyMap())
@@ -66,7 +66,7 @@ class CustomFeignErrorDecoderTest {
 
     @DisplayName("Should fail to parse body and throw RuntimeException instead")
     @Test
-    public void should_throw_Failing_Body_Parsing() throws IOException {
+    void should_throw_Failing_Body_Parsing() throws IOException {
         Response.Body body = mock(Response.Body.class);
         Response response = Response.builder()
             .request(REQUEST)
@@ -86,7 +86,7 @@ class CustomFeignErrorDecoderTest {
 
     @DisplayName("Should decode valid response in case somehow it got in the process")
     @Test
-    public void should_throw_FeignException() {
+    void should_throw_FeignException() {
         Response response = Response.builder()
             .request(REQUEST)
             .headers(Collections.emptyMap())
@@ -103,7 +103,7 @@ class CustomFeignErrorDecoderTest {
 
     @DisplayName("Should decode when response body is not present")
     @Test
-    public void testResponseBodyIsNull() {
+    void should_handle_null_response() {
         Response response = Response.builder()
             .request(REQUEST)
             .headers(Collections.emptyMap())
