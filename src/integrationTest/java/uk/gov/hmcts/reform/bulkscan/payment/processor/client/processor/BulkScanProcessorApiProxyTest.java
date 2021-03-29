@@ -1,6 +1,5 @@
 package uk.gov.hmcts.reform.bulkscan.payment.processor.client.processor;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.client.processor.request.PaymentRequest;
@@ -26,9 +25,6 @@ import static java.util.UUID.randomUUID;
 public class BulkScanProcessorApiProxyTest {
     @Autowired
     private BulkScanProcessorApiProxy proxy;
-
-    @Autowired
-    private ObjectMapper objectMapper;
 
     @Test
     void should_return_ok_when_payment_is_updated() throws IOException {
