@@ -46,7 +46,7 @@ public class BulkScanProcessorApiProxyTest {
 
         proxy.updateStatus(s2sToken, request);
 
-        verify(1, putRequestedFor(urlEqualTo(
-            "/payment/status")).withRequestBody(equalToJson(requestJson)));
+        verify(1, putRequestedFor(urlEqualTo("/payment/status"))
+            .withRequestBody(equalToJson(requestJson)));
     }
 }

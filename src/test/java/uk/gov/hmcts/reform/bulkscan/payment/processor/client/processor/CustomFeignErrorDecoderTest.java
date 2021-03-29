@@ -35,7 +35,7 @@ class CustomFeignErrorDecoderTest {
 
     @DisplayName("Should parse response and return Client specific exception")
     @Test
-    void should_throw_Client_Exception() {
+    void should_throw_client_exception() {
         Response response = Response.builder()
             .request(REQUEST)
             .headers(Collections.singletonMap("AcceptTest", Collections.singletonList("Yes")))
@@ -51,7 +51,7 @@ class CustomFeignErrorDecoderTest {
 
     @DisplayName("Should parse response and return Server specific exception")
     @Test
-    void should_throw_Server_Exception() {
+    void should_throw_server_exception() {
         Response response = Response.builder()
             .request(REQUEST)
             .headers(Collections.emptyMap())
@@ -66,7 +66,7 @@ class CustomFeignErrorDecoderTest {
 
     @DisplayName("Should fail to parse body and throw RuntimeException instead")
     @Test
-    void should_throw_Failing_Body_Parsing() throws IOException {
+    void should_throw_failing_body_parsing() throws IOException {
         Response.Body body = mock(Response.Body.class);
         Response response = Response.builder()
             .request(REQUEST)
@@ -86,7 +86,7 @@ class CustomFeignErrorDecoderTest {
 
     @DisplayName("Should decode valid response in case somehow it got in the process")
     @Test
-    void should_throw_FeignException() {
+    void should_throw_feign_exception() {
         Response response = Response.builder()
             .request(REQUEST)
             .headers(Collections.emptyMap())
@@ -104,10 +104,43 @@ class CustomFeignErrorDecoderTest {
     @DisplayName("Should decode when response body is not present")
     @Test
     void should_handle_null_response() {
+        Request.Body body = null;
+        Request.create(
+            Request.HttpMethod.GET,
+            "localhost",
+            Collections.emptyMap(),
+            body,
+            null
+        );
         Response response = Response.builder()
             .request(REQUEST)
             .headers(Collections.emptyMap())
             .status(HttpStatus.TEMPORARY_REDIRECT.value())
+            .reason("nope")
+            .build();
+
+        assertThat(decode(response))
+            .isInstanceOf(FeignException.class)
+            .hasMessage("[" + HttpStatus.TEMPORARY_REDIRECT.value()
+                            + " nope] during [GET] to [localhost] [methodKey]: []");
+    }
+
+    @DisplayName("Should decode when response body empty")
+    @Test
+    void should_handle_empty_response() {
+        Request.create(
+            Request.HttpMethod.GET,
+            "localhost",
+            Collections.emptyMap(),
+            Request.Body.empty(),
+            null
+        );
+
+        Response response = Response.builder()
+            .request(REQUEST)
+            .headers(Collections.emptyMap())
+            .status(HttpStatus.TEMPORARY_REDIRECT.value())
+            .body("".getBytes())
             .reason("nope")
             .build();
 
