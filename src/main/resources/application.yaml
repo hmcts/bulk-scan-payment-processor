@@ -53,6 +53,15 @@ pay-hub:
   api:
     url: ${PAY_HUB_URL}
 
+bulk-scan-procesor:
+  api:
+    url: ${PROCESSOR_URL}
+    retries: 10
+    wait-time-in-ms: 1000
+
+async:
+  threadpool-size:5
+
 idam:
   s2s-auth:
     url: ${S2S_URL:http://localhost:4552}
