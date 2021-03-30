@@ -5,6 +5,10 @@ pay-hub:
   api:
     url: *wiremock
 
+bulk-scan-procesor:
+  api:
+    url: *wiremock
+
 idam:
   s2s-auth:
     url: *wiremock
