@@ -16,9 +16,9 @@ public class RetryConfig {
     public RetryTemplate retryTemplate(@Value("${bulk-scan-procesor.api.retries}") int numberOfRetries,
                                        @Value("${bulk-scan-procesor.api.wait-time-in-ms}") long timeToWait) {
         return RetryTemplate.builder()
-            .retryOn(HttpServerErrorException.class)
-            .maxAttempts(numberOfRetries)
-            .exponentialBackoff(timeToWait, DEFAULT_MULTIPLIER, DEFAULT_MAX_INTERVAL)
-            .build();
+                .retryOn(HttpServerErrorException.class)
+                .maxAttempts(numberOfRetries)
+                .exponentialBackoff(timeToWait, DEFAULT_MULTIPLIER, DEFAULT_MAX_INTERVAL)
+                .build();
     }
 }
