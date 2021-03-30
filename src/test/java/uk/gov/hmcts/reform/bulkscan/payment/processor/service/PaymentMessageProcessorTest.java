@@ -14,10 +14,12 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import uk.gov.hmcts.reform.bulkscan.payment.processor.client.processor.ProcessorClient;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.PaymentMessageParser;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.PaymentMessageProcessor;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.exceptions.InvalidMessageException;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.handler.PaymentMessageHandler;
+import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.model.CreatePaymentMessage;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.model.UpdatePaymentMessage;
 
 import java.nio.charset.Charset;
@@ -31,6 +33,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.contains;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.willReturn;
 import static org.mockito.BDDMockito.willThrow;
@@ -59,6 +62,12 @@ public class PaymentMessageProcessorTest {
     @Mock
     private PaymentMessageParser paymentMessageParser;
 
+    @Mock
+    private CreatePaymentMessage paymentMessage;
+
+    @Mock
+    private ProcessorClient processorClient;
+
     private PaymentMessageProcessor paymentMessageProcessor;
 
     private static final String CCD_CASE_NUMBER = "213132131";
@@ -71,6 +80,7 @@ public class PaymentMessageProcessorTest {
             paymentMessageHandler,
             messageReceiver,
             paymentMessageParser,
+            processorClient,
             10
         );
     }
@@ -78,6 +88,8 @@ public class PaymentMessageProcessorTest {
     @Test
     public void should_return_true_when_there_is_a_message_to_process() throws Exception {
         // given
+        given(paymentMessageParser.parse(isA(MessageBody.class))).willReturn(paymentMessage);
+
         willReturn(getValidMessage(MESSAGE_LABEL_CREATE)).given(messageReceiver).receive();
 
         // when
@@ -87,6 +99,7 @@ public class PaymentMessageProcessorTest {
 
         // then
         assertThat(processedMessage).isTrue();
+        verify(processorClient).updatePayments(any());
     }
 
     @Test
@@ -99,6 +112,7 @@ public class PaymentMessageProcessorTest {
 
         // then
         assertThat(processedMessage).isFalse();
+        verify(processorClient, never()).updatePayments(any());
     }
 
     @Test
@@ -108,8 +122,11 @@ public class PaymentMessageProcessorTest {
             .willReturn(MessageBody.fromBinaryData(ImmutableList.of("foo".getBytes())));
         given(invalidMessage.getLabel()).willReturn(MESSAGE_LABEL_CREATE);
         given(messageReceiver.receive()).willReturn(invalidMessage);
+        given((paymentMessageParser.parse(invalidMessage.getMessageBody())))
+            .willThrow(new InvalidMessageException("Can't parse"));
 
         assertThat(paymentMessageProcessor.processNextMessage()).isTrue();
+        verify(paymentMessageParser).parse(invalidMessage.getMessageBody());
     }
 
     @Test
@@ -122,6 +139,7 @@ public class PaymentMessageProcessorTest {
         willThrow(new RuntimeException()).given(paymentMessageHandler).handlePaymentMessage(any(), any());
 
         assertThatCode(() -> paymentMessageProcessor.processNextMessage()).doesNotThrowAnyException();
+        verify(processorClient, never()).updatePayments(any());
     }
 
     @Test
@@ -137,6 +155,7 @@ public class PaymentMessageProcessorTest {
         // then
         verify(messageReceiver).receive();
         verify(messageReceiver).complete(validMessage.getLockToken());
+        verify(processorClient).updatePayments(any());
     }
 
     @Test
@@ -192,6 +211,7 @@ public class PaymentMessageProcessorTest {
             contains(JsonParseException.class.getSimpleName())
         );
         verifyNoMoreInteractions(messageReceiver);
+        verify(processorClient, never()).updatePayments(any());
     }
 
     @Test
@@ -270,6 +290,7 @@ public class PaymentMessageProcessorTest {
 
         // then the message is not finalised (completed/dead-lettered)
         verify(messageReceiver).receive();
+        verify(processorClient, never()).updatePayments(any());
     }
 
     @Test
@@ -338,6 +359,7 @@ public class PaymentMessageProcessorTest {
             paymentMessageHandler,
             messageReceiver,
             paymentMessageParser,
+            processorClient,
             1
         );
         Exception processingFailureCause = new RuntimeException(RECOVERABLE_EXCEPTION_MESSAGE);
@@ -354,6 +376,8 @@ public class PaymentMessageProcessorTest {
             eq("Too many deliveries"),
             eq("Reached limit of message delivery count of 1")
         );
+
+        verify(processorClient, never()).updatePayments(any());
     }
 
     @Test
@@ -379,6 +403,7 @@ public class PaymentMessageProcessorTest {
             paymentMessageHandler,
             messageReceiver,
             paymentMessageParser,
+            processorClient,
             1
         );
 
@@ -396,6 +421,8 @@ public class PaymentMessageProcessorTest {
             eq("Too many deliveries"),
             eq("Reached limit of message delivery count of 1")
         );
+
+        verify(processorClient, never()).updatePayments(any());
     }
 
     @Test

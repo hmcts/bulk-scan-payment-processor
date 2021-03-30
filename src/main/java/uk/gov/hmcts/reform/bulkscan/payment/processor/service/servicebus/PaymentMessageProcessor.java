@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
+import uk.gov.hmcts.reform.bulkscan.payment.processor.client.processor.ProcessorClient;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.exceptions.InvalidMessageException;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.exceptions.UnknownMessageProcessingResultException;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.handler.MessageProcessingResult;
@@ -31,17 +32,20 @@ public class PaymentMessageProcessor {
     private final PaymentMessageHandler paymentMessageHandler;
     private final IMessageReceiver messageReceiver;
     private final PaymentMessageParser paymentMessageParser;
+    private final ProcessorClient processorClient;
     private final int maxDeliveryCount;
 
     public PaymentMessageProcessor(
         PaymentMessageHandler paymentMessageHandler,
         IMessageReceiver messageReceiver,
         PaymentMessageParser paymentMessageParser,
+        ProcessorClient processorClient,
         @Value("${azure.servicebus.payments.max-delivery-count}") int maxDeliveryCount
     ) {
         this.paymentMessageHandler = paymentMessageHandler;
         this.messageReceiver = messageReceiver;
         this.paymentMessageParser = paymentMessageParser;
+        this.processorClient = processorClient;
         this.maxDeliveryCount = maxDeliveryCount;
     }
 
@@ -84,7 +88,7 @@ public class PaymentMessageProcessor {
         try {
             payment = paymentMessageParser.parse(message.getMessageBody());
             paymentMessageHandler.handlePaymentMessage(payment, message.getMessageId());
-
+            processorClient.updatePayments(payment.payments);
             log.info(
                 "Processed payment message with ID {}. Envelope ID: {}",
                 message.getMessageId(),
