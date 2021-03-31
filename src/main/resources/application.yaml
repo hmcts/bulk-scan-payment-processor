@@ -20,6 +20,8 @@ management:
 spring:
   application:
     name: Bulk Scan Payment Processor
+  config:
+    import: "optional:configtree:/mnt/secrets/bulk-scan/"
   main:
     # without this, Spring can't properly resolve feign clients when IDAM and CCD clients are both included
     # TODO: remove when possible
@@ -53,14 +55,13 @@ pay-hub:
   api:
     url: ${PAY_HUB_URL}
 
-process:
+bulk-scan-procesor:
   api:
     url: ${PROCESSOR_URL}
     retries: 10
     wait-time-in-ms: 1000
-
-async:
-  threadpool-size:5
+  async:
+    threadpool-size:5
 
 idam:
   s2s-auth:

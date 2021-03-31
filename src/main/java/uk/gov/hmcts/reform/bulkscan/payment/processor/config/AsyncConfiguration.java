@@ -15,7 +15,7 @@ public class AsyncConfiguration {
     private Logger logger = LoggerFactory.getLogger(AsyncConfiguration.class);
 
     @Bean(name = "AsyncExecutor")
-    public Executor getExecutor(@Value("${async.threadpool-size:5}") int threadPoolSize) {
+    public Executor getExecutor(@Value("${bulk-scan-procesor.async.threadpool-size:5}") int threadPoolSize) {
         logger.info("thread pool size {}", threadPoolSize);
         AtomicInteger count = new AtomicInteger();
         return Executors.newFixedThreadPool(threadPoolSize,
