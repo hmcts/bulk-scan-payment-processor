@@ -18,9 +18,8 @@ bulk-scan-procesor:
   api:
     retries: 10
     wait-time-in-ms: 1000
-
-async:
-  threadpool-size:5
+  async:
+    threadpool-size:5
 
 idam:
   s2s-auth:
