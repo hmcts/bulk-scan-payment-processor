@@ -16,8 +16,8 @@ azure:
 
 bulk-scan-procesor:
   api:
-    retries: 10
-    wait-time-in-ms: 1000
+    retries: 5
+    wait-time-in-ms: 10
   async:
     threadpool-size:5
 
