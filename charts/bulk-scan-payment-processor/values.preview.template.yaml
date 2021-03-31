@@ -19,14 +19,22 @@ java:
   keyVaults:
     "bulk-scan":
       secrets:
-        - idam-client-secret
-        - site-id-probate
-        - site-id-divorce
-        - site-id-finrem
-        - site-id-bulkscan
-        - s2s-secret-payment-processor
-        - idam-users-bulkscan-username
-        - idam-users-bulkscan-password
+        - name:  idam-client-secret
+          alias: IDAM_CLIENT_SECRET
+        - name: site-id-probate
+          alias: SITE_ID_PROBATE
+        - name: site-id-divorce
+          alias: SITE_ID_DIVORCE
+        - name: site-id-finrem
+          alias: SITE_ID_FINREM
+        - name: site-id-bulkscan
+          alias: SITE_ID_BULKSCAN
+        - name: s2s-secret-payment-processor
+          alias: S2S_SECRET
+        - name:  idam-users-bulkscan-username
+          alias: idam.users.bulkscan.username
+        - name:  idam-users-bulkscan-password
+          alias: idam.users.bulkscan.password
   # Don't modify below here
   image: ${IMAGE_NAME}
   ingressHost: ${SERVICE_FQDN}

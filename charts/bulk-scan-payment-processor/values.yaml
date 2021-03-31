@@ -19,25 +19,42 @@ java:
   image: hmctspublic.azurecr.io/bulk-scan/payment-processor:latest
   keyVaults:
     "bulk-scan":
-      resourceGroup: bulk-scan
       secrets:
-        - s2s-secret-payment-processor
-        - site-id-probate
-        - site-id-divorce
-        - site-id-finrem
-        - site-id-bulkscan
-        - payments-queue-listen-shared-access-key
-        - app-insights-instrumentation-key
-        - idam-client-secret
-        - idam-users-bulkscan-username
-        - idam-users-bulkscan-password
-        - idam-users-cmc-username
-        - idam-users-cmc-password
-        - idam-users-div-username
-        - idam-users-div-password
-        - idam-users-finrem-username
-        - idam-users-finrem-password
-        - idam-users-probate-username
-        - idam-users-probate-password
+        - name: app-insights-instrumentation-key
+          alias: azure.application-insights.instrumentation-key
+        - name: s2s-secret-payment-processor
+          alias: S2S_SECRET
+        - name: site-id-probate
+          alias: SITE_ID_PROBATE
+        - name: site-id-divorce
+          alias: SITE_ID_DIVORCE
+        - name: site-id-finrem
+          alias: SITE_ID_FINREM
+        - name: site-id-bulkscan
+          alias: SITE_ID_BULKSCAN
+        - name: payments-queue-listen-shared-access-key
+          alias: PAYMENTS_QUEUE_READ_ACCESS_KEY
+        - name: idam-client-secret
+          alias: IDAM_CLIENT_SECRET
+        - name: idam-users-bulkscan-username
+          alias: idam.users.bulkscan.username
+        - name: idam-users-bulkscan-password
+          alias: idam.users.bulkscan.password
+        - name: idam-users-cmc-username
+          alias: idam.users.cmc.username
+        - name: idam-users-cmc-password
+          alias: idam.users.cmc.password
+        - name: idam-users-div-username
+          alias: idam.users.divorce.username
+        - name: idam-users-div-password
+          alias: idam.users.divorce.password
+        - name: idam-users-finrem-username
+          alias: idam.users.finrem.username
+        - name: idam-users-finrem-password
+          alias: idam.users.finrem.password
+        - name: idam-users-probate-username
+          alias: idam.users.probate.username
+        - name: idam-users-probate-password
+          alias: idam.users.probate.password
 servicebus:
   enabled: false
