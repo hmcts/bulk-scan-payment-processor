@@ -10,6 +10,7 @@ import uk.gov.hmcts.reform.bulkscan.payment.processor.client.processor.request.P
 import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.model.PaymentInfo;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 @Service
 public class ProcessorClient {
@@ -26,19 +27,22 @@ public class ProcessorClient {
     }
 
     @Async("AsyncExecutor")
-    public void updatePayments(List<PaymentInfo> payments) {
+    public CompletableFuture<Boolean> updatePayments(List<PaymentInfo> payments) {
         PaymentRequest request = new PaymentRequest(payments);
         String authToken = authTokenGenerator.generate();
+        CompletableFuture<Boolean> completableFuture = new CompletableFuture<>();
         try {
             retryTemplate.execute(context -> {
                 logger.info("Started to update payment DCNS {} ", request.payments);
                 proxy.updateStatus(authToken, request);
                 logger.info("Updated payment DCNS {} ", request.payments);
-                return true;
+                return completableFuture.complete(true);
             });
         } catch (Exception exception) {
+            completableFuture.completeExceptionally(exception);
             logger.error("Exception on payment status update for DCNS {} ", payments, exception);
+        } finally {
+            return completableFuture;
         }
-
     }
 }
