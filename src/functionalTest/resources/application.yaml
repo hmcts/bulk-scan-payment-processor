@@ -16,6 +16,7 @@ azure:
 
 bulk-scan-procesor:
   api:
+    url: ${PROCESSOR_URL}
     retries: 5
     wait-time-in-ms: 10
   async:
