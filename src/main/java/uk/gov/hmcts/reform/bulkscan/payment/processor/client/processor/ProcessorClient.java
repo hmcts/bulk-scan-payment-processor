@@ -41,8 +41,7 @@ public class ProcessorClient {
         } catch (Exception exception) {
             completableFuture.completeExceptionally(exception);
             logger.error("Exception on payment status update for DCNS {} ", payments, exception);
-        } finally {
-            return completableFuture;
         }
+        return completableFuture;
     }
 }
