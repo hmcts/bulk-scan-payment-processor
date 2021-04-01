@@ -14,7 +14,6 @@ import uk.gov.hmcts.reform.bulkscan.payment.processor.client.processor.request.P
 
 @FeignClient(name = "bulk-scan-processor-api", url = "${bulk-scan-procesor.api.url}",
     configuration = BulkScanProcessorApiProxy.BulkScanConfiguration.class)
-@Profile("!functional")
 public interface BulkScanProcessorApiProxy {
 
     @PutMapping(
