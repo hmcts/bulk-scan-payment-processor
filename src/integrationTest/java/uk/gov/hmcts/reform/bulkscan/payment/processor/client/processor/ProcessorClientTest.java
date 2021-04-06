@@ -68,7 +68,7 @@ public class ProcessorClientTest {
 
         when(proxy.updateStatus(any(), any()))
             .thenThrow(new HttpServerErrorException(GATEWAY_TIMEOUT, GATEWAY_TIMEOUT.getReasonPhrase(),
-                null, null, null))
+             null, null, null))
             .thenThrow(new HttpServerErrorException(BAD_GATEWAY, BAD_GATEWAY.getReasonPhrase(), null, null, null))
             .thenReturn("Success");
 
@@ -90,7 +90,8 @@ public class ProcessorClientTest {
 
         when(proxy.updateStatus(any(), any()))
             .thenThrow(new HttpServerErrorException(GATEWAY_TIMEOUT, GATEWAY_TIMEOUT.getReasonPhrase(),
-                null, null, null));
+             null, null, null));
+
         CompletableFuture<Boolean> paymentUpdated =  processorClient.updatePayments(paymentInfoList);
 
         assertThatThrownBy(paymentUpdated::get)
@@ -113,7 +114,7 @@ public class ProcessorClientTest {
 
         when(proxy.updateStatus(any(), any()))
             .thenThrow(new HttpClientErrorException(BAD_REQUEST, BAD_REQUEST.getReasonPhrase(),
-                null, null, null));
+             null, null, null));
 
         CompletableFuture<Boolean> paymentUpdated =  processorClient.updatePayments(paymentInfoList);
 
