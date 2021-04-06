@@ -8,6 +8,11 @@ pay-hub:
 bulk-scan-procesor:
   api:
     url: *wiremock
+    retries: 5
+    wait-time-in-ms: 10
+  async:
+    threadpool-size:5
+
 
 idam:
   s2s-auth:
