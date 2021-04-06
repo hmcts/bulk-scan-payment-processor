@@ -2,6 +2,7 @@ package uk.gov.hmcts.reform.bulkscan.payment.processor.client.processor;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Profile;
 import org.springframework.retry.support.RetryTemplate;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
@@ -13,6 +14,7 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
 @Service
+@Profile("!functional")
 public class ProcessorClient {
     private static final Logger logger = LoggerFactory.getLogger(ProcessorClient.class);
     private final AuthTokenGenerator authTokenGenerator;
