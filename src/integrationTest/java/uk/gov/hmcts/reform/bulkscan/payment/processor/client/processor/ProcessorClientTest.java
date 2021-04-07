@@ -21,9 +21,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.isA;
+import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 import static org.springframework.http.HttpStatus.BAD_GATEWAY;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.GATEWAY_TIMEOUT;
@@ -40,15 +40,15 @@ public class ProcessorClientTest {
     private ProcessorClient processorClient;
 
     @Test
-    void should_invoke_once() throws ExecutionException, InterruptedException {
+    void should_sucessfully_update_payments() throws ExecutionException, InterruptedException {
         List<PaymentInfo> paymentInfoList = of(
             new PaymentInfo("11234"),
             new PaymentInfo("22234"),
             new PaymentInfo("33234")
         );
 
-        when(authTokenGenerator.generate()).thenReturn("authToken");
-        when(proxy.updateStatus(any(), any())).thenReturn("Success");
+        given(authTokenGenerator.generate()).willReturn("authToken");
+        given(proxy.updateStatus(any(), any())).willReturn("Success");
 
         Future<Boolean> paymentUpdated = processorClient.updatePayments(paymentInfoList);
         assertThat(paymentUpdated.get()).isTrue();
@@ -57,23 +57,23 @@ public class ProcessorClientTest {
     }
 
     @Test
-    void should_invoke_retry_thrice() throws ExecutionException, InterruptedException {
+    void should_update_payemnts_after_two_server_failure() throws ExecutionException, InterruptedException {
         List<PaymentInfo> paymentInfoList = of(
             new PaymentInfo("11234"),
             new PaymentInfo("22234"),
             new PaymentInfo("33234")
         );
 
-        when(authTokenGenerator.generate()).thenReturn("authToken");
+        given(authTokenGenerator.generate()).willReturn("authToken");
 
-        when(proxy.updateStatus(any(), any()))
-            .thenThrow(
+        given(proxy.updateStatus(any(), any()))
+            .willThrow(
                 new HttpServerErrorException(GATEWAY_TIMEOUT, GATEWAY_TIMEOUT.getReasonPhrase(), null, null, null)
             )
-            .thenThrow(
+            .willThrow(
                 new HttpServerErrorException(BAD_GATEWAY, BAD_GATEWAY.getReasonPhrase(), null, null, null)
             )
-            .thenReturn("Success");
+            .willReturn("Success");
 
         CompletableFuture<Boolean> paymentUpdated  = processorClient.updatePayments(paymentInfoList);
         assertThat(paymentUpdated.get()).isTrue();
@@ -82,17 +82,17 @@ public class ProcessorClientTest {
     }
 
     @Test
-    void should_invoke_fail_after_five() {
+    void should_fail_after_five_retries_when_exception_is_server_failure() {
         List<PaymentInfo> paymentInfoList = of(
             new PaymentInfo("11234"),
             new PaymentInfo("22234"),
             new PaymentInfo("33234")
         );
 
-        when(authTokenGenerator.generate()).thenReturn("authToken");
+        given(authTokenGenerator.generate()).willReturn("authToken");
 
-        when(proxy.updateStatus(any(), any()))
-            .thenThrow(
+        given(proxy.updateStatus(any(), any()))
+            .willThrow(
                 new HttpServerErrorException(GATEWAY_TIMEOUT, GATEWAY_TIMEOUT.getReasonPhrase(), null, null, null)
             );
 
@@ -107,17 +107,17 @@ public class ProcessorClientTest {
     }
 
     @Test
-    void should_not_retry_client_exception() {
+    void should_not_retry_when_exception_is_client_failure() {
         List<PaymentInfo> paymentInfoList = of(
             new PaymentInfo("11234"),
             new PaymentInfo("22234"),
             new PaymentInfo("33234")
         );
 
-        when(authTokenGenerator.generate()).thenReturn("authToken");
+        given(authTokenGenerator.generate()).willReturn("authToken");
 
-        when(proxy.updateStatus(any(), any()))
-            .thenThrow(
+        given(proxy.updateStatus(any(), any()))
+            .willThrow(
                 new HttpClientErrorException(BAD_REQUEST, BAD_REQUEST.getReasonPhrase(), null, null, null)
             );
 

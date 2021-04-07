@@ -21,8 +21,11 @@ public class ProcessorClient {
     private final BulkScanProcessorApiProxy proxy;
     private final RetryTemplate retryTemplate;
 
-    public ProcessorClient(AuthTokenGenerator authTokenGenerator, BulkScanProcessorApiProxy proxy,
-        RetryTemplate retryTemplate) {
+    public ProcessorClient(
+        AuthTokenGenerator authTokenGenerator,
+        BulkScanProcessorApiProxy proxy,
+        RetryTemplate retryTemplate
+    ) {
         this.authTokenGenerator = authTokenGenerator;
         this.proxy = proxy;
         this.retryTemplate = retryTemplate;

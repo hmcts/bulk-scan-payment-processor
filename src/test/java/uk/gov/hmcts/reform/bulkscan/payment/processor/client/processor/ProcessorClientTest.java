@@ -21,9 +21,9 @@ import static java.util.List.of;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 import static org.springframework.http.HttpStatus.BAD_GATEWAY;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.GATEWAY_TIMEOUT;
@@ -54,7 +54,7 @@ class ProcessorClientTest {
     @Test
     void should_update_payments_successfully() {
         String authToken = "authToken";
-        when(authTokenGenerator.generate()).thenReturn(authToken);
+        given(authTokenGenerator.generate()).willReturn(authToken);
 
         List<PaymentInfo> paymentInfoList = of(
             new PaymentInfo("11234"),
@@ -71,9 +71,9 @@ class ProcessorClientTest {
     }
 
     @Test
-    void should_retry_payments_update_server_failure() {
+    void should_retry_payment_update_when_exception_is_server_failure() {
         String authToken = "authToken";
-        when(authTokenGenerator.generate()).thenReturn(authToken);
+        given(authTokenGenerator.generate()).willReturn(authToken);
 
         List<PaymentInfo> paymentInfoList = of(
             new PaymentInfo("11234"),
@@ -81,14 +81,14 @@ class ProcessorClientTest {
             new PaymentInfo("33234")
         );
 
-        when(proxy.updateStatus(any(), any()))
-            .thenThrow(
+        given(proxy.updateStatus(any(), any()))
+            .willThrow(
                 new HttpServerErrorException(GATEWAY_TIMEOUT, GATEWAY_TIMEOUT.getReasonPhrase(), null, null, null)
             )
-            .thenThrow(
+            .willThrow(
                 new HttpServerErrorException(BAD_GATEWAY, BAD_GATEWAY.getReasonPhrase(), null, null, null)
             )
-            .thenReturn("Success");
+            .willReturn("Success");
 
         processorClient.updatePayments(paymentInfoList);
 
@@ -99,9 +99,9 @@ class ProcessorClientTest {
     }
 
     @Test
-    void should_not_retry_payments_update_client_failure() {
+    void should_not_retry_payment_update_when_exception_is_client_failure() {
         String authToken = "authToken";
-        when(authTokenGenerator.generate()).thenReturn(authToken);
+        given(authTokenGenerator.generate()).willReturn(authToken);
 
         List<PaymentInfo> paymentInfoList = of(
             new PaymentInfo("11234"),
@@ -109,11 +109,11 @@ class ProcessorClientTest {
             new PaymentInfo("33234")
         );
 
-        when(proxy.updateStatus(any(), any()))
-            .thenThrow(
+        given(proxy.updateStatus(any(), any()))
+            .willThrow(
                 new HttpClientErrorException(UNAUTHORIZED, UNAUTHORIZED.getReasonPhrase(), null, null, null)
             )
-            .thenThrow(
+            .willThrow(
                 new HttpClientErrorException(BAD_REQUEST, BAD_REQUEST.getReasonPhrase(), null, null, null)
             );
 
