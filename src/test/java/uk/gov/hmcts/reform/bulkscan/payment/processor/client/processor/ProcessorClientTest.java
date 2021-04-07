@@ -7,6 +7,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.retry.support.RetryTemplate;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
@@ -46,8 +47,8 @@ class ProcessorClientTest {
     @BeforeEach
     void setUp() {
         RetryConfig retryConfig = new RetryConfig();
-        processorClient = new ProcessorClient(authTokenGenerator, proxy,
-            retryConfig.retryTemplate(5, 500));
+        RetryTemplate retryTemplate = retryConfig.retryTemplate(5, 500);
+        processorClient = new ProcessorClient(authTokenGenerator, proxy, retryTemplate);
     }
 
     @Test
