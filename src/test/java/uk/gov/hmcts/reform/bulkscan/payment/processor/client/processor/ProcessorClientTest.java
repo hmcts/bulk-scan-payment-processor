@@ -7,6 +7,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.retry.support.RetryTemplate;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
@@ -20,9 +21,9 @@ import static java.util.List.of;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 import static org.springframework.http.HttpStatus.BAD_GATEWAY;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.GATEWAY_TIMEOUT;
@@ -46,14 +47,14 @@ class ProcessorClientTest {
     @BeforeEach
     void setUp() {
         RetryConfig retryConfig = new RetryConfig();
-        processorClient = new ProcessorClient(authTokenGenerator, proxy,
-            retryConfig.retryTemplate(5, 500));
+        RetryTemplate retryTemplate = retryConfig.retryTemplate(5, 500);
+        processorClient = new ProcessorClient(authTokenGenerator, proxy, retryTemplate);
     }
 
     @Test
     void should_update_payments_successfully() {
         String authToken = "authToken";
-        when(authTokenGenerator.generate()).thenReturn(authToken);
+        given(authTokenGenerator.generate()).willReturn(authToken);
 
         List<PaymentInfo> paymentInfoList = of(
             new PaymentInfo("11234"),
@@ -70,9 +71,9 @@ class ProcessorClientTest {
     }
 
     @Test
-    void should_retry_payments_update_server_failure() {
+    void should_update_payments_after_two_server_failure() {
         String authToken = "authToken";
-        when(authTokenGenerator.generate()).thenReturn(authToken);
+        given(authTokenGenerator.generate()).willReturn(authToken);
 
         List<PaymentInfo> paymentInfoList = of(
             new PaymentInfo("11234"),
@@ -80,11 +81,14 @@ class ProcessorClientTest {
             new PaymentInfo("33234")
         );
 
-        when(proxy.updateStatus(any(), any()))
-            .thenThrow(new HttpServerErrorException(GATEWAY_TIMEOUT, GATEWAY_TIMEOUT.getReasonPhrase(),
-                null, null, null))
-            .thenThrow(new HttpServerErrorException(BAD_GATEWAY, BAD_GATEWAY.getReasonPhrase(), null, null, null))
-            .thenReturn("Success");
+        given(proxy.updateStatus(any(), any()))
+            .willThrow(
+                new HttpServerErrorException(GATEWAY_TIMEOUT, GATEWAY_TIMEOUT.getReasonPhrase(), null, null, null)
+            )
+            .willThrow(
+                new HttpServerErrorException(BAD_GATEWAY, BAD_GATEWAY.getReasonPhrase(), null, null, null)
+            )
+            .willReturn("Success");
 
         processorClient.updatePayments(paymentInfoList);
 
@@ -95,9 +99,9 @@ class ProcessorClientTest {
     }
 
     @Test
-    void should_not_retry_payments_update_client_failure() {
+    void should_not_retry_payment_update_when_exception_is_client_failure() {
         String authToken = "authToken";
-        when(authTokenGenerator.generate()).thenReturn(authToken);
+        given(authTokenGenerator.generate()).willReturn(authToken);
 
         List<PaymentInfo> paymentInfoList = of(
             new PaymentInfo("11234"),
@@ -105,11 +109,13 @@ class ProcessorClientTest {
             new PaymentInfo("33234")
         );
 
-        when(proxy.updateStatus(any(), any()))
-            .thenThrow(new HttpClientErrorException(UNAUTHORIZED, UNAUTHORIZED.getReasonPhrase(),
-                null, null, null))
-            .thenThrow(new HttpClientErrorException(BAD_REQUEST, BAD_REQUEST.getReasonPhrase(),
-                null, null, null));
+        given(proxy.updateStatus(any(), any()))
+            .willThrow(
+                new HttpClientErrorException(UNAUTHORIZED, UNAUTHORIZED.getReasonPhrase(), null, null, null)
+            )
+            .willThrow(
+                new HttpClientErrorException(BAD_REQUEST, BAD_REQUEST.getReasonPhrase(), null, null, null)
+            );
 
         processorClient.updatePayments(paymentInfoList);
 
