@@ -71,7 +71,7 @@ class ProcessorClientTest {
     }
 
     @Test
-    void should_retry_payment_update_when_exception_is_server_failure() {
+    void should_update_payments_after_two_server_failure() {
         String authToken = "authToken";
         given(authTokenGenerator.generate()).willReturn(authToken);
 
