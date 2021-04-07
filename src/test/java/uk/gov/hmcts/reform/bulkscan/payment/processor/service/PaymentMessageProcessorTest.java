@@ -123,7 +123,9 @@ public class PaymentMessageProcessorTest {
         given(invalidMessage.getLabel()).willReturn(MESSAGE_LABEL_CREATE);
         given(messageReceiver.receive()).willReturn(invalidMessage);
         given((paymentMessageParser.parse(invalidMessage.getMessageBody())))
-            .willThrow(new InvalidMessageException("Can't parse"));
+            .willThrow(
+                new InvalidMessageException("Can't parse")
+            );
 
         assertThat(paymentMessageProcessor.processNextMessage()).isTrue();
         verify(paymentMessageParser).parse(invalidMessage.getMessageBody());
