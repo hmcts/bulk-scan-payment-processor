@@ -99,7 +99,6 @@ public class PaymentMessageProcessorTest {
 
         // then
         assertThat(processedMessage).isTrue();
-        verify(processorClient).updatePayments(any());
     }
 
     @Test
@@ -157,7 +156,6 @@ public class PaymentMessageProcessorTest {
         // then
         verify(messageReceiver).receive();
         verify(messageReceiver).complete(validMessage.getLockToken());
-        verify(processorClient).updatePayments(any());
     }
 
     @Test
