@@ -88,7 +88,6 @@ public class PaymentMessageProcessor {
         try {
             payment = paymentMessageParser.parse(message.getMessageBody());
             paymentMessageHandler.handlePaymentMessage(payment, message.getMessageId());
-            processorClient.updatePayments(payment.payments);
             log.info(
                 "Processed payment message with ID {}. Envelope ID: {}",
                 message.getMessageId(),
