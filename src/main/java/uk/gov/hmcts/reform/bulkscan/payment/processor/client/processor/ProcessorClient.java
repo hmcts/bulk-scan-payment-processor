@@ -41,7 +41,9 @@ public class ProcessorClient {
             retryTemplate.execute(context -> {
                 logger.info("Started to update payment DCNS {} ", request.payments);
                 PaymentStatusReponse paymentStatusReponse = proxy.updateStatus(authToken, request);
-                logger.info("Updated payment DCNS {} with reponse {} ", request.payments, paymentStatusReponse.status);
+                logger.info("Updated payment DCNS {} with reponse {} ",
+                            request.payments,
+                            paymentStatusReponse.status);
                 return completableFuture.complete(true);
             });
         } catch (Exception exception) {
