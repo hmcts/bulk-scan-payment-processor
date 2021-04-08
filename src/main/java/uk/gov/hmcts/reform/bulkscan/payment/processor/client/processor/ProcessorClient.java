@@ -8,6 +8,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.client.processor.request.PaymentRequest;
+import uk.gov.hmcts.reform.bulkscan.payment.processor.client.processor.response.PaymentStatusReponse;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.model.PaymentInfo;
 
 import java.util.List;
@@ -39,8 +40,8 @@ public class ProcessorClient {
         try {
             retryTemplate.execute(context -> {
                 logger.info("Started to update payment DCNS {} ", request.payments);
-                proxy.updateStatus(authToken, request);
-                logger.info("Updated payment DCNS {} ", request.payments);
+                PaymentStatusReponse paymentStatusReponse = proxy.updateStatus(authToken, request);
+                logger.info("Updated payment DCNS {} with reponse {} ", request.payments, paymentStatusReponse.status);
                 return completableFuture.complete(true);
             });
         } catch (Exception exception) {

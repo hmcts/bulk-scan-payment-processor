@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.client.processor.request.PaymentRequest;
+import uk.gov.hmcts.reform.bulkscan.payment.processor.client.processor.response.PaymentStatusReponse;
 
 @FeignClient(name = "bulk-scan-processor-api", url = "${bulk-scan-procesor.api.url}",
     configuration = BulkScanProcessorApiProxy.BulkScanConfiguration.class)
@@ -21,7 +22,7 @@ public interface BulkScanProcessorApiProxy {
         path = "/payment/status",
         consumes = MediaType.APPLICATION_JSON_VALUE
     )
-    String updateStatus(
+    PaymentStatusReponse updateStatus(
         @RequestHeader(name = "ServiceAuthorization", required = false) String serviceAuthHeader,
         @RequestBody PaymentRequest request
     );
