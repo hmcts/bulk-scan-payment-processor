@@ -49,7 +49,7 @@ public class ProcessorClientTest {
         );
 
         given(authTokenGenerator.generate()).willReturn("authToken");
-        given(proxy.updateStatus(any(), any())).willReturn(new PaymentStatusReponse("Success"));
+        given(proxy.updateStatus(any(), any())).willReturn(new PaymentStatusReponse("success"));
 
         Future<Boolean> paymentUpdated = processorClient.updatePayments(paymentInfoList);
         assertThat(paymentUpdated.get()).isTrue();
@@ -74,7 +74,7 @@ public class ProcessorClientTest {
             .willThrow(
                 new HttpServerErrorException(BAD_GATEWAY, BAD_GATEWAY.getReasonPhrase(), null, null, null)
             )
-            .willReturn(new PaymentStatusReponse("Success"));
+            .willReturn(new PaymentStatusReponse("success"));
 
         CompletableFuture<Boolean> paymentUpdated  = processorClient.updatePayments(paymentInfoList);
         assertThat(paymentUpdated.get()).isTrue();

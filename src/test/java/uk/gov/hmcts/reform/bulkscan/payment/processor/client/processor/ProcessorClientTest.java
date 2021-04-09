@@ -89,7 +89,7 @@ class ProcessorClientTest {
             .willThrow(
                 new HttpServerErrorException(BAD_GATEWAY, BAD_GATEWAY.getReasonPhrase(), null, null, null)
             )
-            .willReturn(new PaymentStatusReponse("Success"));
+            .willReturn(new PaymentStatusReponse("success"));
 
         processorClient.updatePayments(paymentInfoList);
 
