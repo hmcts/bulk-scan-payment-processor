@@ -8,6 +8,7 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.client.processor.request.PaymentRequest;
+import uk.gov.hmcts.reform.bulkscan.payment.processor.client.processor.response.PaymentStatusReponse;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.config.IntegrationTest;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.model.PaymentInfo;
 
@@ -48,7 +49,7 @@ public class ProcessorClientTest {
         );
 
         given(authTokenGenerator.generate()).willReturn("authToken");
-        given(proxy.updateStatus(any(), any())).willReturn("Success");
+        given(proxy.updateStatus(any(), any())).willReturn(new PaymentStatusReponse("success"));
 
         Future<Boolean> paymentUpdated = processorClient.updatePayments(paymentInfoList);
         assertThat(paymentUpdated.get()).isTrue();
@@ -73,7 +74,7 @@ public class ProcessorClientTest {
             .willThrow(
                 new HttpServerErrorException(BAD_GATEWAY, BAD_GATEWAY.getReasonPhrase(), null, null, null)
             )
-            .willReturn("Success");
+            .willReturn(new PaymentStatusReponse("success"));
 
         CompletableFuture<Boolean> paymentUpdated  = processorClient.updatePayments(paymentInfoList);
         assertThat(paymentUpdated.get()).isTrue();
