@@ -2,13 +2,11 @@ package uk.gov.hmcts.reform.bulkscan.payment.processor;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.cloud.client.circuitbreaker.EnableCircuitBreaker;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 @SpringBootApplication
-@EnableCircuitBreaker
 @EnableFeignClients(basePackages = {"uk.gov.hmcts.reform"})
 @EnableScheduling
 @EnableAsync
