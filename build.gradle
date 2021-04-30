@@ -7,7 +7,7 @@ plugins {
   id 'org.springframework.boot' version '2.4.5'
   id 'org.owasp.dependencycheck' version '6.1.5'
   id 'com.github.ben-manes.versions' version '0.36.0'
-  id 'org.sonarqube' version '3.1.1'
+  id 'org.sonarqube' version '3.2.0'
 }
 
 group = 'uk.gov.hmcts.reform'
@@ -238,7 +238,7 @@ dependencies {
 
   testCompile group: 'org.springframework.boot', name: 'spring-boot-starter-test', withoutJunit4
 
-  integrationTestCompile group: 'com.github.tomakehurst', name: 'wiremock', version: '2.27.1', withoutJunit4
+  integrationTestCompile group: 'com.github.tomakehurst', name: 'wiremock', version: '2.27.2', withoutJunit4
 
   integrationTestCompile group: 'org.springframework.cloud', name: 'spring-cloud-contract-wiremock', version: '3.0.2'
 
