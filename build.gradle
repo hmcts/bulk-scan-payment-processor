@@ -238,7 +238,7 @@ dependencies {
 
   testCompile group: 'org.springframework.boot', name: 'spring-boot-starter-test', withoutJunit4
 
-  integrationTestCompile group: 'com.github.tomakehurst', name: 'wiremock', version: '2.27.1', withoutJunit4
+  integrationTestCompile group: 'com.github.tomakehurst', name: 'wiremock', version: '2.27.2', withoutJunit4
 
   integrationTestCompile group: 'org.springframework.cloud', name: 'spring-cloud-contract-wiremock', version: '3.0.2'
 
