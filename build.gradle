@@ -152,7 +152,7 @@ dependencyManagement {
       entry 'mockito-core'
     }
     //avoid   CVE-2021-21409
-    dependencySet(group: 'io.netty', version: '4.1.61.Final') {
+    dependencySet(group: 'io.netty', version: '4.1.64.Final') {
       entry 'netty-buffer'
       entry 'netty-codec'
       entry 'netty-codec-http'
