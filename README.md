@@ -10,6 +10,7 @@ Retrieve service bus queue messages from payments queue and process them by eith
 
 ### Building the application
 
+
 The project uses [Gradle](https://gradle.org) as a build tool. It already contains
 `./gradlew` wrapper script, so there's no need to install gradle.
 
