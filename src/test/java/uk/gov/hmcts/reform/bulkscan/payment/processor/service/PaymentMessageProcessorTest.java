@@ -1,17 +1,16 @@
 package uk.gov.hmcts.reform.bulkscan.payment.processor.service;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.google.common.collect.ImmutableList;
-import com.microsoft.azure.servicebus.IMessage;
-import com.microsoft.azure.servicebus.IMessageReceiver;
-import com.microsoft.azure.servicebus.MessageBody;
-import com.microsoft.azure.servicebus.primitives.ServiceBusException;
+import com.azure.core.util.BinaryData;
+import com.azure.messaging.servicebus.ServiceBusReceivedMessage;
+import com.azure.messaging.servicebus.ServiceBusReceivedMessageContext;
+import com.azure.messaging.servicebus.models.DeadLetterOptions;
 import feign.FeignException;
 import feign.Request;
 import org.json.JSONException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.client.processor.ProcessorClient;
@@ -24,26 +23,20 @@ import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.model.U
 
 import java.nio.charset.Charset;
 import java.util.Collections;
-import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.contains;
-import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.ArgumentMatchers.isA;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.willReturn;
 import static org.mockito.BDDMockito.willThrow;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static uk.gov.hmcts.reform.bulkscan.payment.processor.data.producer.SamplePaymentMessageData.paymentMessage;
-import static uk.gov.hmcts.reform.bulkscan.payment.processor.data.producer.SamplePaymentMessageData.paymentMessageJsonAsByte;
-import static uk.gov.hmcts.reform.bulkscan.payment.processor.data.producer.SamplePaymentMessageData.updatePaymentMessageJsonAsByte;
+import static uk.gov.hmcts.reform.bulkscan.payment.processor.data.producer.SamplePaymentMessageData.paymentMessageJson;
+import static uk.gov.hmcts.reform.bulkscan.payment.processor.data.producer.SamplePaymentMessageData.updatePaymentMessageJsonAsString;
 
 @ExtendWith(MockitoExtension.class)
 public class PaymentMessageProcessorTest {
@@ -54,7 +47,10 @@ public class PaymentMessageProcessorTest {
     private static final String RECOVERABLE_EXCEPTION_MESSAGE = "exception of type treated as recoverable";
 
     @Mock
-    private IMessageReceiver messageReceiver;
+    private ServiceBusReceivedMessageContext serviceBusReceivedMessageContext;
+
+    @Mock
+    private ServiceBusReceivedMessage message;
 
     @Mock
     private PaymentMessageHandler paymentMessageHandler;
@@ -75,203 +71,210 @@ public class PaymentMessageProcessorTest {
     private static final boolean IS_EXCEPTION_RECORD = true;
 
     @BeforeEach
-    public void before() throws Exception {
+    public void before() {
         paymentMessageProcessor = new PaymentMessageProcessor(
             paymentMessageHandler,
-            messageReceiver,
             paymentMessageParser,
             processorClient,
             10
         );
     }
 
-    @Test
-    public void should_return_true_when_there_is_a_message_to_process() throws Exception {
-        // given
-        given(paymentMessageParser.parse(isA(MessageBody.class))).willReturn(paymentMessage);
-
-        willReturn(getValidMessage(MESSAGE_LABEL_CREATE)).given(messageReceiver).receive();
-
-        // when
-        boolean processedMessage = paymentMessageProcessor.processNextMessage();
-
-        //verify that json conversion works
-
-        // then
-        assertThat(processedMessage).isTrue();
-        verify(processorClient).updatePayments(any());
-    }
 
     @Test
-    public void should_return_false_when_there_is_no_message_to_process() throws Exception {
+    public void should_return_when_there_is_no_message_to_process() {
         // given
-        given(messageReceiver.receive()).willReturn(null);
+        given(serviceBusReceivedMessageContext.getMessage()).willReturn(null);
 
         // when
-        boolean processedMessage = paymentMessageProcessor.processNextMessage();
+        paymentMessageProcessor.processNextMessage(serviceBusReceivedMessageContext);
 
         // then
-        assertThat(processedMessage).isFalse();
+        verify(serviceBusReceivedMessageContext).getMessage();
+        verifyNoMoreInteractions(serviceBusReceivedMessageContext);
         verify(processorClient, never()).updatePayments(any());
     }
 
     @Test
     public void should_not_throw_exception_when_queue_message_is_invalid() throws Exception {
-        IMessage invalidMessage = mock(IMessage.class);
-        given(invalidMessage.getMessageBody())
-            .willReturn(MessageBody.fromBinaryData(ImmutableList.of("foo".getBytes())));
-        given(invalidMessage.getLabel()).willReturn(MESSAGE_LABEL_CREATE);
-        given(messageReceiver.receive()).willReturn(invalidMessage);
-        given((paymentMessageParser.parse(invalidMessage.getMessageBody())))
+        given(serviceBusReceivedMessageContext.getMessage()).willReturn(message);
+        var messageBody = BinaryData.fromString("foo");
+        given(message.getBody())
+            .willReturn(messageBody);
+        given(message.getSubject()).willReturn(MESSAGE_LABEL_CREATE);
+        given((paymentMessageParser.parse(messageBody)))
             .willThrow(
                 new InvalidMessageException("Can't parse")
             );
 
-        assertThat(paymentMessageProcessor.processNextMessage()).isTrue();
-        verify(paymentMessageParser).parse(invalidMessage.getMessageBody());
+        paymentMessageProcessor.processNextMessage(serviceBusReceivedMessageContext);
+        verify(paymentMessageParser).parse(messageBody);
     }
 
     @Test
     public void should_not_throw_exception_when_payment_handler_fails() throws Exception {
         // given
-        willReturn(getValidMessage(MESSAGE_LABEL_CREATE)).given(messageReceiver).receive();
-        willReturn(paymentMessage("32131", true)).given(paymentMessageParser).parse(any());
+        var messageBody = setValidMessage(MESSAGE_LABEL_CREATE, paymentJsonString());
 
+        given(serviceBusReceivedMessageContext.getMessage()).willReturn(message);
+
+        given(paymentMessageParser.parse(messageBody)).willReturn(paymentMessage("32131", true));
         // and
         willThrow(new RuntimeException()).given(paymentMessageHandler).handlePaymentMessage(any(), any());
 
-        assertThatCode(() -> paymentMessageProcessor.processNextMessage()).doesNotThrowAnyException();
+        assertThatCode(() -> paymentMessageProcessor.processNextMessage(serviceBusReceivedMessageContext))
+            .doesNotThrowAnyException();
         verify(processorClient, never()).updatePayments(any());
     }
 
     @Test
-    public void should_complete_the_message_when_processing_is_successful() throws Exception {
+    public void should_complete_create_message_when_processing_is_successful() throws Exception {
         // given
-        IMessage validMessage = getValidMessage(MESSAGE_LABEL_CREATE);
-        given(messageReceiver.receive()).willReturn(validMessage);
+        setValidMessage(MESSAGE_LABEL_CREATE, paymentJsonString());
+        given(serviceBusReceivedMessageContext.getMessage()).willReturn(message);
         willReturn(paymentMessage(CCD_CASE_NUMBER, IS_EXCEPTION_RECORD)).given(paymentMessageParser).parse(any());
 
         // when
-        paymentMessageProcessor.processNextMessage();
+        paymentMessageProcessor.processNextMessage(serviceBusReceivedMessageContext);
 
         // then
-        verify(messageReceiver).receive();
-        verify(messageReceiver).complete(validMessage.getLockToken());
+        verify(serviceBusReceivedMessageContext, times(2)).getMessage();
+        verify(serviceBusReceivedMessageContext).complete();
         verify(processorClient).updatePayments(any());
     }
+
 
     @Test
     public void should_complete_update_message_when_processing_is_successful() throws Exception {
         // given
-        IMessage validMessage = getValidUpdateMessage(
-            "env-12312",
-            "PROBATE",
-            "excp-ref-9999",
-            "new-case-ref-12312"
-        );
 
-        given(messageReceiver.receive()).willReturn(validMessage);
+        var messageBody = setValidMessage(
+            MESSAGE_LABEL_UPDATE,
+            updatePaymentMessageJsonAsString(
+                "env-12312",
+                "PROBATE",
+                "excp-ref-9999",
+                "new-case-ref-12312"
+            )
+        );
+        given(serviceBusReceivedMessageContext.getMessage()).willReturn(message);
 
         willReturn(new UpdatePaymentMessage(
             "env-12312",
             "PROBATE",
             "excp-ref-9999",
             "new-case-ref-12312"
-        )).given(paymentMessageParser).parseUpdateMessage(any());
+        )).given(paymentMessageParser).parseUpdateMessage(messageBody);
 
 
         // when
-        paymentMessageProcessor.processNextMessage();
+        paymentMessageProcessor.processNextMessage(serviceBusReceivedMessageContext);
 
         // then
-        verify(messageReceiver).receive();
-        verify(messageReceiver).complete(validMessage.getLockToken());
+        verify(serviceBusReceivedMessageContext, times(2)).getMessage();
+        verify(serviceBusReceivedMessageContext).complete();
     }
 
     @Test
     public void should_dead_letter_the_message_when_unrecoverable_failure() throws Exception {
         // given
-        IMessage message = mock(IMessage.class);
-        given(message.getMessageBody()).willReturn(
-            MessageBody.fromBinaryData(ImmutableList.of("invalid body".getBytes(Charset.defaultCharset())))
-        );
-        given(message.getLabel()).willReturn(MESSAGE_LABEL_CREATE);
+
+        given(message.getBody()).willReturn(BinaryData.fromString("invalid body"));
+        given(message.getSubject()).willReturn(MESSAGE_LABEL_CREATE);
         willThrow(new InvalidMessageException("JsonParseException")).given(paymentMessageParser).parse(any());
 
-        given(message.getLockToken()).willReturn(UUID.randomUUID());
-        given(messageReceiver.receive()).willReturn(message);
+        given(serviceBusReceivedMessageContext.getMessage()).willReturn(message);
 
         // when
-        paymentMessageProcessor.processNextMessage();
+        paymentMessageProcessor.processNextMessage(serviceBusReceivedMessageContext);
 
         // then
-        verify(messageReceiver).receive();
+        verify(serviceBusReceivedMessageContext, times(3)).getMessage();
 
-        verify(messageReceiver).deadLetter(
-            eq(message.getLockToken()),
-            eq(DEAD_LETTER_REASON_PROCESSING_ERROR),
-            contains(JsonParseException.class.getSimpleName())
+        ArgumentCaptor<DeadLetterOptions> deadLetterOptionsArgumentCaptor
+            = ArgumentCaptor.forClass(DeadLetterOptions.class);
+
+        verify(serviceBusReceivedMessageContext).deadLetter(
+            deadLetterOptionsArgumentCaptor.capture()
         );
-        verifyNoMoreInteractions(messageReceiver);
+
+        var deadLetterOptions = deadLetterOptionsArgumentCaptor.getValue();
+        assertThat(deadLetterOptions.getDeadLetterReason())
+            .isEqualTo("Payment Message processing error");
+        assertThat(deadLetterOptions.getDeadLetterErrorDescription())
+            .isEqualTo("JsonParseException");
+
+        verifyNoMoreInteractions(serviceBusReceivedMessageContext);
         verify(processorClient, never()).updatePayments(any());
     }
 
     @Test
     public void should_dead_letter_update_message_when_unrecoverable_failure() throws Exception {
         // given
-        IMessage message = mock(IMessage.class);
-        given(message.getMessageBody()).willReturn(
-            MessageBody.fromBinaryData(ImmutableList.of("invalid body".getBytes(Charset.defaultCharset())))
-        );
-        given(message.getLabel()).willReturn(MESSAGE_LABEL_UPDATE);
+        var messageBody = setValidMessage(MESSAGE_LABEL_UPDATE, "invalid body");
 
         willThrow(new InvalidMessageException("JsonParseException"))
-            .given(paymentMessageParser).parseUpdateMessage(any());
+            .given(paymentMessageParser).parseUpdateMessage(messageBody);
 
-        given(message.getLockToken()).willReturn(UUID.randomUUID());
-        given(messageReceiver.receive()).willReturn(message);
+        given(serviceBusReceivedMessageContext.getMessage()).willReturn(message);
 
         // when
-        paymentMessageProcessor.processNextMessage();
+        paymentMessageProcessor.processNextMessage(serviceBusReceivedMessageContext);
 
         // then
-        verify(messageReceiver).receive();
+        verify(serviceBusReceivedMessageContext, times(3)).getMessage();
+        ArgumentCaptor<DeadLetterOptions> deadLetterOptionsArgumentCaptor
+            = ArgumentCaptor.forClass(DeadLetterOptions.class);
 
-        verify(messageReceiver).deadLetter(
-            eq(message.getLockToken()),
-            eq(DEAD_LETTER_REASON_PROCESSING_ERROR),
-            contains(JsonParseException.class.getSimpleName())
+        verify(serviceBusReceivedMessageContext).deadLetter(
+            deadLetterOptionsArgumentCaptor.capture()
         );
-        verifyNoMoreInteractions(messageReceiver);
+
+        var deadLetterOptions = deadLetterOptionsArgumentCaptor.getValue();
+        assertThat(deadLetterOptions.getDeadLetterReason())
+            .isEqualTo(DEAD_LETTER_REASON_PROCESSING_ERROR);
+        assertThat(deadLetterOptions.getDeadLetterErrorDescription())
+            .isEqualTo("JsonParseException");
+
+        verifyNoMoreInteractions(serviceBusReceivedMessageContext);
     }
 
     @Test
     public void should_dead_letter_message_when_it_has_no_label() throws Exception {
         // given
-        var message = mock(IMessage.class);
-        given(message.getLabel()).willReturn(null); // no label
-        given(message.getLockToken()).willReturn(UUID.randomUUID());
-
-        given(messageReceiver.receive()).willReturn(message);
+        given(message.getSubject()).willReturn(null); // no label
+        given(serviceBusReceivedMessageContext.getMessage()).willReturn(message);
 
         // when
-        paymentMessageProcessor.processNextMessage();
+        paymentMessageProcessor.processNextMessage(serviceBusReceivedMessageContext);
 
         // then
-        verify(messageReceiver).receive();
+        verify(serviceBusReceivedMessageContext, times(2)).getMessage();
 
-        verify(messageReceiver).deadLetter(
-            eq(message.getLockToken()),
-            eq("Missing label"),
-            eq(null)
+        ArgumentCaptor<DeadLetterOptions> deadLetterOptionsArgumentCaptor
+            = ArgumentCaptor.forClass(DeadLetterOptions.class);
+
+        verify(serviceBusReceivedMessageContext).deadLetter(
+            deadLetterOptionsArgumentCaptor.capture()
         );
+
+        var deadLetterOptions = deadLetterOptionsArgumentCaptor.getValue();
+        assertThat(deadLetterOptions.getDeadLetterReason())
+            .isEqualTo("Missing label");
+        assertThat(deadLetterOptions.getDeadLetterErrorDescription())
+            .isNull();
+
+        verifyNoMoreInteractions(serviceBusReceivedMessageContext);
     }
 
     @Test
     public void should_not_dead_letter_create_message_when_recoverable_failure() throws Exception {
-        willReturn(getValidMessage(MESSAGE_LABEL_CREATE)).given(messageReceiver).receive();
-        willReturn(paymentMessage(CCD_CASE_NUMBER, IS_EXCEPTION_RECORD)).given(paymentMessageParser).parse(any());
 
+        var messageBody = setValidMessage(MESSAGE_LABEL_CREATE, paymentJsonString());
+        given(serviceBusReceivedMessageContext.getMessage()).willReturn(message);
+
+        given(paymentMessageParser.parse(messageBody))
+            .willReturn(paymentMessage(CCD_CASE_NUMBER, IS_EXCEPTION_RECORD));
         Exception processingFailureCause = new FeignException.UnprocessableEntity(
             RECOVERABLE_EXCEPTION_MESSAGE,
             Request.create(
@@ -279,7 +282,8 @@ public class PaymentMessageProcessorTest {
                 "/ccd",
                 Collections.emptyMap(),
                 new byte[]{},
-                Charset.defaultCharset()
+                Charset.defaultCharset(),
+                null
             ),
             new byte[]{}
         );
@@ -288,16 +292,27 @@ public class PaymentMessageProcessorTest {
         willThrow(processingFailureCause).given(paymentMessageHandler).handlePaymentMessage(any(), any());
 
         // when
-        paymentMessageProcessor.processNextMessage();
+        paymentMessageProcessor.processNextMessage(serviceBusReceivedMessageContext);
 
         // then the message is not finalised (completed/dead-lettered)
-        verify(messageReceiver).receive();
+        verify(serviceBusReceivedMessageContext, times(3)).getMessage();
         verify(processorClient, never()).updatePayments(any());
+        verifyNoMoreInteractions(serviceBusReceivedMessageContext);
     }
 
     @Test
     public void should_not_dead_letter_update_message_when_recoverable_failure() throws Exception {
-        willReturn(getValidMessage(MESSAGE_LABEL_UPDATE)).given(messageReceiver).receive();
+
+        var messageBody = setValidMessage(
+            MESSAGE_LABEL_UPDATE,
+            updatePaymentMessageJsonAsString(
+                "env-12312",
+                "PROBATE",
+                "excp-ref-9999",
+                "new-case-ref-12312"
+            )
+        );
+        given(serviceBusReceivedMessageContext.getMessage()).willReturn(message);
 
         Exception processingFailureCause = new FeignException.UnprocessableEntity(
             RECOVERABLE_EXCEPTION_MESSAGE,
@@ -306,60 +321,42 @@ public class PaymentMessageProcessorTest {
                 "/ccd",
                 Collections.emptyMap(),
                 new byte[]{},
-                Charset.defaultCharset()
+                Charset.defaultCharset(),
+                null
             ),
             new byte[]{}
         );
-
+        given(paymentMessageParser.parseUpdateMessage(messageBody))
+            .willReturn(new UpdatePaymentMessage(
+                            "env-12312",
+                            "PROBATE",
+                            "excp-ref-9999",
+                            "new-case-ref-12312"
+                        )
+            );
         // given an error occurs during message processing
         willThrow(processingFailureCause).given(paymentMessageHandler).updatePaymentCaseReference(any());
 
         // when
-        paymentMessageProcessor.processNextMessage();
+        paymentMessageProcessor.processNextMessage(serviceBusReceivedMessageContext);
 
         // then the message is not finalised (completed/dead-lettered)
-        verify(messageReceiver).receive();
+        verify(serviceBusReceivedMessageContext, times(3)).getMessage();
+        verifyNoMoreInteractions(serviceBusReceivedMessageContext);
     }
 
-    @Test
-    public void should_not_dead_letter_the_update_message_when_recoverable_failure() throws Exception {
-        willReturn(getValidUpdateMessage(
-            "env-12312",
-            "PROBATE",
-            "excp-ref-9999",
-            "new-case-ref-12312"
-        )).given(messageReceiver).receive();
-
-        willReturn(new UpdatePaymentMessage(
-            "env-12312",
-            "PROBATE",
-            "excp-ref-9999",
-            "new-case-ref-12312"
-        )).given(paymentMessageParser).parseUpdateMessage(any());
-
-        Exception processingFailureCause = new RuntimeException(RECOVERABLE_EXCEPTION_MESSAGE);
-
-        // given an error occurs during message processing
-        willThrow(processingFailureCause).given(paymentMessageHandler).updatePaymentCaseReference(any());
-
-        // when
-        paymentMessageProcessor.processNextMessage();
-
-        // then the message is not finalised (completed/dead-lettered)
-        verify(messageReceiver).receive();
-        verify(messageReceiver, never()).deadLetter(any(), anyString(), anyString());
-    }
 
     @Test
-    public void should_dead_letter_the_message_when_recoverable_failure_but_delivery_maxed() throws Exception {
+    public void should_dead_letter_the_message_when_recoverable_failure_but_delivery_maxed() throws JSONException {
         // given
-        IMessage validMessage = getValidMessage(MESSAGE_LABEL_CREATE);
-        given(messageReceiver.receive()).willReturn(validMessage);
-        willReturn(paymentMessage(CCD_CASE_NUMBER, IS_EXCEPTION_RECORD)).given(paymentMessageParser).parse(any());
+        var messageBody = setValidMessage(MESSAGE_LABEL_CREATE, paymentJsonString());
+        given(serviceBusReceivedMessageContext.getMessage()).willReturn(message);
+
+        given(paymentMessageParser.parse(messageBody))
+            .willReturn(paymentMessage(CCD_CASE_NUMBER, IS_EXCEPTION_RECORD));
 
         paymentMessageProcessor = new PaymentMessageProcessor(
             paymentMessageHandler,
-            messageReceiver,
             paymentMessageParser,
             processorClient,
             1
@@ -370,14 +367,21 @@ public class PaymentMessageProcessorTest {
         willThrow(processingFailureCause).given(paymentMessageHandler).handlePaymentMessage(any(), any());
 
         // when
-        paymentMessageProcessor.processNextMessage();
+        paymentMessageProcessor.processNextMessage(serviceBusReceivedMessageContext);
 
         // then the message is dead-lettered
-        verify(messageReceiver).deadLetter(
-            eq(validMessage.getLockToken()),
-            eq("Too many deliveries"),
-            eq("Reached limit of message delivery count of 1")
+        ArgumentCaptor<DeadLetterOptions> deadLetterOptionsArgumentCaptor
+            = ArgumentCaptor.forClass(DeadLetterOptions.class);
+
+        verify(serviceBusReceivedMessageContext).deadLetter(
+            deadLetterOptionsArgumentCaptor.capture()
         );
+
+        var deadLetterOptions = deadLetterOptionsArgumentCaptor.getValue();
+        assertThat(deadLetterOptions.getDeadLetterReason())
+            .isEqualTo("Too many deliveries");
+        assertThat(deadLetterOptions.getDeadLetterErrorDescription())
+            .isEqualTo("Reached limit of message delivery count of 1");
 
         verify(processorClient, never()).updatePayments(any());
     }
@@ -385,25 +389,26 @@ public class PaymentMessageProcessorTest {
     @Test
     public void should_dead_letter_update_message_when_recoverable_failure_but_delivery_maxed() throws Exception {
         // given
-        IMessage validMessage = getValidUpdateMessage(
-            "env-12312",
-            "PROBATE",
-            "excp-ref-9999",
-            "new-case-ref-12312"
+        var messageBody = setValidMessage(
+            MESSAGE_LABEL_UPDATE,
+            updatePaymentMessageJsonAsString(
+                "env-12312",
+                "PROBATE",
+                "excp-ref-9999",
+                "new-case-ref-12312"
+            )
         );
-
-        given(messageReceiver.receive()).willReturn(validMessage);
+        given(serviceBusReceivedMessageContext.getMessage()).willReturn(message);
 
         willReturn(new UpdatePaymentMessage(
             "env-12312",
             "PROBATE",
             "excp-ref-9999",
             "new-case-ref-12312"
-        )).given(paymentMessageParser).parseUpdateMessage(any());
+        )).given(paymentMessageParser).parseUpdateMessage(messageBody);
 
         paymentMessageProcessor = new PaymentMessageProcessor(
             paymentMessageHandler,
-            messageReceiver,
             paymentMessageParser,
             processorClient,
             1
@@ -415,62 +420,34 @@ public class PaymentMessageProcessorTest {
         willThrow(processingFailureCause).given(paymentMessageHandler).updatePaymentCaseReference(any());
 
         // when
-        paymentMessageProcessor.processNextMessage();
+        paymentMessageProcessor.processNextMessage(serviceBusReceivedMessageContext);
 
         // then the message is dead-lettered
-        verify(messageReceiver).deadLetter(
-            eq(validMessage.getLockToken()),
-            eq("Too many deliveries"),
-            eq("Reached limit of message delivery count of 1")
+        ArgumentCaptor<DeadLetterOptions> deadLetterOptionsArgumentCaptor
+            = ArgumentCaptor.forClass(DeadLetterOptions.class);
+
+        verify(serviceBusReceivedMessageContext).deadLetter(
+            deadLetterOptionsArgumentCaptor.capture()
         );
+
+        var deadLetterOptions = deadLetterOptionsArgumentCaptor.getValue();
+        assertThat(deadLetterOptions.getDeadLetterReason())
+            .isEqualTo("Too many deliveries");
+        assertThat(deadLetterOptions.getDeadLetterErrorDescription())
+            .isEqualTo("Reached limit of message delivery count of 1");
 
         verify(processorClient, never()).updatePayments(any());
     }
 
-    @Test
-    public void should_throw_exception_when_message_receiver_fails() throws Exception {
-        ServiceBusException receiverException = new ServiceBusException(true);
-        willThrow(receiverException).given(messageReceiver).receive();
-
-        assertThatThrownBy(() -> paymentMessageProcessor.processNextMessage())
-            .isSameAs(receiverException);
+    private BinaryData setValidMessage(String label, String messageStr) throws JSONException {
+        var messageBody = BinaryData.fromString(messageStr);
+        given(message.getBody()).willReturn(messageBody);
+        given(message.getSubject()).willReturn(label);
+        return messageBody;
     }
 
-    private IMessage getValidMessage(String label) throws JSONException {
-        IMessage message = mock(IMessage.class);
-        given(message.getMessageBody())
-            .willReturn(MessageBody.fromBinaryData(ImmutableList.of(paymentJsonToByte())));
-        given(message.getLabel()).willReturn(label);
-        return message;
-    }
-
-    private IMessage getValidUpdateMessage(
-        String envelopeId,
-        String jurisdiction,
-        String exceptionRecordRef,
-        String newCaseRef
-    ) throws JSONException {
-        IMessage message = mock(IMessage.class);
-
-        given(message.getMessageBody())
-            .willReturn(
-                MessageBody.fromBinaryData(
-                    ImmutableList.of(
-                        updatePaymentMessageJsonAsByte(
-                            envelopeId,
-                            jurisdiction,
-                            exceptionRecordRef,
-                            newCaseRef
-                        )
-                    )
-                )
-            );
-        given(message.getLabel()).willReturn("UPDATE");
-        return message;
-    }
-
-    private byte[] paymentJsonToByte() throws JSONException {
-        return paymentMessageJsonAsByte(CCD_CASE_NUMBER, IS_EXCEPTION_RECORD);
+    private String paymentJsonString() throws JSONException {
+        return  paymentMessageJson(CCD_CASE_NUMBER, IS_EXCEPTION_RECORD);
     }
 
 }

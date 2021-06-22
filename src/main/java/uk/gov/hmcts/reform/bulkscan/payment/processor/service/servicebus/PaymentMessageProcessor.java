@@ -1,8 +1,8 @@
 package uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus;
 
-import com.microsoft.azure.servicebus.IMessage;
-import com.microsoft.azure.servicebus.IMessageReceiver;
-import com.microsoft.azure.servicebus.primitives.ServiceBusException;
+import com.azure.messaging.servicebus.ServiceBusReceivedMessage;
+import com.azure.messaging.servicebus.ServiceBusReceivedMessageContext;
+import com.azure.messaging.servicebus.models.DeadLetterOptions;
 import feign.FeignException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,20 +30,17 @@ public class PaymentMessageProcessor {
     private static final Logger log = LoggerFactory.getLogger(PaymentMessageProcessor.class);
 
     private final PaymentMessageHandler paymentMessageHandler;
-    private final IMessageReceiver messageReceiver;
     private final PaymentMessageParser paymentMessageParser;
     private final ProcessorClient processorClient;
     private final int maxDeliveryCount;
 
     public PaymentMessageProcessor(
         PaymentMessageHandler paymentMessageHandler,
-        IMessageReceiver messageReceiver,
         PaymentMessageParser paymentMessageParser,
         ProcessorClient processorClient,
         @Value("${azure.servicebus.payments.max-delivery-count}") int maxDeliveryCount
     ) {
         this.paymentMessageHandler = paymentMessageHandler;
-        this.messageReceiver = messageReceiver;
         this.paymentMessageParser = paymentMessageParser;
         this.processorClient = processorClient;
         this.maxDeliveryCount = maxDeliveryCount;
@@ -54,39 +51,42 @@ public class PaymentMessageProcessor {
      *
      * @return false if there was no message to process. Otherwise true.
      */
-    public boolean processNextMessage() throws ServiceBusException, InterruptedException {
-        IMessage message = messageReceiver.receive();
+    public void processNextMessage(ServiceBusReceivedMessageContext serviceBusReceivedMessageContext) {
+        ServiceBusReceivedMessage message = serviceBusReceivedMessageContext.getMessage();
         if (message != null) {
-            if (message.getLabel() == null) {
-                deadLetterTheMessage(message, "Missing label", null);
+            if (message.getSubject() == null) {
+                deadLetterTheMessage(serviceBusReceivedMessageContext, "Missing label", null);
             } else {
-                switch (message.getLabel()) {
+                switch (message.getSubject()) {
                     case "CREATE":
                         MessageProcessingResult result = processCreateCommand(message);
-                        tryFinaliseProcessedMessage(message, result);
+                        tryFinaliseProcessedMessage(serviceBusReceivedMessageContext, result);
                         break;
                     case "UPDATE":
                         var updateResult = processUpdateCommand(message);
-                        tryFinaliseProcessedMessage(message, updateResult);
+                        tryFinaliseProcessedMessage(serviceBusReceivedMessageContext, updateResult);
                         break;
                     default:
-                        deadLetterTheMessage(message, "Unrecognised message type: " + message.getLabel(), null);
+                        deadLetterTheMessage(
+                            serviceBusReceivedMessageContext,
+                            "Unrecognised message type: " + message.getSubject(),
+                            null
+                        );
                 }
             }
         } else {
             log.info("No payment messages to process by payment processor!!");
         }
 
-        return message != null;
     }
 
-    private MessageProcessingResult processCreateCommand(IMessage message) {
+    private MessageProcessingResult processCreateCommand(ServiceBusReceivedMessage message) {
         log.info("Started processing payment message with ID {}", message.getMessageId());
 
         CreatePaymentMessage payment = null;
 
         try {
-            payment = paymentMessageParser.parse(message.getMessageBody());
+            payment = paymentMessageParser.parse(message.getBody());
             paymentMessageHandler.handlePaymentMessage(payment, message.getMessageId());
             processorClient.updatePayments(payment.payments);
             log.info(
@@ -105,13 +105,13 @@ public class PaymentMessageProcessor {
         }
     }
 
-    private MessageProcessingResult processUpdateCommand(IMessage message) {
+    private MessageProcessingResult processUpdateCommand(ServiceBusReceivedMessage message) {
         log.info("Started processing update payment message with ID {}", message.getMessageId());
 
         UpdatePaymentMessage payment = null;
 
         try {
-            payment = paymentMessageParser.parseUpdateMessage(message.getMessageBody());
+            payment = paymentMessageParser.parseUpdateMessage(message.getBody());
             paymentMessageHandler.updatePaymentCaseReference(payment);
             log.info(
                 "Processed update payment message with ID {}. Envelope ID: {}",
@@ -120,7 +120,11 @@ public class PaymentMessageProcessor {
             );
             return new MessageProcessingResult(SUCCESS);
         } catch (InvalidMessageException ex) {
-            log.error("Rejected update payment message with ID {}, because it's invalid", message.getMessageId(), ex);
+            log.error(
+                "Rejected update payment message with ID {}, because it's invalid",
+                message.getMessageId(),
+                ex
+            );
             return new MessageProcessingResult(UNRECOVERABLE_FAILURE, ex);
         } catch (Exception ex) {
             logUpdateMessageProcessingError(message, payment, ex);
@@ -128,36 +132,36 @@ public class PaymentMessageProcessor {
         }
     }
 
-    private void tryFinaliseProcessedMessage(IMessage message, MessageProcessingResult processingResult) {
+    private void tryFinaliseProcessedMessage(
+        ServiceBusReceivedMessageContext messageContext,
+        MessageProcessingResult processingResult
+    ) {
         try {
-            finaliseProcessedMessage(message, processingResult);
-        } catch (InterruptedException ex) {
-            logMessageFinaliseError(message, processingResult.resultType, ex);
-            Thread.currentThread().interrupt();
+            finaliseProcessedMessage(messageContext, processingResult);
         } catch (Exception ex) {
-            logMessageFinaliseError(message, processingResult.resultType, ex);
+            logMessageFinaliseError(messageContext, processingResult.resultType, ex);
         }
     }
 
     private void finaliseProcessedMessage(
-        IMessage message,
+        ServiceBusReceivedMessageContext messageContext,
         MessageProcessingResult processingResult
-    ) throws InterruptedException, ServiceBusException {
-
+    ) {
+        var message = messageContext.getMessage();
         switch (processingResult.resultType) {
             case SUCCESS:
-                messageReceiver.complete(message.getLockToken());
+                messageContext.complete();
                 log.info("Payment Message with ID {} has been completed", message.getMessageId());
                 break;
             case UNRECOVERABLE_FAILURE:
                 deadLetterTheMessage(
-                    message,
+                    messageContext,
                     "Payment Message processing error",
                     processingResult.exception.getMessage()
                 );
                 break;
             case POTENTIALLY_RECOVERABLE_FAILURE:
-                deadLetterIfMaxDeliveryCountIsReached(message);
+                deadLetterIfMaxDeliveryCountIsReached(messageContext);
                 break;
             default:
                 throw new UnknownMessageProcessingResultException(
@@ -166,9 +170,9 @@ public class PaymentMessageProcessor {
         }
     }
 
-    private void deadLetterIfMaxDeliveryCountIsReached(IMessage message)
-        throws InterruptedException, ServiceBusException {
+    private void deadLetterIfMaxDeliveryCountIsReached(ServiceBusReceivedMessageContext messageContext) {
 
+        var message = messageContext.getMessage();
         int deliveryCount = (int) message.getDeliveryCount() + 1;
 
         if (deliveryCount < maxDeliveryCount) {
@@ -180,7 +184,7 @@ public class PaymentMessageProcessor {
             );
         } else {
             deadLetterTheMessage(
-                message,
+                messageContext,
                 "Too many deliveries",
                 "Reached limit of message delivery count of " + deliveryCount
             );
@@ -188,14 +192,13 @@ public class PaymentMessageProcessor {
     }
 
     private void deadLetterTheMessage(
-        IMessage message,
+        ServiceBusReceivedMessageContext messageContext,
         String reason,
         String description
-    ) throws InterruptedException, ServiceBusException {
-        messageReceiver.deadLetter(
-            message.getLockToken(),
-            reason,
-            description
+    ) {
+        var message = messageContext.getMessage();
+        messageContext.deadLetter(
+            new DeadLetterOptions().setDeadLetterReason(reason).setDeadLetterErrorDescription(description)
         );
 
         log.error(
@@ -207,19 +210,23 @@ public class PaymentMessageProcessor {
     }
 
     private void logMessageFinaliseError(
-        IMessage message,
+        ServiceBusReceivedMessageContext messageContext,
         MessageProcessingResultType processingResultType,
         Exception ex
     ) {
         log.error(
             "Failed to process payment message with ID {}. Processing result: {}",
-            message.getMessageId(),
+            messageContext.getMessage().getMessageId(),
             processingResultType,
             ex
         );
     }
 
-    private void logMessageProcessingError(IMessage message, CreatePaymentMessage paymentMessage, Exception exception) {
+    private void logMessageProcessingError(
+        ServiceBusReceivedMessage message,
+        CreatePaymentMessage paymentMessage,
+        Exception exception
+    ) {
         String baseMessage = String.format("Failed to process payment message with ID %s", message.getMessageId());
         String fullMessage = paymentMessage != null
             ? String.format(
@@ -237,7 +244,7 @@ public class PaymentMessageProcessor {
     }
 
     private void logUpdateMessageProcessingError(
-        IMessage message,
+        ServiceBusReceivedMessage message,
         UpdatePaymentMessage paymentMessage,
         Exception exception
     ) {

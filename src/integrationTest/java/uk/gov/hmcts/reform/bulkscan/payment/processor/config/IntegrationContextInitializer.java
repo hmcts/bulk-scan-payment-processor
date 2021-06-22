@@ -1,9 +1,9 @@
 package uk.gov.hmcts.reform.bulkscan.payment.processor.config;
 
+import com.azure.messaging.servicebus.ServiceBusProcessorClient;
 import com.github.tomakehurst.wiremock.common.Slf4jNotifier;
 import com.github.tomakehurst.wiremock.core.Options;
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
-import com.microsoft.azure.servicebus.IMessageReceiver;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -31,8 +31,8 @@ public class IntegrationContextInitializer implements ApplicationContextInitiali
     }
 
     @Bean
-    public IMessageReceiver paymentMessageReceiver() {
-        return mock(IMessageReceiver.class);
+    public ServiceBusProcessorClient paymentServiceBusProcessorClient() {
+        return mock(ServiceBusProcessorClient.class);
     }
 
 }
