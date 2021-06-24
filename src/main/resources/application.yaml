@@ -80,4 +80,4 @@ core_case_data:
 scheduling:
   task:
     consume-payments-queue:
-      time-interval-ms: ${PAYMENTS_CONSUME_TIME_INTERVAL_MS}
+      time-interval-ms: ${PAYMENTS_CONSUME_CHECK_TIME_INTERVAL_MS}
