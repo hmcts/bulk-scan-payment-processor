@@ -35,7 +35,7 @@ public final class SamplePaymentMessageData {
             .toString();
     }
 
-    public static byte[] updatePaymentMessageJsonAsByte(
+    public static String updatePaymentMessageJsonAsString(
         String envelopeId,
         String jurisdiction,
         String exceptionRecordRef,
@@ -47,7 +47,7 @@ public final class SamplePaymentMessageData {
             .put("jurisdiction", jurisdiction)
             .put("exception_record_ref", exceptionRecordRef)
             .put("new_case_ref", newCaseRef)
-            .toString().getBytes();
+            .toString();
     }
 
     public static CreatePaymentMessage paymentMessage(String ccdCaseNumber, boolean isExceptionRecord) {

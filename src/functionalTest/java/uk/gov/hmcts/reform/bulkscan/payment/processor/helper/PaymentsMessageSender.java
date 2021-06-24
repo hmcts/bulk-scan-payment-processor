@@ -1,9 +1,8 @@
 package uk.gov.hmcts.reform.bulkscan.payment.processor.helper;
 
+import com.azure.messaging.servicebus.ServiceBusMessage;
+import com.azure.messaging.servicebus.ServiceBusSenderClient;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.microsoft.azure.servicebus.IMessage;
-import com.microsoft.azure.servicebus.Message;
-import com.microsoft.azure.servicebus.QueueClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +28,7 @@ public class PaymentsMessageSender {
 
     @Autowired
     @Qualifier("payments")
-    private QueueClient queueClient;
+    private ServiceBusSenderClient serviceBusSenderClient;
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -37,19 +36,20 @@ public class PaymentsMessageSender {
         try {
             final String messageContent = objectMapper.writeValueAsString(cmd);
 
-            IMessage message = new Message(
-                "test_msg_" + UUID.randomUUID().toString(),
-                messageContent,
-                APPLICATION_JSON.toString()
+            ServiceBusMessage message = new ServiceBusMessage(
+                messageContent
             );
-            message.setLabel(CREATE_PAYMENT_LABEL);
 
-            queueClient.send(message);
+            message.setMessageId("test_msg_" + UUID.randomUUID());
+            message.setContentType(APPLICATION_JSON.toString());
+            message.setSubject(CREATE_PAYMENT_LABEL);
+
+            serviceBusSenderClient.sendMessage(message);
 
             log.info(
                 "Sent message to payments queue. ID: {}, Label: {}, Content: {}",
                 message.getMessageId(),
-                message.getLabel(),
+                message.getSubject(),
                 messageContent
             );
         } catch (Exception ex) {
