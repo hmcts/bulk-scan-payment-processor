@@ -79,7 +79,6 @@ withPipeline(type, product, component) {
     builder.gradle('integration')
   }
 
-  enableFortifyScan()
   enableAksStagingDeployment()
   disableLegacyDeployment()
   enableSlackNotifications(channel)
@@ -94,8 +93,4 @@ withPipeline(type, product, component) {
   
   def branchesToSync = ['demo', 'perftest']
   syncBranchesWithMaster(branchesToSync)
-
-  after('fortify-scan') {
-    steps.archiveArtifacts allowEmptyArchive: true, artifacts: '**/Fortify Scan/**/*'
-  }
 }
