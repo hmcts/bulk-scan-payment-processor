@@ -64,7 +64,8 @@ public class PaymentMessageHandlerTest {
             new byte[]{},
             Charset.defaultCharset()
         ),
-        new byte[]{}
+        new byte[]{},
+        null
     );
 
     @BeforeEach
@@ -254,7 +255,8 @@ public class PaymentMessageHandlerTest {
                 new byte[]{},
                 Charset.defaultCharset()
             ),
-            new byte[]{}
+            new byte[]{},
+            null
         );
         doThrow(ccdCallException).when(ccdClient).completeAwaitingDcnProcessing(any(), any(), any());
 

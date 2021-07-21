@@ -285,7 +285,8 @@ public class PaymentMessageProcessorTest {
                 Charset.defaultCharset(),
                 null
             ),
-            new byte[]{}
+            new byte[]{},
+            null
         );
 
         // given an error occurs during message processing
@@ -324,7 +325,8 @@ public class PaymentMessageProcessorTest {
                 Charset.defaultCharset(),
                 null
             ),
-            new byte[]{}
+            new byte[]{},
+            null
         );
         given(paymentMessageParser.parseUpdateMessage(messageBody))
             .willReturn(new UpdatePaymentMessage(
