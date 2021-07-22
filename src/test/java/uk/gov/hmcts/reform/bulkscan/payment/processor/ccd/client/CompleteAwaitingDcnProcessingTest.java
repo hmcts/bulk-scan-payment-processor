@@ -49,7 +49,8 @@ public class CompleteAwaitingDcnProcessingTest {
             new byte[]{},
             Charset.defaultCharset()
         ),
-        new byte[]{}
+        new byte[]{},
+        null
     );
 
     @Mock
