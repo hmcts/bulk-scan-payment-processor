@@ -5,7 +5,6 @@ import com.azure.messaging.servicebus.ServiceBusReceivedMessage;
 import com.azure.messaging.servicebus.ServiceBusReceivedMessageContext;
 import com.azure.messaging.servicebus.models.DeadLetterOptions;
 import feign.FeignException;
-import feign.Request;
 import org.json.JSONException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -21,15 +20,13 @@ import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.handler
 import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.model.CreatePaymentMessage;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.model.UpdatePaymentMessage;
 
-import java.nio.charset.Charset;
-import java.util.Collections;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.willReturn;
 import static org.mockito.BDDMockito.willThrow;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -275,19 +272,8 @@ public class PaymentMessageProcessorTest {
 
         given(paymentMessageParser.parse(messageBody))
             .willReturn(paymentMessage(CCD_CASE_NUMBER, IS_EXCEPTION_RECORD));
-        Exception processingFailureCause = new FeignException.UnprocessableEntity(
-            RECOVERABLE_EXCEPTION_MESSAGE,
-            Request.create(
-                Request.HttpMethod.POST,
-                "/ccd",
-                Collections.emptyMap(),
-                new byte[]{},
-                Charset.defaultCharset(),
-                null
-            ),
-            new byte[]{},
-            null
-        );
+        Exception processingFailureCause = mock(FeignException.UnprocessableEntity.class);
+
 
         // given an error occurs during message processing
         willThrow(processingFailureCause).given(paymentMessageHandler).handlePaymentMessage(any(), any());
@@ -315,19 +301,8 @@ public class PaymentMessageProcessorTest {
         );
         given(serviceBusReceivedMessageContext.getMessage()).willReturn(message);
 
-        Exception processingFailureCause = new FeignException.UnprocessableEntity(
-            RECOVERABLE_EXCEPTION_MESSAGE,
-            Request.create(
-                Request.HttpMethod.POST,
-                "/ccd",
-                Collections.emptyMap(),
-                new byte[]{},
-                Charset.defaultCharset(),
-                null
-            ),
-            new byte[]{},
-            null
-        );
+        Exception processingFailureCause = mock(FeignException.UnprocessableEntity.class);
+
         given(paymentMessageParser.parseUpdateMessage(messageBody))
             .willReturn(new UpdatePaymentMessage(
                             "env-12312",
