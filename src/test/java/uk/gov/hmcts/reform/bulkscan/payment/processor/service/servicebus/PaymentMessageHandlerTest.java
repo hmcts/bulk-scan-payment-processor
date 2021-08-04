@@ -1,7 +1,6 @@
 package uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus;
 
 import feign.FeignException;
-import feign.Request;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -21,8 +20,6 @@ import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.handler
 import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.model.CreatePaymentMessage;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.model.UpdatePaymentMessage;
 
-import java.nio.charset.Charset;
-import java.util.Collections;
 import java.util.Optional;
 
 import static java.util.Collections.singletonList;
@@ -55,18 +52,8 @@ public class PaymentMessageHandlerTest {
 
     private PaymentMessageHandler messageHandler;
 
-    private static final FeignException.InternalServerError FEIGN_EXCEPTION = new FeignException.InternalServerError(
-        "Test exception",
-        Request.create(
-            Request.HttpMethod.POST,
-            "/",
-            Collections.emptyMap(),
-            new byte[]{},
-            Charset.defaultCharset()
-        ),
-        new byte[]{},
-        null
-    );
+    private FeignException.InternalServerError mockFeignException = mock(FeignException.InternalServerError.class);
+
 
     @BeforeEach
     void setUp() {
@@ -246,18 +233,8 @@ public class PaymentMessageHandlerTest {
         when(payHubClient.createPayment(any(), eq(request)))
             .thenReturn(ResponseEntity.of(Optional.of(new CreatePaymentResponse(singletonList("1234")))));
 
-        FeignException ccdCallException = new FeignException.InternalServerError(
-            "Test exception",
-            Request.create(
-                Request.HttpMethod.POST,
-                "/",
-                Collections.emptyMap(),
-                new byte[]{},
-                Charset.defaultCharset()
-            ),
-            new byte[]{},
-            null
-        );
+        FeignException ccdCallException = mock(FeignException.InternalServerError.class);
+
         doThrow(ccdCallException).when(ccdClient).completeAwaitingDcnProcessing(any(), any(), any());
 
         // when
@@ -309,7 +286,7 @@ public class PaymentMessageHandlerTest {
 
         when(payHubClient.updateCaseReference(
             eq("test-service"), eq("exp-21321"), any(CaseReferenceRequest.class))
-        ).thenThrow(FEIGN_EXCEPTION);
+        ).thenThrow(mockFeignException);
 
         // when
         PayHubCallException exception = catchThrowableOfType(
@@ -323,6 +300,6 @@ public class PaymentMessageHandlerTest {
                 "Failed updating payment. "
                     + "Envelope id: env-id-12321, Exception record ref: exp-21321, New case ref: cas-ref-9999"
             );
-        assertThat(exception.getCause()).isEqualTo(FEIGN_EXCEPTION);
+        assertThat(exception.getCause()).isEqualTo(mockFeignException);
     }
 }

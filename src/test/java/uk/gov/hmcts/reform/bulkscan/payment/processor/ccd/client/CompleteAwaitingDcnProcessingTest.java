@@ -2,7 +2,6 @@ package uk.gov.hmcts.reform.bulkscan.payment.processor.ccd.client;
 
 import com.microsoft.applicationinsights.core.dependencies.google.common.collect.ImmutableMap;
 import feign.FeignException;
-import feign.Request;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -18,9 +17,6 @@ import uk.gov.hmcts.reform.ccd.client.model.CaseDataContent;
 import uk.gov.hmcts.reform.ccd.client.model.Event;
 import uk.gov.hmcts.reform.ccd.client.model.StartEventResponse;
 import uk.gov.hmcts.reform.idam.client.models.UserDetails;
-
-import java.nio.charset.Charset;
-import java.util.Collections;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowableOfType;
@@ -40,18 +36,8 @@ public class CompleteAwaitingDcnProcessingTest {
     private static final String COMPLETE_AWAITING_PROCESSING_EVENT_ID = "completeAwaitingPaymentDCNProcessing";
     private static final String EVENT_SUMMARY = "Complete payment DCN processing";
 
-    private static final FeignException.InternalServerError FEIGN_EXCEPTION = new FeignException.InternalServerError(
-        "Test exception",
-        Request.create(
-            Request.HttpMethod.POST,
-            "/",
-            Collections.emptyMap(),
-            new byte[]{},
-            Charset.defaultCharset()
-        ),
-        new byte[]{},
-        null
-    );
+    private FeignException.InternalServerError mockFeignException =
+        mock(FeignException.InternalServerError.class);
 
     @Mock
     private CoreCaseDataApi ccdApi;
@@ -64,6 +50,7 @@ public class CompleteAwaitingDcnProcessingTest {
     @BeforeEach
     void setUp() {
         ccdClient = new CcdClient(ccdApi, ccdAuthenticatorFactory);
+        given(mockFeignException.status()).willReturn(500);
     }
 
     @Test
@@ -123,7 +110,7 @@ public class CompleteAwaitingDcnProcessingTest {
         // given
         setUpCcdAuthenticationFactory("userId1", "userToken1", "serviceToken1");
 
-        willThrow(FEIGN_EXCEPTION)
+        willThrow(mockFeignException)
             .given(ccdApi)
             .startEventForCaseWorker(any(), any(), any(), any(), any(), any(), any());
 
@@ -138,7 +125,7 @@ public class CompleteAwaitingDcnProcessingTest {
             .isEqualTo(
                 "Failed starting event in CCD for completing payment DCN processing case: 1231244243242343 Error: 500"
             );
-        assertThat(exception.getCause()).isEqualTo(FEIGN_EXCEPTION);
+        assertThat(exception.getCause()).isEqualTo(mockFeignException);
 
         verifyNoMoreInteractions(ccdApi);
     }
@@ -152,7 +139,7 @@ public class CompleteAwaitingDcnProcessingTest {
         given(ccdApi.startEventForCaseWorker(any(), any(), any(), any(), any(), any(), any()))
             .willReturn(startEventResponse);
 
-        willThrow(FEIGN_EXCEPTION)
+        willThrow(mockFeignException)
             .given(ccdApi)
             .submitEventForCaseWorker(any(), any(), any(), any(), any(), any(), anyBoolean(), any());
 
@@ -167,7 +154,7 @@ public class CompleteAwaitingDcnProcessingTest {
             .isEqualTo(
                 "Failed submitting event in CCD for completing payment DCN processing case: 1231244243242343 Error: 500"
             );
-        assertThat(exception.getCause()).isEqualTo(FEIGN_EXCEPTION);
+        assertThat(exception.getCause()).isEqualTo(mockFeignException);
     }
 
     private StartEventResponse mockStartEventResponse(String eventToken) {
