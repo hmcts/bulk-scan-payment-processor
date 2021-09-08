@@ -14,7 +14,7 @@ import static org.mockito.Mockito.verify;
         "scheduling.task.consume-payments-queue.time-interval-ms=20000"}
 )
 @IntegrationTest
-public class PaymentMessageProcessTaskTest {
+class PaymentMessageProcessTaskTest {
 
     @SpyBean
     private  PaymentMessageProcessTask paymentMessageProcessTask;
@@ -23,7 +23,7 @@ public class PaymentMessageProcessTaskTest {
     private ServiceBusProcessorClient serviceBusProcessorClient;
 
     @Test
-    public void should_start_ServiceBusProcessorClient() {
+    void should_start_ServiceBusProcessorClient() {
         verify(serviceBusProcessorClient).start();
     }
 }
