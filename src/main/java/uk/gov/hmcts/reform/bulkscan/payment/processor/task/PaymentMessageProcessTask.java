@@ -16,7 +16,6 @@ import javax.annotation.PostConstruct;
 public class PaymentMessageProcessTask {
 
     private static final Logger log = LoggerFactory.getLogger(PaymentMessageProcessTask.class);
-    private static final String TASK_NAME = "consume-payments-queue";
 
     private final ServiceBusProcessorClient serviceBusProcessorClient;
 

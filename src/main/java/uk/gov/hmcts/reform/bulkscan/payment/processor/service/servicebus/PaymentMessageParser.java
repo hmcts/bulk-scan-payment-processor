@@ -20,8 +20,6 @@ public class PaymentMessageParser {
 
     private final ObjectMapper objectMapper;
 
-    private static final String ERROR_CAUSE = "Message Binary data is null";
-
     public PaymentMessageParser(ObjectMapper objectMapper) {
         this.objectMapper = objectMapper;
     }

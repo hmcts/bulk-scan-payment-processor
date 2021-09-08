@@ -20,20 +20,20 @@ import static org.assertj.core.api.Assertions.catchThrowable;
     "idam.users.bulkscan.username=user@example.com",
     "idam.users.bulkscan.password=password1"
 })
-public class JurisdictionToUserMappingTest {
+class JurisdictionToUserMappingTest {
 
     @Autowired
     private JurisdictionToUserMapping mapping;
 
     @Test
-    public void should_parse_up_the_properties_into_map() {
+    void should_parse_up_the_properties_into_map() {
         Credential credentials = mapping.getUser("BULKSCAN");
         assertThat(credentials.getPassword()).isEqualTo("password1");
         assertThat(credentials.getUsername()).isEqualTo("user@example.com");
     }
 
     @Test
-    public void should_throw_exception_when_user_not_found() {
+    void should_throw_exception_when_user_not_found() {
         Throwable throwable = catchThrowable(() -> mapping.getUser("nonexisting"));
 
         assertThat(throwable)
@@ -42,7 +42,7 @@ public class JurisdictionToUserMappingTest {
     }
 
     @Test
-    public void should_throw_exception_if_none_configured() {
+    void should_throw_exception_if_none_configured() {
         Throwable throwable = catchThrowable(
             () -> new JurisdictionToUserMapping().getUser("NONE")
         );

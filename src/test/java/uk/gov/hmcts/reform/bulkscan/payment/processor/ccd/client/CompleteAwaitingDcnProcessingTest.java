@@ -30,13 +30,13 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 
 @ExtendWith(MockitoExtension.class)
-public class CompleteAwaitingDcnProcessingTest {
+class CompleteAwaitingDcnProcessingTest {
 
     private static final String AWAITING_DCN_PROCESSING_FIELD_NAME = "awaitingPaymentDCNProcessing";
     private static final String COMPLETE_AWAITING_PROCESSING_EVENT_ID = "completeAwaitingPaymentDCNProcessing";
     private static final String EVENT_SUMMARY = "Complete payment DCN processing";
 
-    private FeignException.InternalServerError mockFeignException =
+    private final FeignException.InternalServerError mockFeignException =
         mock(FeignException.InternalServerError.class);
 
     @Mock
@@ -100,7 +100,7 @@ public class CompleteAwaitingDcnProcessingTest {
             caseDataContentCaptor.capture()
         );
 
-        assertThat(caseDataContentCaptor.getValue()).isEqualToComparingFieldByFieldRecursively(
+        assertThat(caseDataContentCaptor.getValue()).usingRecursiveComparison().isEqualTo(
             getExpectedCaseDataContentForSubmitEvent(exceptionRecordId, eventToken)
         );
     }
