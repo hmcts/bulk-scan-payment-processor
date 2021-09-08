@@ -9,12 +9,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 
-public class SiteConfigurationTest {
+class SiteConfigurationTest {
 
     private final SiteConfiguration siteConfiguration = new SiteConfiguration();
 
     @Test
-    public void should_map_poBox_to_siteId() {
+    void should_map_poBox_to_siteId() {
 
         siteConfiguration.setSites(
             ImmutableList.of(
@@ -34,7 +34,7 @@ public class SiteConfigurationTest {
     }
 
     @Test
-    public void should_throw_exception_when_sites_config_empty() {
+    void should_throw_exception_when_sites_config_empty() {
 
         assertThatThrownBy(() -> ReflectionTestUtils.invokeMethod(siteConfiguration, "mapPoBoxToSiteId"))
             .isInstanceOf(SiteConfigurationException.class)

@@ -15,37 +15,32 @@ import static uk.gov.hmcts.reform.bulkscan.payment.processor.data.producer.Sampl
 import static uk.gov.hmcts.reform.bulkscan.payment.processor.data.producer.SamplePaymentMessageData.paymentMessageJson;
 
 
-public class PaymentMessageParserTest {
+class PaymentMessageParserTest {
 
-    private ObjectMapper objectMapper = new ObjectMapper();
+    private final ObjectMapper objectMapper = new ObjectMapper();
 
     private final PaymentMessageParser paymentMessageParser = new PaymentMessageParser(objectMapper);
 
     @Test
-    public void should_return_valid_paymentMessage_when_CreatePaymentMessage_message_is_valid()
+    void should_return_valid_paymentMessage_when_CreatePaymentMessage_message_is_valid()
         throws JSONException {
         CreatePaymentMessage expected = paymentMessage("232131313121", false);
         CreatePaymentMessage paymentMessage = paymentMessageParser.parse(getValidMessageBody());
-        assertThat(paymentMessage).isEqualToComparingFieldByFieldRecursively(expected);
+        assertThat(paymentMessage).usingRecursiveComparison().isEqualTo(expected);
     }
 
     @Test
-    public void should_throw_invalidMessageException_when_createPaymentMessage_message_is_invalid() {
+    void should_throw_invalidMessageException_when_createPaymentMessage_message_is_invalid() {
+        BinaryData messageBody = BinaryData.fromString("parse exception");
+
         assertThatThrownBy(
-            () -> paymentMessageParser.parse(BinaryData.fromString("parse exception")))
+            () -> paymentMessageParser.parse(messageBody))
             .isInstanceOf(InvalidMessageException.class);
     }
 
-    private BinaryData getValidMessageBody() throws JSONException {
-        return BinaryData.fromString(paymentMessageJson(
-            "232131313121",
-            false
-        ));
-    }
-
 
     @Test
-    public void should_return_valid_updatePaymentMessage_when_queue_message_is_valid() throws JSONException {
+    void should_return_valid_updatePaymentMessage_when_queue_message_is_valid() throws JSONException {
         UpdatePaymentMessage expected =
             new UpdatePaymentMessage(
             "envelopeId",
@@ -67,15 +62,22 @@ public class PaymentMessageParserTest {
                     )
                 );
 
-        assertThat(paymentMessage).isEqualToComparingFieldByFieldRecursively(expected);
+        assertThat(paymentMessage).usingRecursiveComparison().isEqualTo(expected);
     }
 
     @Test
-    public void should_throw_invalidMessageException_when_queue_updatePayment_message_is_invalid() {
-        assertThatThrownBy(
-            () -> paymentMessageParser.parseUpdateMessage(
-                BinaryData.fromString("parse exception"))
-        ).isInstanceOf(InvalidMessageException.class);
+    void should_throw_invalidMessageException_when_queue_updatePayment_message_is_invalid() {
+        BinaryData messageBody = BinaryData.fromString("parse exception");
+
+        assertThatThrownBy(() -> paymentMessageParser.parseUpdateMessage(messageBody))
+                .isInstanceOf(InvalidMessageException.class);
+    }
+
+    private BinaryData getValidMessageBody() throws JSONException {
+        return BinaryData.fromString(paymentMessageJson(
+            "232131313121",
+            false
+        ));
     }
 
     private static String getUpdatePaymentMessageJsonString(
@@ -92,5 +94,4 @@ public class PaymentMessageParserTest {
             .put("new_case_ref", newCaseRef)
             .toString();
     }
-
 }

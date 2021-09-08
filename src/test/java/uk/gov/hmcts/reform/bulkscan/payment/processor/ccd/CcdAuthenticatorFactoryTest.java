@@ -14,7 +14,6 @@ import uk.gov.hmcts.reform.idam.client.models.UserDetails;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.willThrow;
 import static org.mockito.Mockito.mock;
@@ -45,7 +44,7 @@ class CcdAuthenticatorFactoryTest {
         String userToken = "userToken1";
         UserDetails userDetails = mock(UserDetails.class);
 
-        given(users.getUser(eq(jurisdiction))).willReturn(credentials);
+        given(users.getUser(jurisdiction)).willReturn(credentials);
         given(tokenGenerator.generate()).willReturn(serviceToken);
         given(idamClient.getAccessToken(any(), any())).willReturn(userToken);
         given(idamClient.getUserDetails(userToken)).willReturn(userDetails);

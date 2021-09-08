@@ -36,7 +36,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class PaymentMessageHandlerTest {
+class PaymentMessageHandlerTest {
 
     @Mock
     private PayHubClient payHubClient;
@@ -52,7 +52,8 @@ public class PaymentMessageHandlerTest {
 
     private PaymentMessageHandler messageHandler;
 
-    private FeignException.InternalServerError mockFeignException = mock(FeignException.InternalServerError.class);
+    private final FeignException.InternalServerError mockFeignException =
+            mock(FeignException.InternalServerError.class);
 
 
     @BeforeEach
@@ -61,7 +62,7 @@ public class PaymentMessageHandlerTest {
     }
 
     @Test
-    public void should_call_payhub_api_and_ccd_api_for_successful_payment_message() {
+    void should_call_payhub_api_and_ccd_api_for_successful_payment_message() {
         // given
         String exceptionRecordCcdId = "1234123412341234";
         CreatePaymentMessage message = SamplePaymentMessageData.paymentMessage(exceptionRecordCcdId, true);
@@ -89,7 +90,7 @@ public class PaymentMessageHandlerTest {
     }
 
     @Test
-    public void should_rethrow_feign_exception_when_payhub_call_fails() {
+    void should_rethrow_feign_exception_when_payhub_call_fails() {
         // given
         String exceptionRecordCcdId = "1234123412341234";
         CreatePaymentMessage message = SamplePaymentMessageData.paymentMessage(exceptionRecordCcdId, true);
@@ -122,7 +123,7 @@ public class PaymentMessageHandlerTest {
     }
 
     @Test
-    public void should_update_payment_processing_status_in_ccd_when_payhub_call_fails_with_409_response() {
+    void should_update_payment_processing_status_in_ccd_when_payhub_call_fails_with_409_response() {
         // given
         String exceptionRecordCcdId = "1234123412341234";
         CreatePaymentMessage message = SamplePaymentMessageData.paymentMessage(exceptionRecordCcdId, true);
@@ -150,7 +151,7 @@ public class PaymentMessageHandlerTest {
     }
 
     @Test
-    public void should_not_update_status_in_ccd_when_message_does_not_represent_exception_record() {
+    void should_not_update_status_in_ccd_when_message_does_not_represent_exception_record() {
         // given
         String caseId = "1234123412341234";
         CreatePaymentMessage message = SamplePaymentMessageData.paymentMessage(caseId, false);
@@ -178,7 +179,7 @@ public class PaymentMessageHandlerTest {
     }
 
     @Test
-    public void should_fail_when_payhub_call_fails_with_non_409_response() {
+    void should_fail_when_payhub_call_fails_with_non_409_response() {
         // given
         String exceptionRecordCcdId = "1234123412341234";
         CreatePaymentMessage message = SamplePaymentMessageData.paymentMessage(exceptionRecordCcdId, true);
@@ -214,7 +215,7 @@ public class PaymentMessageHandlerTest {
     }
 
     @Test
-    public void should_fail_when_updating_ccd_fails() {
+    void should_fail_when_updating_ccd_fails() {
         // given
         String exceptionRecordCcdId = "1234123412341234";
         CreatePaymentMessage message = SamplePaymentMessageData.paymentMessage(exceptionRecordCcdId, true);
@@ -244,7 +245,7 @@ public class PaymentMessageHandlerTest {
     }
 
     @Test
-    public void should_call_payhub_api_to_assign_case_ref() {
+    void should_call_payhub_api_to_assign_case_ref() {
         // given
         UpdatePaymentMessage message = new UpdatePaymentMessage(
             "env-id-12321",
@@ -268,12 +269,12 @@ public class PaymentMessageHandlerTest {
         verify(payHubClient).updateCaseReference(any(), any(), requestCaptor.capture());
         CaseReferenceRequest req = requestCaptor.getValue();
         CaseReferenceRequest expectedRequest = new CaseReferenceRequest("cas-ref-9999");
-        assertThat(req).isEqualToComparingFieldByFieldRecursively(expectedRequest);
+        assertThat(req).usingRecursiveComparison().isEqualTo(expectedRequest);
     }
 
 
     @Test
-    public void should_throw_exception_if_payhub_api_assign_case_ref_fails() {
+    void should_throw_exception_if_payhub_api_assign_case_ref_fails() {
         // given
         UpdatePaymentMessage message = new UpdatePaymentMessage(
             "env-id-12321",
