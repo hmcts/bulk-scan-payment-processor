@@ -22,7 +22,7 @@ import static uk.gov.hmcts.reform.bulkscan.payment.processor.data.producer.Sampl
 import static uk.gov.hmcts.reform.bulkscan.payment.processor.data.producer.SamplePaymentMessageData.paymentMessage;
 
 @ExtendWith(MockitoExtension.class)
-public class PaymentRequestMapperTest {
+class PaymentRequestMapperTest {
 
     @Mock
     private SiteConfiguration siteConfig;
@@ -35,7 +35,7 @@ public class PaymentRequestMapperTest {
     }
 
     @Test
-    public void should_return_valid_PaymentRequest_when_PaymentMessage_is_valid() {
+    void should_return_valid_PaymentRequest_when_PaymentMessage_is_valid() {
         // given
         when(siteConfig.getSiteIdByPoBox(PO_BOX)).thenReturn("A123");
         CreatePaymentRequest expectedPaymentRequest = new CreatePaymentRequest(
@@ -52,23 +52,24 @@ public class PaymentRequestMapperTest {
         ));
 
         // then
-        assertThat(paymentRequest).isEqualToComparingFieldByFieldRecursively(expectedPaymentRequest);
+        assertThat(paymentRequest).usingRecursiveComparison().isEqualTo(expectedPaymentRequest);
     }
 
     @Test
-    public void should_throw_exception_when_site_not_found_for_the_poBox() {
+    void should_throw_exception_when_site_not_found_for_the_poBox() {
         // given
         when(siteConfig.getSiteIdByPoBox(PO_BOX)).thenReturn(null);
 
+        CreatePaymentMessage paymentMessage = paymentMessage("case_number_1231", true);
+
         // then
-        assertThatThrownBy(
-            () -> paymentRequestMapper.mapPaymentMessage(paymentMessage("case_number_1231", true)))
+        assertThatThrownBy(() -> paymentRequestMapper.mapPaymentMessage(paymentMessage))
             .isInstanceOf(SiteNotFoundException.class)
             .hasMessage("Site not Found for po box: " + PO_BOX);
     }
 
     @Test
-    public void should_throw_InvalidMessageException_when_no_payments_info() {
+    void should_throw_InvalidMessageException_when_no_payments_info() {
         // given
         CreatePaymentMessage paymentMessage = new CreatePaymentMessage(
             "envelope_id_123",

@@ -17,7 +17,6 @@ import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.Payment
 import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.PaymentMessageProcessor;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.exceptions.InvalidMessageException;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.handler.PaymentMessageHandler;
-import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.model.CreatePaymentMessage;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.model.UpdatePaymentMessage;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -36,7 +35,7 @@ import static uk.gov.hmcts.reform.bulkscan.payment.processor.data.producer.Sampl
 import static uk.gov.hmcts.reform.bulkscan.payment.processor.data.producer.SamplePaymentMessageData.updatePaymentMessageJsonAsString;
 
 @ExtendWith(MockitoExtension.class)
-public class PaymentMessageProcessorTest {
+class PaymentMessageProcessorTest {
 
     private static final String DEAD_LETTER_REASON_PROCESSING_ERROR = "Payment Message processing error";
     private static final String MESSAGE_LABEL_CREATE = "CREATE";
@@ -56,9 +55,6 @@ public class PaymentMessageProcessorTest {
     private PaymentMessageParser paymentMessageParser;
 
     @Mock
-    private CreatePaymentMessage paymentMessage;
-
-    @Mock
     private ProcessorClient processorClient;
 
     private PaymentMessageProcessor paymentMessageProcessor;
@@ -68,7 +64,7 @@ public class PaymentMessageProcessorTest {
     private static final boolean IS_EXCEPTION_RECORD = true;
 
     @BeforeEach
-    public void before() {
+    void before() {
         paymentMessageProcessor = new PaymentMessageProcessor(
             paymentMessageHandler,
             paymentMessageParser,
@@ -79,7 +75,7 @@ public class PaymentMessageProcessorTest {
 
 
     @Test
-    public void should_return_when_there_is_no_message_to_process() {
+    void should_return_when_there_is_no_message_to_process() {
         // given
         given(serviceBusReceivedMessageContext.getMessage()).willReturn(null);
 
@@ -93,7 +89,7 @@ public class PaymentMessageProcessorTest {
     }
 
     @Test
-    public void should_not_throw_exception_when_queue_message_is_invalid() throws Exception {
+    void should_not_throw_exception_when_queue_message_is_invalid() {
         given(serviceBusReceivedMessageContext.getMessage()).willReturn(message);
         var messageBody = BinaryData.fromString("foo");
         given(message.getBody())
@@ -109,7 +105,7 @@ public class PaymentMessageProcessorTest {
     }
 
     @Test
-    public void should_not_throw_exception_when_payment_handler_fails() throws Exception {
+    void should_not_throw_exception_when_payment_handler_fails() throws Exception {
         // given
         var messageBody = setValidMessage(MESSAGE_LABEL_CREATE, paymentJsonString());
 
@@ -125,7 +121,7 @@ public class PaymentMessageProcessorTest {
     }
 
     @Test
-    public void should_complete_create_message_when_processing_is_successful() throws Exception {
+    void should_complete_create_message_when_processing_is_successful() throws Exception {
         // given
         setValidMessage(MESSAGE_LABEL_CREATE, paymentJsonString());
         given(serviceBusReceivedMessageContext.getMessage()).willReturn(message);
@@ -142,7 +138,7 @@ public class PaymentMessageProcessorTest {
 
 
     @Test
-    public void should_complete_update_message_when_processing_is_successful() throws Exception {
+    void should_complete_update_message_when_processing_is_successful() throws Exception {
         // given
 
         var messageBody = setValidMessage(
@@ -173,7 +169,7 @@ public class PaymentMessageProcessorTest {
     }
 
     @Test
-    public void should_dead_letter_the_message_when_unrecoverable_failure() throws Exception {
+    void should_dead_letter_the_message_when_unrecoverable_failure() {
         // given
 
         given(message.getBody()).willReturn(BinaryData.fromString("invalid body"));
@@ -206,7 +202,7 @@ public class PaymentMessageProcessorTest {
     }
 
     @Test
-    public void should_dead_letter_update_message_when_unrecoverable_failure() throws Exception {
+    void should_dead_letter_update_message_when_unrecoverable_failure() {
         // given
         var messageBody = setValidMessage(MESSAGE_LABEL_UPDATE, "invalid body");
 
@@ -237,7 +233,7 @@ public class PaymentMessageProcessorTest {
     }
 
     @Test
-    public void should_dead_letter_message_when_it_has_no_label() throws Exception {
+    void should_dead_letter_message_when_it_has_no_label() {
         // given
         given(message.getSubject()).willReturn(null); // no label
         given(serviceBusReceivedMessageContext.getMessage()).willReturn(message);
@@ -265,7 +261,7 @@ public class PaymentMessageProcessorTest {
     }
 
     @Test
-    public void should_not_dead_letter_create_message_when_recoverable_failure() throws Exception {
+    void should_not_dead_letter_create_message_when_recoverable_failure() throws Exception {
 
         var messageBody = setValidMessage(MESSAGE_LABEL_CREATE, paymentJsonString());
         given(serviceBusReceivedMessageContext.getMessage()).willReturn(message);
@@ -288,7 +284,7 @@ public class PaymentMessageProcessorTest {
     }
 
     @Test
-    public void should_not_dead_letter_update_message_when_recoverable_failure() throws Exception {
+    void should_not_dead_letter_update_message_when_recoverable_failure() throws Exception {
 
         var messageBody = setValidMessage(
             MESSAGE_LABEL_UPDATE,
@@ -324,7 +320,7 @@ public class PaymentMessageProcessorTest {
 
 
     @Test
-    public void should_dead_letter_the_message_when_recoverable_failure_but_delivery_maxed() throws JSONException {
+    void should_dead_letter_the_message_when_recoverable_failure_but_delivery_maxed() throws JSONException {
         // given
         var messageBody = setValidMessage(MESSAGE_LABEL_CREATE, paymentJsonString());
         given(serviceBusReceivedMessageContext.getMessage()).willReturn(message);
@@ -364,7 +360,7 @@ public class PaymentMessageProcessorTest {
     }
 
     @Test
-    public void should_dead_letter_update_message_when_recoverable_failure_but_delivery_maxed() throws Exception {
+    void should_dead_letter_update_message_when_recoverable_failure_but_delivery_maxed() throws Exception {
         // given
         var messageBody = setValidMessage(
             MESSAGE_LABEL_UPDATE,
@@ -416,7 +412,7 @@ public class PaymentMessageProcessorTest {
         verify(processorClient, never()).updatePayments(any());
     }
 
-    private BinaryData setValidMessage(String label, String messageStr) throws JSONException {
+    private BinaryData setValidMessage(String label, String messageStr) {
         var messageBody = BinaryData.fromString(messageStr);
         given(message.getBody()).willReturn(messageBody);
         given(message.getSubject()).willReturn(label);
@@ -426,5 +422,4 @@ public class PaymentMessageProcessorTest {
     private String paymentJsonString() throws JSONException {
         return  paymentMessageJson(CCD_CASE_NUMBER, IS_EXCEPTION_RECORD);
     }
-
 }

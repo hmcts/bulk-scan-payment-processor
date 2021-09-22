@@ -17,7 +17,7 @@ import static org.slf4j.event.Level.INFO;
 
 
 @ExtendWith(MockitoExtension.class)
-public class PaymentMessageProcessTaskTest {
+class PaymentMessageProcessTaskTest {
     @RegisterExtension
     public LogCapturer logs = LogCapturer.create().captureForType(PaymentMessageProcessTask.class);
 
@@ -28,14 +28,14 @@ public class PaymentMessageProcessTaskTest {
     private PaymentMessageProcessTask queueConsumeTask;
 
     @BeforeEach
-    public void setUp() {
+    void setUp() {
         queueConsumeTask = new PaymentMessageProcessTask(
             serviceBusProcessorClient
         );
     }
 
     @Test
-    public void should_log_when_listener_is_not_working() {
+    void should_log_when_listener_is_not_working() {
         given(serviceBusProcessorClient.isRunning()).willReturn(false);
         queueConsumeTask.checkServiceBusProcessorClient();
 
@@ -45,12 +45,11 @@ public class PaymentMessageProcessTaskTest {
     }
 
     @Test
-    public void should_log_when_listener_is_working() {
+    void should_log_when_listener_is_working() {
         given(serviceBusProcessorClient.isRunning()).willReturn(true);
         queueConsumeTask.checkServiceBusProcessorClient();
         assertThat(logs.assertContains(
             event -> event.getLevel() == INFO, "No INFO level log").getMessage())
             .isEqualTo("Payments queue consume listener is working.");
     }
-
 }

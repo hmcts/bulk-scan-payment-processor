@@ -1,6 +1,5 @@
 package uk.gov.hmcts.reform.bulkscan.payment.processor.ccd;
 
-import com.google.common.collect.ImmutableMap;
 import feign.FeignException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -9,6 +8,8 @@ import uk.gov.hmcts.reform.ccd.client.CoreCaseDataApi;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDataContent;
 import uk.gov.hmcts.reform.ccd.client.model.Event;
 import uk.gov.hmcts.reform.ccd.client.model.StartEventResponse;
+
+import java.util.Map;
 
 import static java.lang.String.format;
 
@@ -55,7 +56,7 @@ public class CcdClient {
             .build();
 
         CaseDataContent caseDataContent = CaseDataContent.builder()
-            .data(ImmutableMap.of(AWAITING_DCN_PROCESSING_FIELD_NAME, "No"))
+            .data(Map.of(AWAITING_DCN_PROCESSING_FIELD_NAME, "No"))
             .event(event)
             .ignoreWarning(true)
             .caseReference(exceptionRecordCcdId)
