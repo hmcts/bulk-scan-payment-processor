@@ -170,8 +170,8 @@ repositories {
 }
 
 def versions = [
-  junit           : '5.6.2',
-  junitPlatform   : '1.6.2',
+  junit           : '5.8.1',
+  junitPlatform   : '1.8.1',
   reformLogging   : '5.1.6',
   springBoot      : springBoot.class.package.implementationVersion,
   springfoxSwagger: '2.9.2'
@@ -220,6 +220,7 @@ dependencies {
   testImplementation group: 'org.mockito', name: 'mockito-junit-jupiter', version: '3.12.4'
   testImplementation group: 'org.mockito', name: 'mockito-inline', version: '3.12.4'
   testImplementation group: 'org.awaitility', name: 'awaitility', version: '4.1.0'
+  testImplementation group: 'org.apiguardian', name: 'apiguardian-api', version: '1.0.0'
 
   testImplementation group: 'org.springframework.boot', name: 'spring-boot-starter-test', withoutJunit4
   testImplementation group: 'io.github.netmikey.logunit', name: 'logunit-core', version: '1.1.0'
