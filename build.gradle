@@ -149,7 +149,7 @@ dependencyCheck {
 dependencyManagement {
   dependencies {
     // CVE-2020-8908
-    dependencySet(group: 'com.google.guava', version: '30.1.1-jre') {
+    dependencySet(group: 'com.google.guava', version: '31.0-jre') {
       entry 'guava'
     }
     // avoid CVE-2021-29425
