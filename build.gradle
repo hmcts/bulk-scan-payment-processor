@@ -203,7 +203,7 @@ dependencies {
   implementation group: 'com.github.hmcts', name: 'ccd-client', version: '4.7.7'
   
   implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-bootstrap', version: '3.0.4'
-  implementation group: 'com.azure', name: 'azure-messaging-servicebus', version: '7.4.1'
+  implementation group: 'com.azure', name: 'azure-messaging-servicebus', version: '7.4.2'
 
   implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-openfeign', version: '3.0.4'
   implementation group: 'io.github.openfeign', name: 'feign-httpclient', version: '11.6'
