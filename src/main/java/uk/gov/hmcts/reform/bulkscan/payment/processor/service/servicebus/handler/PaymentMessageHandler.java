@@ -94,10 +94,11 @@ public class PaymentMessageHandler {
         CreatePaymentRequest request = paymentRequestMapper.mapPaymentMessage(paymentMessage);
 
         log.info(
-            "Sending Payment request with Document Control Numbers: {}, Envelope id: {}, poBox: {}",
+            "Sending Payment request with Document Control Numbers: {}, Envelope id: {}, poBox: {}, ccdReference {}",
             String.join(", ", request.documentControlNumbers),
             paymentMessage.envelopeId,
-            paymentMessage.poBox
+            paymentMessage.poBox,
+            paymentMessage.ccdReference
         );
 
         try {
