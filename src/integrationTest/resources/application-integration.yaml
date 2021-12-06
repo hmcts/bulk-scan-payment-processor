@@ -43,5 +43,6 @@ spring:
     # TODO: remove when possible
     allow-bean-definition-overriding: true
 
-springdoc.packagesToScan=uk.gov.hmcts.reform.bulkscan.payment.processor
-springdoc.pathsToMatch=/**
+springdoc:
+  packagesToScan: uk.gov.hmcts.reform.bulkscan.payment.processor
+  pathsToMatch: /**
