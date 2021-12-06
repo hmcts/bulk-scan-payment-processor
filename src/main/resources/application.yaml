@@ -81,3 +81,7 @@ scheduling:
   task:
     consume-payments-queue:
       time-interval-ms: ${PAYMENTS_CONSUME_CHECK_TIME_INTERVAL_MS}
+
+springdoc:
+  packagesToScan: uk.gov.hmcts.reform.bulkscan.payment.processor
+  pathsToMatch: /**
