@@ -42,3 +42,6 @@ spring:
     # without this, Spring can't properly resolve feign clients when IDAM and CCD clients are both included
     # TODO: remove when possible
     allow-bean-definition-overriding: true
+
+springdoc.packagesToScan=uk.gov.hmcts.reform.bulkscan.payment.processor
+springdoc.pathsToMatch=/**
