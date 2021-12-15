@@ -225,7 +225,7 @@ dependencies {
   testImplementation group: 'org.apiguardian', name: 'apiguardian-api', version: '1.1.2'
 
   testImplementation group: 'org.springframework.boot', name: 'spring-boot-starter-test', withoutJunit4
-  testImplementation group: 'io.github.netmikey.logunit', name: 'logunit-core', version: '1.1.1'
+  testImplementation group: 'io.github.netmikey.logunit', name: 'logunit-core', version: '1.1.2'
   testImplementation group: 'com.github.hmcts', name: 'fortify-client', version: '1.2.2', classifier: 'all'
   testRuntimeOnly group: 'io.github.netmikey.logunit', name: 'logunit-logback', version: '1.1.1'
 
