@@ -242,7 +242,7 @@ dependencies {
   smokeTestImplementation sourceSets.main.runtimeClasspath
   smokeTestImplementation sourceSets.test.runtimeClasspath
   smokeTestImplementation group: 'io.rest-assured', name: 'rest-assured', withoutJunit4
-  smokeTestImplementation group: 'com.typesafe', name: 'config', version: '1.4.1'
+  smokeTestImplementation group: 'com.typesafe', name: 'config', version: '1.4.2'
 }
 
 mainClassName = 'uk.gov.hmcts.reform.bulkscan.payment.processor.Application'
