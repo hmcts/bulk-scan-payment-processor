@@ -156,7 +156,7 @@ dependencyManagement {
     dependencySet(group: 'io.netty', version: '2.0.50.Final') {
       entry 'netty-tcnative-boringssl-static'
     }
-    dependencySet(group: 'org.apache.logging.log4j', version: '2.17.1') {
+    dependencySet(group: 'org.apache.logging.log4j', version: '2.17.2') {
       entry 'log4j-api'
       entry 'log4j-to-slf4j'
     }
