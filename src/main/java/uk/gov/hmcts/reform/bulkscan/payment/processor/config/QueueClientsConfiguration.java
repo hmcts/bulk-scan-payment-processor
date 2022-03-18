@@ -43,7 +43,12 @@ public class QueueClientsConfiguration {
             .receiveMode(ServiceBusReceiveMode.PEEK_LOCK)
             .disableAutoComplete()
             .processMessage(paymentMessageProcessor::processNextMessage)
-            .processError(c -> log.error("Payment queue handle error {}", c.getErrorSource(), c.getException()))
+            .processError(c -> log.error(
+                "Payment queue handle error {}, connectionString {}",
+                c.getErrorSource(),
+                c.getException(),
+                connectionString
+            ))
             .buildProcessorClient();
     }
 }
