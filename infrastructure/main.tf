@@ -74,7 +74,7 @@ module "bulk-scan-orchestrator" {
   subscription                    = "${var.subscription}"
   capacity                        = "${var.capacity}"
   common_tags                     = "${var.common_tags}"
-  appinsights_instrumentation_key = "${var.appinsights_instrumentation_key}"
+  appinsights_instrumentation_key = "${data.azurerm_key_vault_secret.appinsights_secret.value}"
   asp_name                        = "${var.product}-${var.env}"
   asp_rg                          = "${var.product}-${var.env}"
   instance_size                   = "I1"
@@ -127,4 +127,9 @@ data "azurerm_key_vault_secret" "payhub_site_ids" {
   count        = "${length(local.payhub_sites)}"
   key_vault_id = "${data.azurerm_key_vault.bulk_scan_key_vault.id}"
   name         = "${local.payhub_site_id_secret_names[count.index]}"
+}
+
+data "azurerm_key_vault_secret" "appinsights_secret" {
+  name         = "app-insights-instrumentation-key"
+  key_vault_id = data.azurerm_key_vault.bulk_scan_key_vault.id
 }
