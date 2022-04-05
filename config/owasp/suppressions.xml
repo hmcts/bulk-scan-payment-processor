@@ -7,5 +7,8 @@
    ]]></notes>
    <packageUrl regex="true">^pkg:maven/com\.fasterxml\.jackson\.core/jackson\-databind@.*$</packageUrl>
    <cve>CVE-2020-36518</cve>
-</suppress>
+  </suppress>
+  <suppress until="2022-07-05">
+    <cve>CVE-2022-22965</cve>
+  </suppress>
 </suppressions>
