@@ -74,7 +74,7 @@ module "bulk-scan-orchestrator" {
   subscription                    = "${var.subscription}"
   capacity                        = "${var.capacity}"
   common_tags                     = "${var.common_tags}"
-  appinsights_instrumentation_key = data.azurerm_key_vault_secret.appinsights_secret
+  appinsights_instrumentation_key = "${data.azurerm_key_vault_secret.appinsights_secret}"
   asp_name                        = "${var.product}-${var.env}"
   asp_rg                          = "${var.product}-${var.env}"
   instance_size                   = "I1"
