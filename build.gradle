@@ -206,7 +206,7 @@ dependencies {
 
   implementation group: 'javax.xml.bind', name: 'jaxb-api', version: '2.3.1' // Needed for openjdk 11 to execute test
 
-  implementation group: 'org.springdoc', name: 'springdoc-openapi-ui', version: '1.6.7'
+  implementation group: 'org.springdoc', name: 'springdoc-openapi-ui', version: '1.6.8'
 
   implementation group: 'com.github.hmcts.java-logging', name: 'logging', version: versions.reformLogging
   implementation group: 'com.github.hmcts.java-logging', name: 'logging-appinsights', version: versions.reformLogging
@@ -228,8 +228,8 @@ dependencies {
   testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-params', version: versions.junit
   testImplementation group: 'org.junit.platform', name: 'junit-platform-commons', version: versions.junitPlatform
   testImplementation group: 'org.junit.platform', name: 'junit-platform-engine', version: versions.junitPlatform
-  testImplementation group: 'org.mockito', name: 'mockito-junit-jupiter', version: '4.4.0'
-  testImplementation group: 'org.mockito', name: 'mockito-inline', version: '4.4.0'
+  testImplementation group: 'org.mockito', name: 'mockito-junit-jupiter', version: '4.5.1'
+  testImplementation group: 'org.mockito', name: 'mockito-inline', version: '4.5.1'
   testImplementation group: 'org.awaitility', name: 'awaitility', version: '4.2.0'
   testImplementation group: 'org.apiguardian', name: 'apiguardian-api', version: '1.1.2'
 
