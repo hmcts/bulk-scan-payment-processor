@@ -48,3 +48,4 @@ servicebus:
     queues:
       - name: payments
   enabled: true
+  applicationName: "bulk-scan-print"
