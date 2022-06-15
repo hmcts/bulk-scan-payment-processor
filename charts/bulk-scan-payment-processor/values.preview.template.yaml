@@ -49,3 +49,6 @@ servicebus:
       - name: payments
   enabled: true
   applicationName: "bulk-scan-print"
+  builtFrom: "https://github.com/hmcts/bulk-scan-payment-processor"
+  businessArea: "CFT"
+  environment: "preview"
