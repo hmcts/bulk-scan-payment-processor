@@ -48,8 +48,7 @@ public class PaymentMessageProcessor {
 
     /**
      * Reads and processes next message from the queue.
-     *
-     * @return false if there was no message to process. Otherwise true.
+     * return false if there was no message to process. Otherwise true.
      */
     public void processNextMessage(ServiceBusReceivedMessageContext serviceBusReceivedMessageContext) {
         ServiceBusReceivedMessage message = serviceBusReceivedMessageContext.getMessage();

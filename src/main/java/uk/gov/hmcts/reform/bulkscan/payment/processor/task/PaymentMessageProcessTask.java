@@ -35,7 +35,8 @@ public class PaymentMessageProcessTask {
         if (!serviceBusProcessorClient.isRunning()) {
             log.error("Payments queue consume listener is NOT running!!!");
         } else {
-            log.info("Payments queue consume listener is working.");
+            log.info("""
+                         Payments queue consume listener is working.""");
         }
     }
 
