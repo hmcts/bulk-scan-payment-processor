@@ -234,7 +234,7 @@ public class PaymentMessageProcessor {
                 paymentMessage.jurisdiction
             )
             : baseMessage;
-        String fullMessageWithClientResponse = exception instanceof FeignException
+        String fullMessageWithClientResponse = exception instanceof FeignException feignException
             ? String.format("%s. Client response: %s", fullMessage, ((FeignException) exception).contentUTF8())
             : fullMessage;
 
@@ -259,7 +259,7 @@ public class PaymentMessageProcessor {
                 paymentMessage.jurisdiction
             )
             : baseMessage;
-        String fullMessageWithClientResponse = exception instanceof FeignException
+        String fullMessageWithClientResponse = exception instanceof FeignException feignException
             ? String.format("%s. Client response: %s", fullMessage, ((FeignException) exception).contentUTF8())
             : fullMessage;
 
