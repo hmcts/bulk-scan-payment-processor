@@ -57,20 +57,21 @@ public class PaymentMessageProcessor {
                 deadLetterTheMessage(serviceBusReceivedMessageContext, "Missing label", null);
             } else {
                 switch (message.getSubject()) {
-                    case "CREATE":
+                    case "CREATE" -> {
                         MessageProcessingResult result = processCreateCommand(message);
                         tryFinaliseProcessedMessage(serviceBusReceivedMessageContext, result);
-                        break;
-                    case "UPDATE":
+                    }
+                    case "UPDATE" -> {
                         var updateResult = processUpdateCommand(message);
                         tryFinaliseProcessedMessage(serviceBusReceivedMessageContext, updateResult);
-                        break;
-                    default:
+                    }
+                    default -> {
                         deadLetterTheMessage(
                             serviceBusReceivedMessageContext,
                             "Unrecognised message type: " + message.getSubject(),
                             null
                         );
+                    }
                 }
             }
         } else {
