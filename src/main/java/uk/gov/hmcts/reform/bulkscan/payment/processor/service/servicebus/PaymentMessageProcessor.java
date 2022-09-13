@@ -73,7 +73,9 @@ public class PaymentMessageProcessor {
                 }
             }
         } else {
-            log.info("No payment messages to process by payment processor!!");
+            log.info("""
+                         No payment messages to process by payment processor!!
+                         """);
         }
 
     }
