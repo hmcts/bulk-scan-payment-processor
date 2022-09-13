@@ -48,8 +48,7 @@ public class PaymentMessageProcessor {
 
     /**
      * Reads and processes next message from the queue.
-     *
-     * @return false if there was no message to process. Otherwise true.
+     * return false if there was no message to process. Otherwise true.
      */
     public void processNextMessage(ServiceBusReceivedMessageContext serviceBusReceivedMessageContext) {
         ServiceBusReceivedMessage message = serviceBusReceivedMessageContext.getMessage();
@@ -58,24 +57,25 @@ public class PaymentMessageProcessor {
                 deadLetterTheMessage(serviceBusReceivedMessageContext, "Missing label", null);
             } else {
                 switch (message.getSubject()) {
-                    case "CREATE":
+                    case "CREATE" -> {
                         MessageProcessingResult result = processCreateCommand(message);
                         tryFinaliseProcessedMessage(serviceBusReceivedMessageContext, result);
-                        break;
-                    case "UPDATE":
+                    }
+                    case "UPDATE" -> {
                         var updateResult = processUpdateCommand(message);
                         tryFinaliseProcessedMessage(serviceBusReceivedMessageContext, updateResult);
-                        break;
-                    default:
-                        deadLetterTheMessage(
-                            serviceBusReceivedMessageContext,
-                            "Unrecognised message type: " + message.getSubject(),
-                            null
-                        );
+                    }
+                    default -> deadLetterTheMessage(
+                        serviceBusReceivedMessageContext,
+                        "Unrecognised message type: " + message.getSubject(),
+                        null
+                    );
                 }
             }
         } else {
-            log.info("No payment messages to process by payment processor!!");
+            log.info("""
+                         No payment messages to process by payment processor!!
+                         """);
         }
 
     }
@@ -236,7 +236,7 @@ public class PaymentMessageProcessor {
                 paymentMessage.jurisdiction
             )
             : baseMessage;
-        String fullMessageWithClientResponse = exception instanceof FeignException
+        String fullMessageWithClientResponse = exception instanceof FeignException feignException
             ? String.format("%s. Client response: %s", fullMessage, ((FeignException) exception).contentUTF8())
             : fullMessage;
 
@@ -261,7 +261,7 @@ public class PaymentMessageProcessor {
                 paymentMessage.jurisdiction
             )
             : baseMessage;
-        String fullMessageWithClientResponse = exception instanceof FeignException
+        String fullMessageWithClientResponse = exception instanceof FeignException feignException
             ? String.format("%s. Client response: %s", fullMessage, ((FeignException) exception).contentUTF8())
             : fullMessage;
 

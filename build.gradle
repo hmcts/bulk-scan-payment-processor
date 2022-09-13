@@ -13,8 +13,11 @@ plugins {
 group = 'uk.gov.hmcts.reform'
 version = '0.0.1'
 
-sourceCompatibility = '11'
-targetCompatibility = '11'
+java {
+  toolchain {
+    languageVersion = JavaLanguageVersion.of(17)
+  }
+}
 
 sourceSets {
   functionalTest {
@@ -41,6 +44,10 @@ sourceSets {
 
 tasks.withType(JavaCompile) {
   options.compilerArgs << "-Xlint:unchecked" << "-Werror"
+}
+
+tasks.withType(JavaExec).configureEach {
+  javaLauncher.set(javaToolchains.launcherFor(java.toolchain))
 }
 
 task functional(type: Test, description: 'Runs the functional tests.', group: 'Verification') {
@@ -82,7 +89,7 @@ test {
 
 checkstyle {
   maxWarnings = 0
-  toolVersion = '8.29'
+  toolVersion = '9.2.1'
   // need to set configDir to rootDir otherwise submodule will use submodule/config/checkstyle
   getConfigDirectory().set(new File(rootDir, 'config/checkstyle'))
 }
