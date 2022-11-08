@@ -32,6 +32,8 @@ java:
           alias: SITE_ID_DIVORCE
         - name: site-id-finrem
           alias: SITE_ID_FINREM
+        - name: site-id-nfd
+          alias: SITE_ID_NFD
         - name: site-id-bulkscan
           alias: SITE_ID_BULKSCAN
         - name: payments-queue-listen-shared-access-key-premium
