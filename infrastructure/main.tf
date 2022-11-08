@@ -22,6 +22,7 @@ locals {
     SITE_ID_PROBATE = "site-id-probate"
     SITE_ID_DIVORCE = "site-id-divorce"
     SITE_ID_FINREM  = "site-id-finrem"
+    SITE_ID_NFD  = "site-id-nfd"
     # site-id-bulkscan secret should not be defined in prod
     SITE_ID_BULKSCAN = "site-id-bulkscan"
   }
