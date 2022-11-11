@@ -182,7 +182,7 @@ dependencyManagement {
       entry 'logback-classic'
     }
     //CVE-2022-24823
-    dependencySet(group: 'io.netty', version: '4.1.84.Final') {
+    dependencySet(group: 'io.netty', version: '4.1.85.Final') {
       entry 'netty-buffer'
       entry 'netty-codec'
       entry 'netty-codec-dns'
@@ -254,7 +254,7 @@ dependencies {
 
   implementation group: 'com.google.guava', name: 'guava', version: '31.1-jre'
 
-  implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-bootstrap', version: '3.1.4'
+  implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-bootstrap', version: '3.1.5'
   implementation group: 'com.azure', name: 'azure-messaging-servicebus', version: '7.12.1'
 
   implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-openfeign', version: '3.1.5'
@@ -278,7 +278,7 @@ dependencies {
 
   integrationTestImplementation group: 'com.github.tomakehurst', name: 'wiremock', version: '2.33.2', withoutJunit4
 
-  integrationTestImplementation group: 'org.springframework.cloud', name: 'spring-cloud-contract-wiremock', version: '3.1.4'
+  integrationTestImplementation group: 'org.springframework.cloud', name: 'spring-cloud-contract-wiremock', version: '3.1.5'
 
   integrationTestImplementation sourceSets.main.runtimeClasspath
   integrationTestImplementation sourceSets.test.runtimeClasspath
