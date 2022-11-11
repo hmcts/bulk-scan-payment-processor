@@ -2,7 +2,6 @@ package uk.gov.hmcts.reform.bulkscan.payment.processor.client.processor;
 
 import feign.Response;
 import feign.codec.ErrorDecoder;
-import org.apache.commons.io.IOUtils;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.client.HttpClientErrorException;
@@ -13,8 +12,10 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Optional;
 
+import static com.google.common.io.ByteStreams.toByteArray;
+
 public class CustomFeignErrorDecoder implements ErrorDecoder {
-    private ErrorDecoder delegate = new Default();
+    private final ErrorDecoder delegate = new Default();
 
     @Override
     public Exception decode(String methodKey, Response response) {
@@ -29,7 +30,7 @@ public class CustomFeignErrorDecoder implements ErrorDecoder {
 
         if (response.body() != null && response.body().length() != null) {
             try (InputStream body = response.body().asInputStream()) {
-                responseBody = IOUtils.toByteArray(body);
+                responseBody = toByteArray(body);
             } catch (IOException e) {
                 return new RuntimeException("Failed to process response body.", e);
             }
