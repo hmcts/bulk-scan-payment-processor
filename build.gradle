@@ -89,7 +89,7 @@ test {
 
 checkstyle {
   maxWarnings = 0
-  toolVersion = '10.5.0'
+  toolVersion = '10.6.0'
   // need to set configDir to rootDir otherwise submodule will use submodule/config/checkstyle
   getConfigDirectory().set(new File(rootDir, 'config/checkstyle'))
 }
