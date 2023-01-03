@@ -255,10 +255,10 @@ dependencies {
 
   implementation group: 'com.google.guava', name: 'guava', version: '31.1-jre'
 
-  implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-bootstrap', version: '3.1.5'
+  implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-bootstrap', version: '4.0.0'
   implementation group: 'com.azure', name: 'azure-messaging-servicebus', version: '7.13.0'
 
-  implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-openfeign', version: '3.1.5'
+  implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-openfeign', version: '4.0.0'
   implementation group: 'io.github.openfeign', name: 'feign-httpclient', version: '12.1'
   implementation group: 'io.github.openfeign', name: 'feign-jackson', version: '12.1'
 
@@ -279,7 +279,7 @@ dependencies {
 
   integrationTestImplementation group: 'com.github.tomakehurst', name: 'wiremock', version: '2.33.2', withoutJunit4
 
-  integrationTestImplementation group: 'org.springframework.cloud', name: 'spring-cloud-contract-wiremock', version: '3.1.5'
+  integrationTestImplementation group: 'org.springframework.cloud', name: 'spring-cloud-contract-wiremock', version: '4.0.0'
 
   integrationTestImplementation sourceSets.main.runtimeClasspath
   integrationTestImplementation sourceSets.test.runtimeClasspath
