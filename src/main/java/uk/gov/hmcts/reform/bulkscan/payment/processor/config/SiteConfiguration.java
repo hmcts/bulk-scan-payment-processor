@@ -63,5 +63,29 @@ public class SiteConfiguration {
         public Sites() {
             // Spring needs it.
         }
+
+        public String getSiteName() {
+            return siteName;
+        }
+
+        public void setSiteName(String siteName) {
+            this.siteName = siteName;
+        }
+
+        public List<String> getPoBoxes() {
+            return poBoxes;
+        }
+
+        public void setPoBoxes(List<String> poBoxes) {
+            this.poBoxes = poBoxes;
+        }
+
+        public String getSiteId() {
+            return siteId;
+        }
+
+        public void setSiteId(String siteId) {
+            this.siteId = siteId;
+        }
     }
 }
