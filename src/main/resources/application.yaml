@@ -45,6 +45,9 @@ site-mappings:
     - siteName: BULKSCAN
       poBox: BULKSCANPO
       siteId: ${SITE_ID_BULKSCAN}
+    - siteName: BULKSCAN
+      poBox: BULKSCANPOTWO
+      siteId: ${SITE_ID_BULKSCAN}
 
 azure:
   servicebus:
