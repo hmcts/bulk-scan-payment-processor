@@ -37,9 +37,9 @@ public class SiteConfiguration {
                         }
                         return m;
                     },
-                    (m, m2) -> {
-                        m.putAll(m2);
-                        return m;
+                    (m1, m2) -> {
+                        m1.putAll(m2);
+                        return m1;
                     }
             );
     }
