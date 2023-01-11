@@ -30,6 +30,9 @@ site-mappings:
     - siteName: PROBATE
       poBox: 12625
       siteId: ${SITE_ID_PROBATE}
+    - siteName: PROBATE
+      poBox: 12624
+      siteId: ${SITE_ID_PROBATE}
     - siteName: DIVORCE
       poBox: 12706
       siteId: ${SITE_ID_DIVORCE}
