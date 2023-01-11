@@ -28,19 +28,24 @@ spring:
 site-mappings:
   sites:
     - siteName: PROBATE
-      poBox: 12625
+      poBoxes:
+        - 12625
       siteId: ${SITE_ID_PROBATE}
     - siteName: DIVORCE
-      poBox: 12706
+      poBoxes:
+        - 12706
       siteId: ${SITE_ID_DIVORCE}
     - siteName: DIVORCE
-      poBox: 12746
+      poBoxes:
+        - 12746
       siteId: ${SITE_ID_FINREM}
     - siteName: DIVORCE
-      poBox: 13226
+      poBoxes:
+        - 13226
       siteId: ${SITE_ID_NFD}
     - siteName: BULKSCAN
-      poBox: BULKSCANPO
+      poBoxes:
+        - BULKSCANPO
       siteId: ${SITE_ID_BULKSCAN}
 
 azure:
