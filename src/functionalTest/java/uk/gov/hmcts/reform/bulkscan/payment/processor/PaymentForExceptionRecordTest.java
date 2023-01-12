@@ -17,7 +17,7 @@ import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
 
 import java.util.concurrent.TimeUnit;
 
-import static java.util.Arrays.asList;
+import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
 
@@ -29,7 +29,7 @@ class PaymentForExceptionRecordTest {
     private static final String YES = "Yes";
     private static final String NO = "No";
     private static final String JURISDICTION = "BULKSCAN";
-    private static final String BULKSCAN_PO_BOX = "12625";
+    private static final String BULKSCAN_PO_BOX = "BULKSCANPO1";
 
     @Autowired
     private CoreCaseDataApi coreCaseDataApi;
@@ -66,7 +66,7 @@ class PaymentForExceptionRecordTest {
                 BULKSCAN_PO_BOX,
                 true,
                 // document_control_number length must be exactly 21 Characters
-                asList(new PaymentData("154565768345123456789"))
+                singletonList(new PaymentData("154565768345123456789"))
             )
         );
 
