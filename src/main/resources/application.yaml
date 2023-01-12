@@ -28,7 +28,7 @@ spring:
 site-mappings:
   sites:
     - siteName: PROBATE
-      poBoxex:
+      poBoxes:
         - 12625
       siteId: ${SITE_ID_PROBATE}
     - siteName: DIVORCE
