@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <suppressions xmlns="https://jeremylong.github.io/DependencyCheck/dependency-suppression.1.3.xsd">
   <suppress until="2023-04-07">
-    <packageUrl regex="true">^pkg:maven/org\.codehaus\.codehaus/jettison@.*$</packageUrl>
+    <notes>jettison-1.2.jar vulnerability</notes>
     <cve>CVE-2022-40149</cve>
     <cve>CVE-2022-40150</cve>
     <cve>CVE-2022-45693</cve>
