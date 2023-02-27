@@ -259,8 +259,8 @@ dependencies {
   implementation group: 'com.azure', name: 'azure-messaging-servicebus', version: '7.13.2'
 
   implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-openfeign', version: '3.1.6'
-  implementation group: 'io.github.openfeign', name: 'feign-httpclient', version: '12.1'
-  implementation group: 'io.github.openfeign', name: 'feign-jackson', version: '12.1'
+  implementation group: 'io.github.openfeign', name: 'feign-httpclient', version: '12.2'
+  implementation group: 'io.github.openfeign', name: 'feign-jackson', version: '12.2'
 
   testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: versions.junit
   testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: versions.junit
