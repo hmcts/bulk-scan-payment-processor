@@ -42,7 +42,3 @@ variable "supported_services" {
   description = "Services to be supported by Bulk Scan in the given environment. Bulk Scan will only be able to map these ones to IDAM user credentials"
   default     = ["SSCS", "BULKSCAN", "PROBATE", "DIVORCE", "FINREM", "CMC"]
 }
-
-variable "enable_ase" {
-  default = false
-}
