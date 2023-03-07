@@ -68,21 +68,21 @@ locals {
 module "bulk-scan-orchestrator" {
   source                          = "git@github.com:hmcts/cnp-module-webapp?ref=master"
   product                         = "${var.product}-${var.component}"
-  location                        = "${var.location_app}"
-  env                             = "${var.env}"
-  ilbIp                           = "${var.ilbIp}"
+  location                        = var.location_app
+  env                             = var.env
+  ilbIp                           = var.ilbIp
   resource_group_name             = "${var.product}-${var.component}-${var.env}"
-  subscription                    = "${var.subscription}"
-  capacity                        = "${var.capacity}"
-  common_tags                     = "${var.common_tags}"
-  appinsights_instrumentation_key = "${data.azurerm_key_vault_secret.appinsights_secret.value}"
+  subscription                    = var.subscription
+  capacity                        = var.capacity
+  common_tags                     = var.common_tags
+  appinsights_instrumentation_key = data.azurerm_key_vault_secret.appinsights_secret.value
   asp_name                        = "${var.product}-${var.env}"
   asp_rg                          = "${var.product}-${var.env}"
   instance_size                   = "I1"
   java_version                    = "11"
 
   app_settings = "${merge(local.core_app_settings, local.users_usernames_settings, local.users_passwords_settings, local.payhub_site_settings)}"
-  enable_ase   = "${var.enable_ase}"
+  enable_ase   = var.enable_ase
 }
 
 data "azurerm_key_vault" "s2s_key_vault" {
