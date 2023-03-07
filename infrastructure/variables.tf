@@ -12,8 +12,6 @@ variable "location_app" {
   default = "UK South"
 }
 
-variable "ilbIp" {}
-
 variable "tenant_id" {}
 
 variable "jenkins_AAD_objectId" {
@@ -47,8 +45,4 @@ variable "supported_services" {
 
 variable "enable_ase" {
   default = false
-}
-
-variable "deployment_namespace" {
-  default = ""
 }

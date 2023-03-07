@@ -55,7 +55,7 @@ locals {
 
   core_app_settings = {
     PAY_HUB_URL                           = "http://ccpay-bulkscanning-api-${var.env}.service.core-compute-${var.env}.internal"
-    S2S_URL                               = "${local.s2s_url}"
+    S2S_URL                               = local.s2s_url
     S2S_SECRET                            = "${data.azurerm_key_vault_secret.s2s_secret.value}"
     IDAM_API_URL                          = "https://idam-api.${var.env}.platform.hmcts.net"
     IDAM_CLIENT_REDIRECT_URI              = var.idam_client_redirect_uri
@@ -70,7 +70,6 @@ module "bulk-scan-orchestrator" {
   product                         = "${var.product}-${var.component}"
   location                        = var.location_app
   env                             = var.env
-  ilbIp                           = var.ilbIp
   resource_group_name             = "${var.product}-${var.component}-${var.env}"
   subscription                    = var.subscription
   capacity                        = var.capacity
