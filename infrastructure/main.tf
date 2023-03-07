@@ -58,7 +58,7 @@ locals {
     S2S_URL                               = "${local.s2s_url}"
     S2S_SECRET                            = "${data.azurerm_key_vault_secret.s2s_secret.value}"
     IDAM_API_URL                          = "https://idam-api.${var.env}.platform.hmcts.net"
-    IDAM_CLIENT_REDIRECT_URI              = "${var.idam_client_redirect_uri}"
+    IDAM_CLIENT_REDIRECT_URI              = var.idam_client_redirect_uri
     CORE_CASE_DATA_API_URL                = "http://ccd-data-store-api-${var.env}.service.core-compute-${var.env}.internal"
     IDAM_CLIENT_SECRET                    = "${data.azurerm_key_vault_secret.idam_client_secret.value}"
     PAYMENTS_QUEUE_MAX_DELIVERY_COUNT     = "5"
@@ -114,19 +114,19 @@ resource "azurerm_key_vault_secret" "bulk_scan_s2s_secret" {
 
 data "azurerm_key_vault_secret" "idam_users_usernames" {
   count        = "${length(local.users_secret_names)}"
-  key_vault_id = "${data.azurerm_key_vault.bulk_scan_key_vault.id}"
+  key_vault_id = data.azurerm_key_vault.bulk_scan_key_vault.id
   name         = "${local.users_secret_names[count.index]}-username"
 }
 
 data "azurerm_key_vault_secret" "idam_users_passwords" {
   count        = "${length(local.users_secret_names)}"
-  key_vault_id = "${data.azurerm_key_vault.bulk_scan_key_vault.id}"
+  key_vault_id = data.azurerm_key_vault.bulk_scan_key_vault.id
   name         = "${local.users_secret_names[count.index]}-password"
 }
 
 data "azurerm_key_vault_secret" "payhub_site_ids" {
   count        = "${length(local.payhub_sites)}"
-  key_vault_id = "${data.azurerm_key_vault.bulk_scan_key_vault.id}"
+  key_vault_id = data.azurerm_key_vault.bulk_scan_key_vault.id
   name         = "${local.payhub_site_id_secret_names[count.index]}"
 }
 
