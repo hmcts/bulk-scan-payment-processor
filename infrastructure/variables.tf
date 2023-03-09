@@ -12,8 +12,6 @@ variable "location_app" {
   default = "UK South"
 }
 
-variable "ilbIp" {}
-
 variable "tenant_id" {}
 
 variable "jenkins_AAD_objectId" {
@@ -40,15 +38,7 @@ variable "idam_client_redirect_uri" {
 }
 
 variable "supported_services" {
-  type        = "list"
+  type        = list
   description = "Services to be supported by Bulk Scan in the given environment. Bulk Scan will only be able to map these ones to IDAM user credentials"
   default     = ["SSCS", "BULKSCAN", "PROBATE", "DIVORCE", "FINREM", "CMC"]
-}
-
-variable "enable_ase" {
-  default = false
-}
-
-variable "deployment_namespace" {
-  default = ""
 }
