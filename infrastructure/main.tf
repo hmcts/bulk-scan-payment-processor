@@ -55,34 +55,14 @@ locals {
 
   core_app_settings = {
     PAY_HUB_URL                           = "http://ccpay-bulkscanning-api-${var.env}.service.core-compute-${var.env}.internal"
-    S2S_URL                               = "${local.s2s_url}"
+    S2S_URL                               = local.s2s_url
     S2S_SECRET                            = "${data.azurerm_key_vault_secret.s2s_secret.value}"
     IDAM_API_URL                          = "https://idam-api.${var.env}.platform.hmcts.net"
-    IDAM_CLIENT_REDIRECT_URI              = "${var.idam_client_redirect_uri}"
+    IDAM_CLIENT_REDIRECT_URI              = var.idam_client_redirect_uri
     CORE_CASE_DATA_API_URL                = "http://ccd-data-store-api-${var.env}.service.core-compute-${var.env}.internal"
     IDAM_CLIENT_SECRET                    = "${data.azurerm_key_vault_secret.idam_client_secret.value}"
     PAYMENTS_QUEUE_MAX_DELIVERY_COUNT     = "5"
   }
-}
-
-module "bulk-scan-orchestrator" {
-  source                          = "git@github.com:hmcts/cnp-module-webapp?ref=master"
-  product                         = "${var.product}-${var.component}"
-  location                        = "${var.location_app}"
-  env                             = "${var.env}"
-  ilbIp                           = "${var.ilbIp}"
-  resource_group_name             = "${var.product}-${var.component}-${var.env}"
-  subscription                    = "${var.subscription}"
-  capacity                        = "${var.capacity}"
-  common_tags                     = "${var.common_tags}"
-  appinsights_instrumentation_key = "${data.azurerm_key_vault_secret.appinsights_secret.value}"
-  asp_name                        = "${var.product}-${var.env}"
-  asp_rg                          = "${var.product}-${var.env}"
-  instance_size                   = "I1"
-  java_version                    = "11"
-
-  app_settings = "${merge(local.core_app_settings, local.users_usernames_settings, local.users_passwords_settings, local.payhub_site_settings)}"
-  enable_ase   = "${var.enable_ase}"
 }
 
 data "azurerm_key_vault" "s2s_key_vault" {
@@ -114,19 +94,19 @@ resource "azurerm_key_vault_secret" "bulk_scan_s2s_secret" {
 
 data "azurerm_key_vault_secret" "idam_users_usernames" {
   count        = "${length(local.users_secret_names)}"
-  key_vault_id = "${data.azurerm_key_vault.bulk_scan_key_vault.id}"
+  key_vault_id = data.azurerm_key_vault.bulk_scan_key_vault.id
   name         = "${local.users_secret_names[count.index]}-username"
 }
 
 data "azurerm_key_vault_secret" "idam_users_passwords" {
   count        = "${length(local.users_secret_names)}"
-  key_vault_id = "${data.azurerm_key_vault.bulk_scan_key_vault.id}"
+  key_vault_id = data.azurerm_key_vault.bulk_scan_key_vault.id
   name         = "${local.users_secret_names[count.index]}-password"
 }
 
 data "azurerm_key_vault_secret" "payhub_site_ids" {
   count        = "${length(local.payhub_sites)}"
-  key_vault_id = "${data.azurerm_key_vault.bulk_scan_key_vault.id}"
+  key_vault_id = data.azurerm_key_vault.bulk_scan_key_vault.id
   name         = "${local.payhub_site_id_secret_names[count.index]}"
 }
 
