@@ -18,3 +18,7 @@
 *.ipr
 
 .DS_Store
+/bin/create-env-file.sh
+/bin/setup-env.sh
+/bin/substitutions.json
+.env
