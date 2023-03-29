@@ -7,7 +7,7 @@ java:
     PAYMENTS_QUEUE_ACCESS_KEY_LISTEN_NAME: "ListenSharedAccessKey"
     PAYMENTS_QUEUE_MAX_DELIVERY_COUNT: "5"
     PAYMENTS_QUEUE_NAME: payments
-    PAYMENTS_CONSUME_CHECK_TIME_INTERVAL_MS: "3420000" # 57 minutes - email alert works every 60 minutes
+    PAYMENTS_CONSUME_CHECK_TIME_INTERVAL_MS: "3420000"
     PAYMENTS_QUEUE_NAMESPACE: bulk-scan-servicebus-{{ .Values.global.environment }}-premium
     S2S_NAME: "bulk_scan_payment_processor"
     S2S_URL: http://rpe-service-auth-provider-{{ .Values.global.environment }}.service.core-compute-{{ .Values.global.environment }}.internal
