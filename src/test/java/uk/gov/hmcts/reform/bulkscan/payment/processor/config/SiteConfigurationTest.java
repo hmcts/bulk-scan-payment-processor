@@ -5,9 +5,10 @@ import org.junit.jupiter.api.Test;
 import org.springframework.test.util.ReflectionTestUtils;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.exception.SiteConfigurationException;
 
+import static java.util.Arrays.asList;
+import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-
 
 class SiteConfigurationTest {
 
@@ -18,9 +19,9 @@ class SiteConfigurationTest {
 
         siteConfiguration.setSites(
             ImmutableList.of(
-                new SiteConfiguration.Sites("site_a", "12345", "99"),
-                new SiteConfiguration.Sites("site_b", "11111", "11"),
-                new SiteConfiguration.Sites("site_c", "98756", "44")
+                new SiteConfiguration.Sites("site_a", singletonList("12345"), "99"),
+                new SiteConfiguration.Sites("site_b", asList("11111", "22222"), "11"),
+                new SiteConfiguration.Sites("site_c", singletonList("98756"), "44")
             )
         );
 
@@ -28,6 +29,7 @@ class SiteConfigurationTest {
 
         assertThat(siteConfiguration.getSiteIdByPoBox("12345")).isEqualTo("99");
         assertThat(siteConfiguration.getSiteIdByPoBox("11111")).isEqualTo("11");
+        assertThat(siteConfiguration.getSiteIdByPoBox("22222")).isEqualTo("11");
         assertThat(siteConfiguration.getSiteIdByPoBox("98756")).isEqualTo("44");
         assertThat(siteConfiguration.getSiteIdByPoBox("80000")).isNull();
 

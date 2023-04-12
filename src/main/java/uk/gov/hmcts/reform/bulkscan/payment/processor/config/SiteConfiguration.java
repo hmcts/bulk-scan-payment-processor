@@ -3,9 +3,9 @@ package uk.gov.hmcts.reform.bulkscan.payment.processor.config;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.exception.SiteConfigurationException;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 
 @ConfigurationProperties(prefix = "site-mappings")
@@ -29,7 +29,19 @@ public class SiteConfiguration {
         }
         poBoxToSiteIdMap = getSites()
             .stream()
-            .collect(Collectors.toMap(Sites::getPoBox, Sites::getSiteId));
+                .reduce(
+                        new HashMap<>(),
+                        (m, s) -> {
+                            for (String poBox: s.poBoxes) {
+                                m.put(poBox, s.siteId);
+                            }
+                            return m;
+                        },
+                        (m1, m2) -> {
+                            m1.putAll(m2);
+                            return m1;
+                        }
+                );
     }
 
     public String getSiteIdByPoBox(String poBox) {
@@ -39,12 +51,12 @@ public class SiteConfiguration {
     public static class Sites {
 
         private String siteName;
-        private String poBox;
+        private List<String> poBoxes;
         private String siteId;
 
-        public Sites(String siteName, String poBox, String siteId) {
+        public Sites(String siteName, List<String> poBoxes, String siteId) {
             this.siteName = siteName;
-            this.poBox = poBox;
+            this.poBoxes = poBoxes;
             this.siteId = siteId;
         }
 
@@ -60,12 +72,12 @@ public class SiteConfiguration {
             this.siteName = siteName;
         }
 
-        public String getPoBox() {
-            return poBox;
+        public List<String> getPoBoxes() {
+            return poBoxes;
         }
 
-        public void setPoBox(String poBox) {
-            this.poBox = poBox;
+        public void setPoBoxes(List<String> poBoxes) {
+            this.poBoxes = poBoxes;
         }
 
         public String getSiteId() {
