@@ -3,9 +3,7 @@ package uk.gov.hmcts.reform.bulkscan.payment.processor.config;
 import javax.jms.ConnectionFactory;
 import javax.jms.Session;
 
-import org.apache.activemq.util.FactoryFinder;
 import org.apache.qpid.jms.JmsConnectionFactory;
-import org.apache.qpid.jms.provider.ProviderFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.jms.DefaultJmsListenerContainerFactoryConfigurer;
@@ -43,11 +41,10 @@ public class JmsConfiguration {
     @Bean
     public ConnectionFactory paymentsJmsConnectionFactory(@Value("${jms.application-name}") final String clientId) {
         String connection = String.format(amqpConnectionStringTemplate, namespace, idleTimeout);
-        System.out.println(ProviderFactory.class.getPackage().getName());
         JmsConnectionFactory jmsConnectionFactory = new JmsConnectionFactory(connection);
         jmsConnectionFactory.setUsername(username);
         jmsConnectionFactory.setPassword(password);
-        jmsConnectionFactory.setClientID("balls");
+        jmsConnectionFactory.setClientID(clientId);
         return new CachingConnectionFactory(jmsConnectionFactory);
     }
 
@@ -55,9 +52,6 @@ public class JmsConfiguration {
     public JmsListenerContainerFactory<DefaultMessageListenerContainer> paymentsEventQueueContainerFactory(
         ConnectionFactory tribunalsHearingsJmsConnectionFactory,
         DefaultJmsListenerContainerFactoryConfigurer defaultJmsListenerContainerFactoryConfigurer) {
-
-        System.out.println("goes into here as well");
-
         DefaultJmsListenerContainerFactory factory = new DefaultJmsListenerContainerFactory();
         factory.setConnectionFactory(tribunalsHearingsJmsConnectionFactory);
         factory.setReceiveTimeout(receiveTimeout);
@@ -67,5 +61,4 @@ public class JmsConfiguration {
         defaultJmsListenerContainerFactoryConfigurer.configure(factory, tribunalsHearingsJmsConnectionFactory);
         return factory;
     }
-
 }
