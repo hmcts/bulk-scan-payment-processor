@@ -25,7 +25,7 @@ spring:
     # TODO: remove when possible
     allow-bean-definition-overriding: true
   autoconfigure:
-    exclude: org.springframework.boot.autoconfigure.jms.JmsAutoConfiguration,org.springframework.boot.autoconfigure.jms.activemq.ActiveMQAutoConfiguration
+    exclude:
 
 site-mappings:
   sites:
@@ -51,15 +51,6 @@ site-mappings:
         - BULKSCANPO
         - BULKSCANPO1
       siteId: ${SITE_ID_BULKSCAN}
-
-azure:
-  servicebus:
-    payments:
-      access-key: ${PAYMENTS_QUEUE_READ_ACCESS_KEY}
-      access-key-name: ${PAYMENTS_QUEUE_ACCESS_KEY_LISTEN_NAME}
-      namespace: ${PAYMENTS_QUEUE_NAMESPACE}
-      queue-name: ${PAYMENTS_QUEUE_NAME}
-      max-delivery-count: ${PAYMENTS_QUEUE_MAX_DELIVERY_COUNT}
 
 pay-hub:
   api:
@@ -99,6 +90,13 @@ springdoc:
   pathsToMatch: /**
 
 jms:
-  # Set to disable configuration in envs besides local/dev
+  # JMS Configuration for local dev
+  application-name: BulkScanPaymentsApiLocal
   enabled: ${JMS_ENABLED:false}
+  namespace: ${JMS_NAMESPACE:5672}
+  amqp-connection-string-template: ${JMS_AMQP_CONNECTION_TEMPLATE:amqp://localhost:%1s?amqp.idleTimeout=%2d}
+  username: ${JMS_USERNAME:admin}
+  password: ${JMS_PASSWORD:admin}
+  receiveTimeout: ${JMS_RECEIVE_TIMEOUT:30000}
+  idleTimeout: ${JMS_IDLE_TIMEOUT:30000}
 

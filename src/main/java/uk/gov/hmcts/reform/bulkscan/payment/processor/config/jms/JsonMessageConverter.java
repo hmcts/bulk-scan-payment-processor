@@ -1,4 +1,4 @@
-package uk.gov.hmcts.reform.bulkscan.payment.processor.config;
+package uk.gov.hmcts.reform.bulkscan.payment.processor.config.jms;
 
 import com.fasterxml.jackson.databind.ObjectWriter;
 import org.apache.qpid.jms.message.JmsBytesMessage;

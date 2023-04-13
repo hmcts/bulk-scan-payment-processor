@@ -1,4 +1,4 @@
-package uk.gov.hmcts.reform.bulkscan.payment.processor.config;
+package uk.gov.hmcts.reform.bulkscan.payment.processor.config.jms;
 
 import javax.jms.ConnectionFactory;
 import javax.jms.Session;
