@@ -4,6 +4,7 @@ import com.azure.core.util.BinaryData;
 import feign.FeignException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.client.processor.ProcessorClient;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.exceptions.InvalidMessageException;
@@ -17,6 +18,7 @@ import static uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.
 import static uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.handler.MessageProcessingResultType.UNRECOVERABLE_FAILURE;
 
 @Service
+@Profile("!functional")
 public class PaymentCommands {
 
     private static final Logger log = LoggerFactory.getLogger(PaymentCommands.class);
