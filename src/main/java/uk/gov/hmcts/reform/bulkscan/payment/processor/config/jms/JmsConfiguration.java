@@ -3,11 +3,7 @@ package uk.gov.hmcts.reform.bulkscan.payment.processor.config.jms;
 import javax.jms.ConnectionFactory;
 import javax.jms.Session;
 
-import org.apache.activemq.RedeliveryPolicy;
 import org.apache.qpid.jms.JmsConnectionFactory;
-import org.apache.qpid.jms.policy.JmsRedeliveryPolicy;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.jms.DefaultJmsListenerContainerFactoryConfigurer;
@@ -18,13 +14,6 @@ import org.springframework.jms.config.DefaultJmsListenerContainerFactory;
 import org.springframework.jms.config.JmsListenerContainerFactory;
 import org.springframework.jms.connection.CachingConnectionFactory;
 import org.springframework.jms.listener.DefaultMessageListenerContainer;
-import org.springframework.jms.support.converter.MappingJackson2MessageConverter;
-import org.springframework.jms.support.converter.MessageConverter;
-import org.springframework.jms.support.converter.MessageType;
-import org.springframework.retry.annotation.Backoff;
-import org.springframework.util.ErrorHandler;
-import org.springframework.util.backoff.BackOff;
-import org.springframework.util.backoff.FixedBackOff;
 
 @Configuration
 @EnableJms
@@ -60,30 +49,14 @@ public class JmsConfiguration {
     }
 
     @Bean
-    public MessageConverter jsonJmsConverter() {
-        MappingJackson2MessageConverter jackson = new MappingJackson2MessageConverter();
-        //json is just text
-        jackson.setTargetType(MessageType.TEXT);
-        //each message should contain a property called _type and its value is the name of the class to serialize to
-        jackson.setTypeIdPropertyName("_type");
-        return jackson;
-    }
-
-    @Bean
     public JmsListenerContainerFactory<DefaultMessageListenerContainer> paymentsEventQueueContainerFactory(
         ConnectionFactory paymentsHearingsJmsConnectionFactory,
-        DefaultJmsListenerContainerFactoryConfigurer defaultJmsListenerContainerFactoryConfigurer,
-        JmsErrorHandler errorHandler) {
+        DefaultJmsListenerContainerFactoryConfigurer defaultJmsListenerContainerFactoryConfigurer) {
         DefaultJmsListenerContainerFactory factory = new DefaultJmsListenerContainerFactory();
         factory.setConnectionFactory(paymentsHearingsJmsConnectionFactory);
         factory.setReceiveTimeout(receiveTimeout);
         factory.setSessionTransacted(Boolean.TRUE);
         factory.setSessionAcknowledgeMode(Session.SESSION_TRANSACTED);
-        factory.setErrorHandler(errorHandler);
-        FixedBackOff fbo = new FixedBackOff();
-        fbo.setMaxAttempts(3);
-        fbo.setInterval(5000);
-        factory.setBackOff(fbo);
         defaultJmsListenerContainerFactoryConfigurer.configure(factory, paymentsHearingsJmsConnectionFactory);
         return factory;
     }

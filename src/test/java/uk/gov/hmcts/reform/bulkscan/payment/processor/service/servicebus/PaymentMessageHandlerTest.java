@@ -65,7 +65,7 @@ class PaymentMessageHandlerTest {
     void should_call_payhub_api_and_ccd_api_for_successful_payment_message() {
         // given
         String exceptionRecordCcdId = "1234123412341234";
-        CreatePaymentMessage message = SamplePaymentMessageData.paymentMessage(exceptionRecordCcdId, true);
+        CreatePaymentMessage message = SamplePaymentMessageData.paymentMessage(exceptionRecordCcdId, true, "CREATE");
         String s2sToken = "s2sToken1";
 
         when(s2sTokenGenerator.generate()).thenReturn(s2sToken);
@@ -93,7 +93,7 @@ class PaymentMessageHandlerTest {
     void should_rethrow_feign_exception_when_payhub_call_fails() {
         // given
         String exceptionRecordCcdId = "1234123412341234";
-        CreatePaymentMessage message = SamplePaymentMessageData.paymentMessage(exceptionRecordCcdId, true);
+        CreatePaymentMessage message = SamplePaymentMessageData.paymentMessage(exceptionRecordCcdId, true, "CREATE");
         String s2sToken = "s2sToken1";
 
         when(s2sTokenGenerator.generate()).thenReturn(s2sToken);
@@ -126,7 +126,7 @@ class PaymentMessageHandlerTest {
     void should_update_payment_processing_status_in_ccd_when_payhub_call_fails_with_409_response() {
         // given
         String exceptionRecordCcdId = "1234123412341234";
-        CreatePaymentMessage message = SamplePaymentMessageData.paymentMessage(exceptionRecordCcdId, true);
+        CreatePaymentMessage message = SamplePaymentMessageData.paymentMessage(exceptionRecordCcdId, true, "CREATE");
         String s2sToken = "s2sToken1";
 
         when(s2sTokenGenerator.generate()).thenReturn(s2sToken);
@@ -154,7 +154,7 @@ class PaymentMessageHandlerTest {
     void should_not_update_status_in_ccd_when_message_does_not_represent_exception_record() {
         // given
         String caseId = "1234123412341234";
-        CreatePaymentMessage message = SamplePaymentMessageData.paymentMessage(caseId, false);
+        CreatePaymentMessage message = SamplePaymentMessageData.paymentMessage(caseId, false, "CREATE");
 
         when(s2sTokenGenerator.generate()).thenReturn("s2sToken1");
 
@@ -182,7 +182,7 @@ class PaymentMessageHandlerTest {
     void should_fail_when_payhub_call_fails_with_non_409_response() {
         // given
         String exceptionRecordCcdId = "1234123412341234";
-        CreatePaymentMessage message = SamplePaymentMessageData.paymentMessage(exceptionRecordCcdId, true);
+        CreatePaymentMessage message = SamplePaymentMessageData.paymentMessage(exceptionRecordCcdId, true, "CREATE");
         String s2sToken = "s2sToken1";
 
         when(s2sTokenGenerator.generate()).thenReturn(s2sToken);
@@ -218,7 +218,7 @@ class PaymentMessageHandlerTest {
     void should_fail_when_updating_ccd_fails() {
         // given
         String exceptionRecordCcdId = "1234123412341234";
-        CreatePaymentMessage message = SamplePaymentMessageData.paymentMessage(exceptionRecordCcdId, true);
+        CreatePaymentMessage message = SamplePaymentMessageData.paymentMessage(exceptionRecordCcdId, true, "CREATE");
         String s2sToken = "s2sToken1";
 
         when(s2sTokenGenerator.generate()).thenReturn(s2sToken);

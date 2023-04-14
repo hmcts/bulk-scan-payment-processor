@@ -1,5 +1,6 @@
 package uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus;
 
+import com.azure.core.util.BinaryData;
 import com.azure.messaging.servicebus.ServiceBusReceivedMessage;
 import com.azure.messaging.servicebus.ServiceBusReceivedMessageContext;
 import com.azure.messaging.servicebus.models.DeadLetterOptions;
@@ -29,20 +30,14 @@ public class PaymentMessageProcessor {
 
     private static final Logger log = LoggerFactory.getLogger(PaymentMessageProcessor.class);
 
-    private final PaymentMessageHandler paymentMessageHandler;
-    private final PaymentMessageParser paymentMessageParser;
-    private final ProcessorClient processorClient;
+    private final PaymentCommands paymentCommands;
     private final int maxDeliveryCount;
 
     public PaymentMessageProcessor(
-        PaymentMessageHandler paymentMessageHandler,
-        PaymentMessageParser paymentMessageParser,
-        ProcessorClient processorClient,
+        PaymentCommands paymentCommands,
         @Value("${azure.servicebus.payments.max-delivery-count}") int maxDeliveryCount
     ) {
-        this.paymentMessageHandler = paymentMessageHandler;
-        this.paymentMessageParser = paymentMessageParser;
-        this.processorClient = processorClient;
+        this.paymentCommands = paymentCommands;
         this.maxDeliveryCount = maxDeliveryCount;
     }
 
@@ -58,11 +53,11 @@ public class PaymentMessageProcessor {
             } else {
                 switch (message.getSubject()) {
                     case "CREATE" -> {
-                        MessageProcessingResult result = processCreateCommand(message);
+                        MessageProcessingResult result = paymentCommands.processCreateCommand(message.getMessageId(), message.getBody());
                         tryFinaliseProcessedMessage(serviceBusReceivedMessageContext, result);
                     }
                     case "UPDATE" -> {
-                        var updateResult = processUpdateCommand(message);
+                        var updateResult = paymentCommands.processUpdateCommand(message.getMessageId(), message.getBody());
                         tryFinaliseProcessedMessage(serviceBusReceivedMessageContext, updateResult);
                     }
                     default -> deadLetterTheMessage(
@@ -78,58 +73,6 @@ public class PaymentMessageProcessor {
                          """);
         }
 
-    }
-
-    private MessageProcessingResult processCreateCommand(ServiceBusReceivedMessage message) {
-        log.info("Started processing payment message with ID {}", message.getMessageId());
-
-        CreatePaymentMessage payment = null;
-
-        try {
-            payment = paymentMessageParser.parse(message.getBody());
-            paymentMessageHandler.handlePaymentMessage(payment, message.getMessageId());
-            processorClient.updatePayments(payment.payments);
-            log.info(
-                "Processed payment message with ID {}. Envelope ID: {}",
-                message.getMessageId(),
-                payment.envelopeId
-            );
-
-            return new MessageProcessingResult(SUCCESS);
-        } catch (InvalidMessageException ex) {
-            log.error("Rejected payment message with ID {}, because it's invalid", message.getMessageId(), ex);
-            return new MessageProcessingResult(UNRECOVERABLE_FAILURE, ex);
-        } catch (Exception ex) {
-            logMessageProcessingError(message, payment, ex);
-            return new MessageProcessingResult(POTENTIALLY_RECOVERABLE_FAILURE);
-        }
-    }
-
-    private MessageProcessingResult processUpdateCommand(ServiceBusReceivedMessage message) {
-        log.info("Started processing update payment message with ID {}", message.getMessageId());
-
-        UpdatePaymentMessage payment = null;
-
-        try {
-            payment = paymentMessageParser.parseUpdateMessage(message.getBody());
-            paymentMessageHandler.updatePaymentCaseReference(payment);
-            log.info(
-                "Processed update payment message with ID {}. Envelope ID: {}",
-                message.getMessageId(),
-                payment.envelopeId
-            );
-            return new MessageProcessingResult(SUCCESS);
-        } catch (InvalidMessageException ex) {
-            log.error(
-                "Rejected update payment message with ID {}, because it's invalid",
-                message.getMessageId(),
-                ex
-            );
-            return new MessageProcessingResult(UNRECOVERABLE_FAILURE, ex);
-        } catch (Exception ex) {
-            logUpdateMessageProcessingError(message, payment, ex);
-            return new MessageProcessingResult(POTENTIALLY_RECOVERABLE_FAILURE);
-        }
     }
 
     private void tryFinaliseProcessedMessage(
@@ -220,51 +163,5 @@ public class PaymentMessageProcessor {
             processingResultType,
             ex
         );
-    }
-
-    private void logMessageProcessingError(
-        ServiceBusReceivedMessage message,
-        CreatePaymentMessage paymentMessage,
-        Exception exception
-    ) {
-        String baseMessage = String.format("Failed to process payment message with ID %s", message.getMessageId());
-        String fullMessage = paymentMessage != null
-            ? String.format(
-                "%s. CCD Case Number: %s, Jurisdiction: %s",
-                baseMessage,
-                paymentMessage.ccdReference,
-                paymentMessage.jurisdiction
-            )
-            : baseMessage;
-        String fullMessageWithClientResponse = exception instanceof FeignException feignException
-            ? String.format("%s. Client response: %s", fullMessage, ((FeignException) exception).contentUTF8())
-            : fullMessage;
-
-        log.error(fullMessageWithClientResponse, exception);
-    }
-
-    private void logUpdateMessageProcessingError(
-        ServiceBusReceivedMessage message,
-        UpdatePaymentMessage paymentMessage,
-        Exception exception
-    ) {
-        String baseMessage = String.format(
-            "Failed to process update payment message with ID %s",
-            message.getMessageId()
-        );
-        String fullMessage = paymentMessage != null
-            ? String.format(
-                "%s. New Case Number: %s, Exception Record Ref: %s, Jurisdiction: %s",
-                baseMessage,
-                paymentMessage.newCaseRef,
-                paymentMessage.exceptionRecordRef,
-                paymentMessage.jurisdiction
-            )
-            : baseMessage;
-        String fullMessageWithClientResponse = exception instanceof FeignException feignException
-            ? String.format("%s. Client response: %s", fullMessage, ((FeignException) exception).contentUTF8())
-            : fullMessage;
-
-        log.error(fullMessageWithClientResponse, exception);
     }
 }

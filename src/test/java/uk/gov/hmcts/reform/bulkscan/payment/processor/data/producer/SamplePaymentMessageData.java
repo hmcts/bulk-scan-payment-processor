@@ -19,9 +19,10 @@ public final class SamplePaymentMessageData {
     private SamplePaymentMessageData() {
     }
 
-    public static String paymentMessageJson(String ccdCaseNumber, boolean isExceptionRecord) throws JSONException {
+    public static String paymentMessageJson(String ccdCaseNumber, boolean isExceptionRecord, String label) throws JSONException {
 
         return new JSONObject()
+            .put("label", label)
             .put("envelope_id", ENVELOPE_ID)
             .put("ccd_reference", ccdCaseNumber)
             .put("is_exception_record", isExceptionRecord)
@@ -50,9 +51,10 @@ public final class SamplePaymentMessageData {
             .toString();
     }
 
-    public static CreatePaymentMessage paymentMessage(String ccdCaseNumber, boolean isExceptionRecord) {
+    public static CreatePaymentMessage paymentMessage(String ccdCaseNumber, boolean isExceptionRecord, String label) {
 
         return new CreatePaymentMessage(
+            label,
             ENVELOPE_ID,
             ccdCaseNumber,
             isExceptionRecord,
@@ -65,10 +67,11 @@ public final class SamplePaymentMessageData {
 
     public static byte[] paymentMessageJsonAsByte(
         String ccdCaseNumber,
-        boolean isExceptionRecord
+        boolean isExceptionRecord,
+        String label
     ) throws JSONException {
 
-        return paymentMessageJson(ccdCaseNumber, isExceptionRecord).getBytes();
+        return paymentMessageJson(ccdCaseNumber, isExceptionRecord, label).getBytes();
     }
 
 }

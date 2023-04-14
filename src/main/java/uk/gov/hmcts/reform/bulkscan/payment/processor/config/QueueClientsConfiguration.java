@@ -31,9 +31,6 @@ public class QueueClientsConfiguration {
         QueueConfigurationProperties queueProperties,
         PaymentMessageProcessor paymentMessageProcessor
     ) {
-
-        log.info("Setting up Azure");
-
         String connectionString  = String.format(
             "Endpoint=sb://%s.servicebus.windows.net;SharedAccessKeyName=%s;SharedAccessKey=%s;",
             queueProperties.getNamespace(),
