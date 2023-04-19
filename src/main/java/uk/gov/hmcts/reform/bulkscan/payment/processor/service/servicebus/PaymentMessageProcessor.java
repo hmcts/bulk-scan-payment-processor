@@ -1,28 +1,15 @@
 package uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus;
 
-import com.azure.core.util.BinaryData;
 import com.azure.messaging.servicebus.ServiceBusReceivedMessage;
 import com.azure.messaging.servicebus.ServiceBusReceivedMessageContext;
 import com.azure.messaging.servicebus.models.DeadLetterOptions;
-import feign.FeignException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
-import uk.gov.hmcts.reform.bulkscan.payment.processor.client.processor.ProcessorClient;
-import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.exceptions.InvalidMessageException;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.exceptions.UnknownMessageProcessingResultException;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.handler.MessageProcessingResult;
-import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.handler.MessageProcessingResultType;
-import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.handler.PaymentMessageHandler;
-import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.model.CreatePaymentMessage;
-import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.model.UpdatePaymentMessage;
-
-import static uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.handler.MessageProcessingResultType.POTENTIALLY_RECOVERABLE_FAILURE;
-import static uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.handler.MessageProcessingResultType.SUCCESS;
-import static uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.handler.MessageProcessingResultType.UNRECOVERABLE_FAILURE;
-
 
 @Service
 @Profile("!functional & !integration")
@@ -82,7 +69,8 @@ public class PaymentMessageProcessor {
         try {
             finaliseProcessedMessage(messageContext, processingResult);
         } catch (Exception ex) {
-            logMessageFinaliseError(messageContext, processingResult.resultType, ex);
+            paymentCommands.logMessageFinaliseError(messageContext.getMessage().getMessageId(),
+                                                    processingResult.resultType, ex);
         }
     }
 
@@ -90,32 +78,27 @@ public class PaymentMessageProcessor {
         ServiceBusReceivedMessageContext messageContext,
         MessageProcessingResult processingResult
     ) {
-        var message = messageContext.getMessage();
+        ServiceBusReceivedMessage message = messageContext.getMessage();
         switch (processingResult.resultType) {
-            case SUCCESS:
+            case SUCCESS -> {
                 messageContext.complete();
                 log.info("Payment Message with ID {} has been completed", message.getMessageId());
-                break;
-            case UNRECOVERABLE_FAILURE:
-                deadLetterTheMessage(
-                    messageContext,
-                    "Payment Message processing error",
-                    processingResult.exception.getMessage()
-                );
-                break;
-            case POTENTIALLY_RECOVERABLE_FAILURE:
-                deadLetterIfMaxDeliveryCountIsReached(messageContext);
-                break;
-            default:
-                throw new UnknownMessageProcessingResultException(
-                    "Unknown payment message processing result type: " + processingResult.resultType
-                );
+            }
+            case UNRECOVERABLE_FAILURE -> deadLetterTheMessage(
+                messageContext,
+                "Payment Message processing error",
+                processingResult.exception.getMessage()
+            );
+            case POTENTIALLY_RECOVERABLE_FAILURE -> deadLetterIfMaxDeliveryCountIsReached(messageContext);
+            default -> throw new UnknownMessageProcessingResultException(
+                "Unknown payment message processing result type: " + processingResult.resultType
+            );
         }
     }
 
     private void deadLetterIfMaxDeliveryCountIsReached(ServiceBusReceivedMessageContext messageContext) {
 
-        var message = messageContext.getMessage();
+        ServiceBusReceivedMessage message = messageContext.getMessage();
         int deliveryCount = (int) message.getDeliveryCount() + 1;
 
         if (deliveryCount < maxDeliveryCount) {
@@ -139,7 +122,7 @@ public class PaymentMessageProcessor {
         String reason,
         String description
     ) {
-        var message = messageContext.getMessage();
+        ServiceBusReceivedMessage message = messageContext.getMessage();
         messageContext.deadLetter(
             new DeadLetterOptions().setDeadLetterReason(reason).setDeadLetterErrorDescription(description)
         );
@@ -149,19 +132,6 @@ public class PaymentMessageProcessor {
             message.getMessageId(),
             reason,
             description
-        );
-    }
-
-    private void logMessageFinaliseError(
-        ServiceBusReceivedMessageContext messageContext,
-        MessageProcessingResultType processingResultType,
-        Exception ex
-    ) {
-        log.error(
-            "Failed to process payment message with ID {}. Processing result: {}",
-            messageContext.getMessage().getMessageId(),
-            processingResultType,
-            ex
         );
     }
 }

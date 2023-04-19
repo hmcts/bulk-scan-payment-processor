@@ -49,7 +49,7 @@ class PaymentForExceptionRecordTest {
     private CcdAuthenticatorFactory ccdAuthenticatorFactory;
 
     @Test
-    public void should_set_awaiting_payment_false_after_payment_sent() throws Exception {
+    public void should_set_awaiting_payment_false_after_payment_sent() {
         // given
         CaseDetails caseDetails = exceptionRecordCreator.createExceptionRecord(
             ImmutableMap.of(AWAITING_DNC_PROCESSING_FLAG_NAME, YES)

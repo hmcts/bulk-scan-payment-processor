@@ -134,4 +134,17 @@ public class PaymentCommands {
 
         log.error(fullMessageWithClientResponse, exception);
     }
+
+    public void logMessageFinaliseError(
+        String messageId,
+        Object processingResultType,
+        Exception ex
+    ) {
+        log.error(
+            "Failed to process payment message with ID {}. Processing result: {}",
+            messageId,
+            processingResultType,
+            ex
+        );
+    }
 }
