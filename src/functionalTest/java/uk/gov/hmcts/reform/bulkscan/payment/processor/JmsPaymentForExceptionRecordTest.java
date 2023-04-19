@@ -1,6 +1,7 @@
 package uk.gov.hmcts.reform.bulkscan.payment.processor;
 
 import com.google.common.collect.ImmutableMap;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -9,6 +10,7 @@ import uk.gov.hmcts.reform.bulkscan.payment.processor.ccd.CcdAuthenticator;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.ccd.CcdAuthenticatorFactory;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.helper.CaseSearcher;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.helper.ExceptionRecordCreator;
+import uk.gov.hmcts.reform.bulkscan.payment.processor.helper.JmsPaymentsMessageSender;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.helper.PaymentsMessageSender;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.model.CreatePaymentsCommand;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.model.PaymentData;
@@ -23,7 +25,8 @@ import static org.awaitility.Awaitility.await;
 
 @SpringBootTest
 @ActiveProfiles("functional")
-class PaymentForExceptionRecordTest {
+//@Disabled // For local dev testing only
+class JmsPaymentForExceptionRecordTest {
 
     private static final String AWAITING_DNC_PROCESSING_FLAG_NAME = "awaitingPaymentDCNProcessing";
     private static final String YES = "Yes";
@@ -41,7 +44,7 @@ class PaymentForExceptionRecordTest {
     private CaseSearcher caseSearcher;
 
     @Autowired
-    private PaymentsMessageSender paymentsMessageSender;
+    private JmsPaymentsMessageSender jmsPaymentsMessageSender;
 
     @Autowired
     private CcdAuthenticatorFactory ccdAuthenticatorFactory;
@@ -57,7 +60,7 @@ class PaymentForExceptionRecordTest {
 
         // when
         // payment sent to payments queue
-        paymentsMessageSender.send(
+        jmsPaymentsMessageSender.send(
             new CreatePaymentsCommand(
                 "some_envelope_id",
                 Long.toString(caseDetails.getId()),
@@ -66,7 +69,8 @@ class PaymentForExceptionRecordTest {
                 BULKSCAN_PO_BOX,
                 true,
                 // document_control_number length must be exactly 21 Characters
-                singletonList(new PaymentData("154565768345123456789"))
+                singletonList(new PaymentData("154565768345123456789")),
+                "CREATE"
             )
         );
 
