@@ -25,7 +25,7 @@ import static org.awaitility.Awaitility.await;
 
 @SpringBootTest
 @ActiveProfiles("functional")
-//@Disabled // For local dev testing only
+@Disabled // For local dev testing only
 class JmsPaymentForExceptionRecordTest {
 
     private static final String AWAITING_DNC_PROCESSING_FLAG_NAME = "awaitingPaymentDCNProcessing";
