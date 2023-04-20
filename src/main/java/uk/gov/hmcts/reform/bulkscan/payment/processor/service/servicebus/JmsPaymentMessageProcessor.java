@@ -65,8 +65,8 @@ public class JmsPaymentMessageProcessor {
             }
         } else {
             log.info("""
-                         No payment messages to process by payment processor!!
-                         """);
+                     No payment messages to process by payment processor!!
+                     """);
         }
 
     }
