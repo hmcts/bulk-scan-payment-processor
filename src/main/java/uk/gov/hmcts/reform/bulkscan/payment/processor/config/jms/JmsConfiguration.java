@@ -87,16 +87,11 @@ public class JmsConfiguration {
 
         @Override
         public Message toMessage(Object object, Session session) throws JMSException, MessageConversionException {
-            // Convert the Object to a Message
-            // Here's an example implementation for a String payload:
             return session.createTextMessage(object.toString());
         }
 
         @Override
         public Object fromMessage(Message message) throws MessageConversionException {
-            // Convert the Message to an Object
-            // Here's an example implementation for a String payload:
-            //            return ((javax.jms.TextMessage) message).getText();
             return message;
         }
     }
