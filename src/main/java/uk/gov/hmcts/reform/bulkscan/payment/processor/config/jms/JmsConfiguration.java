@@ -1,14 +1,7 @@
 package uk.gov.hmcts.reform.bulkscan.payment.processor.config.jms;
 
-import javax.jms.ConnectionFactory;
-import javax.jms.JMSException;
-import javax.jms.Message;
-import javax.jms.Session;
-
 import org.apache.qpid.jms.JmsConnectionFactory;
-import org.apache.qpid.jms.JmsDestination;
 import org.apache.qpid.jms.policy.JmsDefaultRedeliveryPolicy;
-import org.apache.qpid.jms.policy.JmsRedeliveryPolicy;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.jms.DefaultJmsListenerContainerFactoryConfigurer;
@@ -23,6 +16,11 @@ import org.springframework.jms.listener.DefaultMessageListenerContainer;
 import org.springframework.jms.support.converter.MessageConversionException;
 import org.springframework.jms.support.converter.MessageConverter;
 import org.springframework.stereotype.Component;
+
+import javax.jms.ConnectionFactory;
+import javax.jms.JMSException;
+import javax.jms.Message;
+import javax.jms.Session;
 
 @Configuration
 @EnableJms

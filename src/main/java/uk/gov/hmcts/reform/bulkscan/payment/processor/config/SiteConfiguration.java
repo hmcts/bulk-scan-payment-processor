@@ -1,7 +1,6 @@
 package uk.gov.hmcts.reform.bulkscan.payment.processor.config;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.exception.SiteConfigurationException;
 

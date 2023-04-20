@@ -40,11 +40,13 @@ public class PaymentMessageProcessor {
             } else {
                 switch (message.getSubject()) {
                     case "CREATE" -> {
-                        MessageProcessingResult result = paymentCommands.processCreateCommand(message.getMessageId(), message.getBody());
+                        MessageProcessingResult result = paymentCommands.processCreateCommand(message.getMessageId(),
+                                                                                              message.getBody());
                         tryFinaliseProcessedMessage(serviceBusReceivedMessageContext, result);
                     }
                     case "UPDATE" -> {
-                        var updateResult = paymentCommands.processUpdateCommand(message.getMessageId(), message.getBody());
+                        var updateResult = paymentCommands.processUpdateCommand(
+                            message.getMessageId(), message.getBody());
                         tryFinaliseProcessedMessage(serviceBusReceivedMessageContext, updateResult);
                     }
                     default -> deadLetterTheMessage(

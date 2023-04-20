@@ -11,7 +11,6 @@ import uk.gov.hmcts.reform.bulkscan.payment.processor.ccd.CcdAuthenticatorFactor
 import uk.gov.hmcts.reform.bulkscan.payment.processor.helper.CaseSearcher;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.helper.ExceptionRecordCreator;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.helper.JmsPaymentsMessageSender;
-import uk.gov.hmcts.reform.bulkscan.payment.processor.helper.PaymentsMessageSender;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.model.CreatePaymentsCommand;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.model.PaymentData;
 import uk.gov.hmcts.reform.ccd.client.CoreCaseDataApi;

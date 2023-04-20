@@ -19,7 +19,8 @@ public final class SamplePaymentMessageData {
     private SamplePaymentMessageData() {
     }
 
-    public static String paymentMessageJson(String ccdCaseNumber, boolean isExceptionRecord, String label) throws JSONException {
+    public static String paymentMessageJson(String ccdCaseNumber, boolean isExceptionRecord, String label)
+        throws JSONException {
 
         return new JSONObject()
             .put("label", label)
