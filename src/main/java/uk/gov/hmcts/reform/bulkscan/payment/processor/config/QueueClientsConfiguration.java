@@ -5,6 +5,7 @@ import com.azure.messaging.servicebus.ServiceBusProcessorClient;
 import com.azure.messaging.servicebus.models.ServiceBusReceiveMode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnExpression;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -12,6 +13,7 @@ import org.springframework.context.annotation.Profile;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.PaymentMessageProcessor;
 
 @Configuration
+@ConditionalOnExpression("!${jms.enabled}")
 @Profile("!functional & !integration")
 public class QueueClientsConfiguration {
 
@@ -28,7 +30,6 @@ public class QueueClientsConfiguration {
         QueueConfigurationProperties queueProperties,
         PaymentMessageProcessor paymentMessageProcessor
     ) {
-
         String connectionString  = String.format(
             "Endpoint=sb://%s.servicebus.windows.net;SharedAccessKeyName=%s;SharedAccessKey=%s;",
             queueProperties.getNamespace(),

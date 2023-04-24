@@ -1,9 +1,9 @@
 #!groovy
+import uk.gov.hmcts.contino.DockerImage
 @Library("Infrastructure")
 
 import uk.gov.hmcts.contino.GradleBuilder
 import uk.gov.hmcts.contino.Kubectl
-import uk.gov.hmcts.contino.DockerImage
 import uk.gov.hmcts.pipeline.TeamConfig
 
 def type = "java"
@@ -45,6 +45,8 @@ withPipeline(type, product, component) {
   afterSuccess('akschartsinstall'){
     // Vars needed for AKS testing
     env.S2S_NAME = 'bulk_scan_payment_processor'
+    env.JMS_ENABLED = false
+    env.SPRING_PROFILES_ACTIVE = 'default'
     env.S2S_URL = 'http://rpe-service-auth-provider-aat.service.core-compute-aat.internal'
     env.CORE_CASE_DATA_API_URL = 'http://ccd-data-store-api-aat.service.core-compute-aat.internal'
     env.IDAM_API_URL = 'https://idam-api.aat.platform.hmcts.net'

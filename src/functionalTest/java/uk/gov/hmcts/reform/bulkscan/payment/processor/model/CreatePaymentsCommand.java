@@ -27,6 +27,9 @@ public class CreatePaymentsCommand {
     @JsonProperty("payments")
     public final List<PaymentData> payments;
 
+    @JsonProperty("label")
+    public String label = "";
+
     public CreatePaymentsCommand(
         String envelopeId,
         String ccdReference,
@@ -43,6 +46,26 @@ public class CreatePaymentsCommand {
         this.poBox = poBox;
         this.isExceptionRecord = isExceptionRecord;
         this.payments = payments;
+    }
+
+    public CreatePaymentsCommand(
+        String envelopeId,
+        String ccdReference,
+        String jurisdiction,
+        String service,
+        String poBox,
+        boolean isExceptionRecord,
+        List<PaymentData> payments,
+        String label
+    ) {
+        this.envelopeId = envelopeId;
+        this.ccdReference = ccdReference;
+        this.jurisdiction = jurisdiction;
+        this.service = service;
+        this.poBox = poBox;
+        this.isExceptionRecord = isExceptionRecord;
+        this.payments = payments;
+        this.label = label;
     }
 
     public String getLabel() {
