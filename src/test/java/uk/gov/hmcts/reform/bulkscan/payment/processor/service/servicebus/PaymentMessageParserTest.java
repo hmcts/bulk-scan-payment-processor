@@ -24,7 +24,7 @@ class PaymentMessageParserTest {
     @Test
     void should_return_valid_paymentMessage_when_CreatePaymentMessage_message_is_valid()
         throws JSONException {
-        CreatePaymentMessage expected = paymentMessage("232131313121", false);
+        CreatePaymentMessage expected = paymentMessage("232131313121", false, "a label");
         CreatePaymentMessage paymentMessage = paymentMessageParser.parse(getValidMessageBody());
         assertThat(paymentMessage).usingRecursiveComparison().isEqualTo(expected);
     }
@@ -76,7 +76,8 @@ class PaymentMessageParserTest {
     private BinaryData getValidMessageBody() throws JSONException {
         return BinaryData.fromString(paymentMessageJson(
             "232131313121",
-            false
+            false,
+            "a label"
         ));
     }
 

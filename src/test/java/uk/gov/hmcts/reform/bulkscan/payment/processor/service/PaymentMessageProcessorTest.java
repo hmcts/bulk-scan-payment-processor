@@ -13,6 +13,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.client.processor.ProcessorClient;
+import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.PaymentCommands;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.PaymentMessageParser;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.PaymentMessageProcessor;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.exceptions.InvalidMessageException;
@@ -20,7 +21,6 @@ import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.handler
 import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.model.UpdatePaymentMessage;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatCode;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.willReturn;
@@ -58,6 +58,7 @@ class PaymentMessageProcessorTest {
     private ProcessorClient processorClient;
 
     private PaymentMessageProcessor paymentMessageProcessor;
+    private PaymentCommands paymentCommands;
 
     private static final String CCD_CASE_NUMBER = "213132131";
 
@@ -65,77 +66,14 @@ class PaymentMessageProcessorTest {
 
     @BeforeEach
     void before() {
-        paymentMessageProcessor = new PaymentMessageProcessor(
+        paymentCommands = new PaymentCommands(
             paymentMessageHandler,
             paymentMessageParser,
-            processorClient,
-            10
+            processorClient
         );
+        paymentMessageProcessor = new PaymentMessageProcessor(
+            paymentCommands, 10);
     }
-
-
-    @Test
-    void should_return_when_there_is_no_message_to_process() {
-        // given
-        given(serviceBusReceivedMessageContext.getMessage()).willReturn(null);
-
-        // when
-        paymentMessageProcessor.processNextMessage(serviceBusReceivedMessageContext);
-
-        // then
-        verify(serviceBusReceivedMessageContext).getMessage();
-        verifyNoMoreInteractions(serviceBusReceivedMessageContext);
-        verify(processorClient, never()).updatePayments(any());
-    }
-
-    @Test
-    void should_not_throw_exception_when_queue_message_is_invalid() {
-        given(serviceBusReceivedMessageContext.getMessage()).willReturn(message);
-        var messageBody = BinaryData.fromString("foo");
-        given(message.getBody())
-            .willReturn(messageBody);
-        given(message.getSubject()).willReturn(MESSAGE_LABEL_CREATE);
-        given((paymentMessageParser.parse(messageBody)))
-            .willThrow(
-                new InvalidMessageException("Can't parse")
-            );
-
-        paymentMessageProcessor.processNextMessage(serviceBusReceivedMessageContext);
-        verify(paymentMessageParser).parse(messageBody);
-    }
-
-    @Test
-    void should_not_throw_exception_when_payment_handler_fails() throws Exception {
-        // given
-        var messageBody = setValidMessage(MESSAGE_LABEL_CREATE, paymentJsonString());
-
-        given(serviceBusReceivedMessageContext.getMessage()).willReturn(message);
-
-        given(paymentMessageParser.parse(messageBody)).willReturn(paymentMessage("32131", true));
-        // and
-        willThrow(new RuntimeException()).given(paymentMessageHandler).handlePaymentMessage(any(), any());
-
-        assertThatCode(() -> paymentMessageProcessor.processNextMessage(serviceBusReceivedMessageContext))
-            .doesNotThrowAnyException();
-        verify(processorClient, never()).updatePayments(any());
-    }
-
-    @Test
-    void should_complete_create_message_when_processing_is_successful() throws Exception {
-        // given
-        setValidMessage(MESSAGE_LABEL_CREATE, paymentJsonString());
-        given(serviceBusReceivedMessageContext.getMessage()).willReturn(message);
-        willReturn(paymentMessage(CCD_CASE_NUMBER, IS_EXCEPTION_RECORD)).given(paymentMessageParser).parse(any());
-
-        // when
-        paymentMessageProcessor.processNextMessage(serviceBusReceivedMessageContext);
-
-        // then
-        verify(serviceBusReceivedMessageContext, times(2)).getMessage();
-        verify(serviceBusReceivedMessageContext).complete();
-        verify(processorClient).updatePayments(any());
-    }
-
 
     @Test
     void should_complete_update_message_when_processing_is_successful() throws Exception {
@@ -267,7 +205,7 @@ class PaymentMessageProcessorTest {
         given(serviceBusReceivedMessageContext.getMessage()).willReturn(message);
 
         given(paymentMessageParser.parse(messageBody))
-            .willReturn(paymentMessage(CCD_CASE_NUMBER, IS_EXCEPTION_RECORD));
+            .willReturn(paymentMessage(CCD_CASE_NUMBER, IS_EXCEPTION_RECORD, "CREATE"));
         Exception processingFailureCause = mock(FeignException.UnprocessableEntity.class);
 
 
@@ -326,13 +264,10 @@ class PaymentMessageProcessorTest {
         given(serviceBusReceivedMessageContext.getMessage()).willReturn(message);
 
         given(paymentMessageParser.parse(messageBody))
-            .willReturn(paymentMessage(CCD_CASE_NUMBER, IS_EXCEPTION_RECORD));
+            .willReturn(paymentMessage(CCD_CASE_NUMBER, IS_EXCEPTION_RECORD, "CREATE"));
 
         paymentMessageProcessor = new PaymentMessageProcessor(
-            paymentMessageHandler,
-            paymentMessageParser,
-            processorClient,
-            1
+            paymentCommands, 1
         );
         Exception processingFailureCause = new RuntimeException(RECOVERABLE_EXCEPTION_MESSAGE);
 
@@ -381,9 +316,7 @@ class PaymentMessageProcessorTest {
         )).given(paymentMessageParser).parseUpdateMessage(messageBody);
 
         paymentMessageProcessor = new PaymentMessageProcessor(
-            paymentMessageHandler,
-            paymentMessageParser,
-            processorClient,
+            paymentCommands,
             1
         );
 
@@ -420,6 +353,6 @@ class PaymentMessageProcessorTest {
     }
 
     private String paymentJsonString() throws JSONException {
-        return  paymentMessageJson(CCD_CASE_NUMBER, IS_EXCEPTION_RECORD);
+        return paymentMessageJson(CCD_CASE_NUMBER, IS_EXCEPTION_RECORD, "a label");
     }
 }

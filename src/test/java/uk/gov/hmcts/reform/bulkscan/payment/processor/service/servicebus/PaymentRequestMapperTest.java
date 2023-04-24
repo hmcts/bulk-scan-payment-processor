@@ -48,7 +48,8 @@ class PaymentRequestMapperTest {
         // when
         CreatePaymentRequest paymentRequest = paymentRequestMapper.mapPaymentMessage(paymentMessage(
             "case_number_3333",
-            false
+            false,
+            "CREATE"
         ));
 
         // then
@@ -60,7 +61,7 @@ class PaymentRequestMapperTest {
         // given
         when(siteConfig.getSiteIdByPoBox(PO_BOX)).thenReturn(null);
 
-        CreatePaymentMessage paymentMessage = paymentMessage("case_number_1231", true);
+        CreatePaymentMessage paymentMessage = paymentMessage("case_number_1231", true, "CREATE");
 
         // then
         assertThatThrownBy(() -> paymentRequestMapper.mapPaymentMessage(paymentMessage))
@@ -72,6 +73,7 @@ class PaymentRequestMapperTest {
     void should_throw_InvalidMessageException_when_no_payments_info() {
         // given
         CreatePaymentMessage paymentMessage = new CreatePaymentMessage(
+            "CREATE",
             "envelope_id_123",
             "case_num_32213",
             true,

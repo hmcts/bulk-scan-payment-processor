@@ -1,6 +1,7 @@
 package uk.gov.hmcts.reform.bulkscan.payment.processor.config;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Profile;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.exception.SiteConfigurationException;
 
 import java.util.HashMap;
@@ -9,6 +10,7 @@ import java.util.Map;
 import javax.annotation.PostConstruct;
 
 @ConfigurationProperties(prefix = "site-mappings")
+@Profile("!functional")
 public class SiteConfiguration {
     private List<Sites> sites;
 

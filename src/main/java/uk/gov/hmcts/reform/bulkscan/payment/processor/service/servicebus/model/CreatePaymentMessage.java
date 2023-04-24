@@ -8,6 +8,7 @@ import java.util.List;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class CreatePaymentMessage {
 
+    public final String label;
     public final String envelopeId;
     public final String ccdReference;
     public final boolean isExceptionRecord;
@@ -17,6 +18,7 @@ public class CreatePaymentMessage {
     public final List<PaymentInfo> payments;
 
     public CreatePaymentMessage(
+        @JsonProperty(value = "label", required = true) String label,
         @JsonProperty(value = "envelope_id", required = true) String envelopeId,
         @JsonProperty(value = "ccd_reference", required = true) String ccdReference,
         @JsonProperty(value = "is_exception_record", required = true) boolean isExceptionRecord,
@@ -24,6 +26,7 @@ public class CreatePaymentMessage {
         @JsonProperty(value = "jurisdiction", required = true) String jurisdiction,
         @JsonProperty(value = "service", required = true) String service,
         @JsonProperty(value = "payments", required = true) List<PaymentInfo> payments) {
+        this.label = label;
         this.envelopeId = envelopeId;
         this.ccdReference = ccdReference;
         this.isExceptionRecord = isExceptionRecord;
@@ -32,5 +35,4 @@ public class CreatePaymentMessage {
         this.service = service;
         this.payments = payments;
     }
-
 }
