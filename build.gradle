@@ -165,7 +165,7 @@ dependencyManagement {
       entry 'commons-io'
     }
     // CVE-2014-3488 CVE-2015-2156
-    dependencySet(group: 'io.netty', version: '2.0.59.Final') {
+    dependencySet(group: 'io.netty', version: '2.0.60.Final') {
       entry 'netty-tcnative-boringssl-static'
     }
     dependencySet(group: 'org.apache.logging.log4j', version: '2.20.0') {
