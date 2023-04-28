@@ -263,7 +263,7 @@ dependencies {
   implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-bootstrap', version: '3.1.6'
   implementation group: 'com.azure', name: 'azure-messaging-servicebus', version: '7.13.4'
 
-  implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-openfeign', version: '3.1.6'
+  implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-openfeign', version: '3.1.7'
   implementation group: 'io.github.openfeign', name: 'feign-httpclient', version: '12.3'
   implementation group: 'io.github.openfeign', name: 'feign-jackson', version: '12.3'
 
@@ -286,7 +286,7 @@ dependencies {
 
   integrationTestImplementation group: 'com.github.tomakehurst', name: 'wiremock', version: '2.33.2', withoutJunit4
 
-  integrationTestImplementation group: 'org.springframework.cloud', name: 'spring-cloud-contract-wiremock', version: '3.1.6'
+  integrationTestImplementation group: 'org.springframework.cloud', name: 'spring-cloud-contract-wiremock', version: '3.1.7'
 
   integrationTestImplementation sourceSets.main.runtimeClasspath
   integrationTestImplementation sourceSets.test.runtimeClasspath
