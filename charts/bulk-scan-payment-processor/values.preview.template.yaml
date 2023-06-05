@@ -1,22 +1,24 @@
 java:
   secrets:
     SB_ACCESS_KEY:
-      secretRef: servicebus-secret-namespace-{{ .Release.Name }}-servicebus
+      secretRef: bsp-sb-preview
       key: primaryKey
     SB_NAMESPACE:
-      secretRef: servicebus-secret-namespace-{{ .Release.Name }}-servicebus
-      key: namespaceName
+      secretRef: bsp-sb-preview
+      key: connectionString
   environment:
     S2S_URL: "http://rpe-service-auth-provider-aat.service.core-compute-aat.internal"
     PAYMENTS_QUEUE_ACCESS_KEY_LISTEN_NAME: "RootManageSharedAccessKey"
     PAYMENTS_QUEUE_ACCESS_KEY_SEND_NAME: "RootManageSharedAccessKey"
     PAYMENTS_QUEUE_READ_ACCESS_KEY: "$(SB_ACCESS_KEY)"
-    PAYMENTS_QUEUE_NAMESPACE: "$(SB_NAMESPACE)"
+    PAYMENTS_QUEUE_NAME: "{{ .Release.Name }}-servicebus-payments"
+    PAYMENTS_QUEUE_NAMESPACE: "bsp-sb-preview"
     PAY_HUB_URL: "http://ccpay-bulkscanning-api-aat.service.core-compute-aat.internal"
     IDAM_API_URL: "https://idam-api.aat.platform.hmcts.net"
     IDAM_CLIENT_REDIRECT_URI: "https://bulk-scan-orchestrator-aat.service.core-compute-aat.internal/oauth2/callback"
     CORE_CASE_DATA_API_URL: "http://ccd-data-store-api-aat.service.core-compute-aat.internal"
     PROCESSOR_URL: "http://bulk-scan-processor-aat.service.core-compute-aat.internal"
+    SB_NAMESPACE: "bsp-sb-preview"
   keyVaults:
     "bulk-scan":
       secrets:
@@ -42,10 +44,11 @@ java:
   image: ${IMAGE_NAME}
   ingressHost: ${SERVICE_FQDN}
 servicebus:
-  resourceGroup: bulk-scan-aks
+  resourceGroup: bsp-aso-preview-rg
   teamName: "Software Engineering"
   location: uksouth
   serviceplan: basic
+  sbNamespace: bsp
   setup:
     queues:
       - name: payments
