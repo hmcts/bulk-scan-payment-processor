@@ -1,7 +1,6 @@
 java:
   environment:
     PAYMENTS_QUEUE_NAME: payments-staging
-    PAYMENTS_QUEUE_NAMESPACE: bulk-scan-servicebus-{{ .Values.global.environment }}-premium
   keyVaults:
     "bulk-scan":
       resourceGroup: bulk-scan
