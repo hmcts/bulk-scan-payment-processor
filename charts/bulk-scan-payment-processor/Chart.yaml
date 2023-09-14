@@ -2,13 +2,13 @@ apiVersion: v2
 description: A helm chart for bulk scan pay processor app
 name: bulk-scan-payment-processor
 home: https://github.com/hmcts/bulk-scan-payment-processor
-version: 0.3.20
+version: 0.3.21
 maintainers:
   - name: HMCTS BSP Team
     email: bspteam@hmcts.net
 dependencies:
   - name: java
-    version: 4.1.4
+    version: 4.2.0
     repository: https://hmctspublic.azurecr.io/helm/v1/repo/
   - name: servicebus
     version: 1.0.4
