@@ -61,5 +61,9 @@ java:
           alias: idam.users.probate.username
         - name: idam-users-probate-password
           alias: idam.users.probate.password
+        - name: launch-darkly-sdk-key
+          alias: LAUNCH_DARKLY_SDK_KEY
+        - name: launch-darkly-offline-mode
+          alias: LAUNCH_DARKLY_OFFLINE_MODE
 servicebus:
   enabled: false

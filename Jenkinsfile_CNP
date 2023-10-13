@@ -18,7 +18,9 @@ def previewSecrets = [
     secret('s2s-secret-payment-processor', 'S2S_SECRET'),
     secret('idam-users-bulkscan-username', 'IDAM_USERS_BULKSCAN_USERNAME'),
     secret('idam-users-bulkscan-password', 'IDAM_USERS_BULKSCAN_PASSWORD'),
-    secret('idam-client-secret', 'IDAM_CLIENT_SECRET')
+    secret('idam-client-secret', 'IDAM_CLIENT_SECRET'),
+    secret('launch-darkly-sdk-key', 'LAUNCH_DARKLY_SDK_KEY'),
+    secret('launch-darkly-offline-mode', 'LAUNCH_DARKLY_OFFLINE_MODE')
   ]
 ]
 
@@ -28,7 +30,9 @@ def nonPreviewSecrets = [
     secret('idam-users-bulkscan-username', 'IDAM_USERS_BULKSCAN_USERNAME'),
     secret('idam-users-bulkscan-password', 'IDAM_USERS_BULKSCAN_PASSWORD'),
     secret('idam-client-secret', 'IDAM_CLIENT_SECRET'),
-    secret('payments-staging-queue-send-shared-access-key', 'PAYMENTS_QUEUE_WRITE_ACCESS_KEY')
+    secret('payments-staging-queue-send-shared-access-key', 'PAYMENTS_QUEUE_WRITE_ACCESS_KEY'),
+    secret('launch-darkly-sdk-key', 'LAUNCH_DARKLY_SDK_KEY'),
+    secret('launch-darkly-offline-mode', 'LAUNCH_DARKLY_OFFLINE_MODE')
   ]
 ]
 

@@ -114,3 +114,13 @@ data "azurerm_key_vault_secret" "appinsights_secret" {
   name         = "app-insights-instrumentation-key"
   key_vault_id = data.azurerm_key_vault.bulk_scan_key_vault.id
 }
+
+data "azurerm_key_vault_secret" "launch_darkly_sdk_key" {
+  name         = "launch-darkly-sdk-key"
+  key_vault_id = data.azurerm_key_vault.bulk_scan_key_vault.id
+}
+
+data "azurerm_key_vault_secret" "launch_darkly_offline_mode" {
+  name         = "launch-darkly-offline-mode"
+  key_vault_id = data.azurerm_key_vault.bulk_scan_key_vault.id
+}
