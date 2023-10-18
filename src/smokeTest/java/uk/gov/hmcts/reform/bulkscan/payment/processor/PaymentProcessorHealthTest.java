@@ -13,14 +13,14 @@ import static org.hamcrest.Matchers.equalTo;
 class PaymentProcessorHealthTest {
 
     @Value("${test-url}")
-    private String TEST_URL;
+    private String testUrl;
 
     @Test
     void payment_processor_is_healthy() {
         RestAssured
             .given()
             .relaxedHTTPSValidation()
-            .baseUri(TEST_URL)
+            .baseUri(testUrl)
             .get("/health")
             .then()
             .assertThat()
