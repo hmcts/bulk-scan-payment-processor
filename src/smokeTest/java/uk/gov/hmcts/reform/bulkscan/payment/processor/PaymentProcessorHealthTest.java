@@ -1,18 +1,19 @@
 package uk.gov.hmcts.reform.bulkscan.payment.processor;
 
-import com.typesafe.config.ConfigFactory;
 import io.restassured.RestAssured;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.actuate.health.Status;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.context.TestPropertySource;
 
 import static org.hamcrest.Matchers.equalTo;
 
-@TestPropertySource("classpath:application.conf")
+@TestPropertySource("classpath:application.properties")
 class PaymentProcessorHealthTest {
 
-    private static final String TEST_URL = ConfigFactory.load().getString("test-url");
+    @Value("${test-url}")
+    private String TEST_URL;
 
     @Test
     void payment_processor_is_healthy() {
