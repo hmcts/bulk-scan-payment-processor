@@ -9,9 +9,9 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class LaunchDarklyClient {
-        public static final LDUser BULK_SCAN_PAYMENT_PROCESSOR_USER = new LDUser.Builder("bulk-scan-payment-processor")
-        .anonymous(true)
-        .build();
+    public static final LDUser BULK_SCAN_PAYMENT_PROCESSOR_USER = new LDUser.Builder("bulk-scan-payment-processor")
+            .anonymous(true)
+            .build();
 
     private final LDClientInterface internalClient;
 
