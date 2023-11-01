@@ -48,7 +48,7 @@ servicebus:
   teamName: "Software Engineering"
   location: uksouth
   serviceplan: basic
-  sbNamespace: bsp
+  sbNamespace: bsp-sb-preview
   setup:
     queues:
       - name: payments
