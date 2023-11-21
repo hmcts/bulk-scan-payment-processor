@@ -1,10 +1,6 @@
 java:
   environment:
     S2S_URL: "http://rpe-service-auth-provider-aat.service.core-compute-aat.internal"
-    PAYMENTS_QUEUE_ACCESS_KEY_LISTEN_NAME: "RootManageSharedAccessKey"
-    PAYMENTS_QUEUE_ACCESS_KEY_SEND_NAME: "RootManageSharedAccessKey"
-    PAYMENTS_QUEUE_WRITE_ACCESS_KEY_NAME: "RootManageSharedAccessKey" # functional tests
-    PAYMENTS_QUEUE_READ_ACCESS_KEY_NAME: "RootManageSharedAccessKey" # functional tests
     PAYMENTS_QUEUE_NAME: "{{ .Release.Name }}-servicebus-payments"
     PAYMENTS_QUEUE_NAMESPACE: "bsp-sb-preview"
     PAY_HUB_URL: "http://ccpay-bulkscanning-api-aat.service.core-compute-aat.internal"
