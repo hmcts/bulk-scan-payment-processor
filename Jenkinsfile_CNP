@@ -69,16 +69,11 @@ withPipeline(type, product, component) {
       kubectl.login()
 
       env.PAYMENTS_QUEUE_NAME = "${aksServiceName}-servicebus-payments"
-
-      echo "NAMESPACE : ${env.PAYMENTS_QUEUE_NAMESPACE}"
-      echo "WRITE KEY : ${env.PAYMENTS_QUEUE_WRITE_ACCESS_KEY}"
-      echo "KEY NAME : ${env.PAYMENTS_QUEUE_WRITE_ACCESS_KEY_NAME}"
-      echo "QUEUE NAME : ${env.PAYMENTS_QUEUE_NAME}"
+      env.PAYMENTS_QUEUE_WRITE_ACCESS_KEY_NAME = "RootManageSharedAccessKey"
     }
   }
 
   // Vars needed for smoke / functional testing
-  env.PAYMENTS_QUEUE_WRITE_ACCESS_KEY_NAME = "RootManageSharedAccessKey"
   env.TEST_PAY_HUB_URL = 'http://ccpay-bulkscanning-api-aat.service.core-compute-aat.internal'
 
   afterSuccess('test') {
