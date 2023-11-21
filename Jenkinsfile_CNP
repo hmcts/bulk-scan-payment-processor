@@ -78,6 +78,7 @@ withPipeline(type, product, component) {
   }
 
   // Vars needed for smoke / functional testing
+  env.PAYMENTS_QUEUE_WRITE_ACCESS_KEY_NAME = "RootManageSharedAccessKey"
   env.TEST_PAY_HUB_URL = 'http://ccpay-bulkscanning-api-aat.service.core-compute-aat.internal'
 
   afterSuccess('test') {
@@ -93,7 +94,6 @@ withPipeline(type, product, component) {
   }
 
   onNonPR() {
-    env.PAYMENTS_QUEUE_WRITE_ACCESS_KEY_NAME = "RootManageSharedAccessKey"
     loadVaultSecrets(nonPreviewSecrets)
   }
 
