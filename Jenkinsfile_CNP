@@ -55,7 +55,6 @@ withPipeline(type, product, component) {
     env.IDAM_API_URL = 'https://idam-api.aat.platform.hmcts.net'
     env.IDAM_CLIENT_REDIRECT_URI = 'https://bulk-scan-orchestrator-aat.service.core-compute-aat.internal/oauth2/callback'
     env.PAYMENTS_QUEUE_NAME = "payments-staging"
-    env.PAYMENTS_QUEUE_NAMESPACE = "bulk-scan-servicebus-aat-premium"
     env.PAYMENTS_QUEUE_WRITE_ACCESS_KEY_NAME = "SendSharedAccessKey"
   }
 
