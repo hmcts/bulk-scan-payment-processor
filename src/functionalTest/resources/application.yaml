@@ -10,7 +10,7 @@ azure:
   servicebus:
     payments:
       namespace: ${PAYMENTS_QUEUE_NAMESPACE:bsp-sb-preview}
-      write-access-key: ${PAYMENTS_QUEUE_WRITE_ACCESS_KEY:RootManageSharedAccessKey}
+      write-access-key: ${PAYMENTS_QUEUE_WRITE_ACCESS_KEY}
       write-access-key-name: ${PAYMENTS_QUEUE_WRITE_ACCESS_KEY_NAME:RootManageSharedAccessKey}
       queue-name: ${PAYMENTS_QUEUE_NAME}
 idam:
