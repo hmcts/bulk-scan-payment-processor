@@ -27,6 +27,7 @@ public class FunctionalQueueConfig {
             accessKeyName,
             accessKey
         );
+        System.out.println("************** " + connectionString);
 
         return new ServiceBusClientBuilder()
             .connectionString(connectionString)
