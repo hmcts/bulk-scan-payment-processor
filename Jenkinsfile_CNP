@@ -70,9 +70,6 @@ withPipeline(type, product, component) {
       kubectl.login()
 
       env.PAYMENTS_QUEUE_NAME = "${aksServiceName}-servicebus-payments"
-      env.PAYMENTS_QUEUE_NAMESPACE = "bsp-sb-preview"
-      env.PAYMENTS_QUEUE_WRITE_ACCESS_KEY_NAME = "RootManageSharedAccessKey"
-      env.PAYMENTS_QUEUE_READ_ACCESS_KEY_NAME = "RootManageSharedAccessKey"
     }
   }
 
