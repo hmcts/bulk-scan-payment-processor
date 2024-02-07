@@ -53,7 +53,6 @@ withPipeline(type, product, component) {
     env.S2S_URL = 'http://rpe-service-auth-provider-aat.service.core-compute-aat.internal'
     env.CORE_CASE_DATA_API_URL = 'http://ccd-data-store-api-aat.service.core-compute-aat.internal'
     env.IDAM_API_URL = 'https://idam-api.aat.platform.hmcts.net'
-    env.PAYMENTS_QUEUE_NAMESPACE = "bulk-scan-servicebus-aat-premium"
     env.IDAM_CLIENT_REDIRECT_URI = 'https://bulk-scan-orchestrator-aat.service.core-compute-aat.internal/oauth2/callback'
     env.PAYMENTS_QUEUE_NAME = "payments-staging"
     env.PAYMENTS_QUEUE_WRITE_ACCESS_KEY_NAME = "SendSharedAccessKey"
@@ -69,7 +68,6 @@ withPipeline(type, product, component) {
       def kubectl = new Kubectl(this, subscription, namespace)
       kubectl.login()
 
-      env.PAYMENTS_QUEUE_NAMESPACE = "bsp-sb-preview"
       env.PAYMENTS_QUEUE_NAME = "${aksServiceName}-servicebus-payments"
       env.PAYMENTS_QUEUE_WRITE_ACCESS_KEY_NAME = "RootManageSharedAccessKey"
     }
