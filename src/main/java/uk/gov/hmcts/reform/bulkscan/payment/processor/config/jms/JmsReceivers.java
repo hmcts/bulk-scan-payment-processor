@@ -9,8 +9,8 @@ import org.springframework.jms.annotation.JmsListener;
 import org.springframework.jms.core.JmsTemplate;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.JmsPaymentMessageProcessor;
 
-import javax.jms.JMSException;
-import javax.jms.Message;
+import jakarta.jms.JMSException;
+import jakarta.jms.Message;
 
 @Configuration()
 @ConditionalOnProperty(name = "jms.enabled", havingValue = "true")
@@ -31,7 +31,7 @@ public class JmsReceivers {
 
     @JmsListener(destination = "payments", containerFactory = "paymentsEventQueueContainerFactory")
     public void receiveMessage(Message message) throws JMSException, JsonProcessingException {
-        String messageBody = ((javax.jms.TextMessage) message).getText();
+        String messageBody = ((jakarta.jms.TextMessage) message).getText();
         log.info("Received Message {} on Service Bus. Delivery count is: {}",
                  messageBody, message.getStringProperty("JMSXDeliveryCount"));
         jmsPaymentMessageProcessor.processNextMessage(message, messageBody);

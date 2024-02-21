@@ -7,7 +7,7 @@ import uk.gov.hmcts.reform.bulkscan.payment.processor.exception.SiteConfiguratio
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 
 @ConfigurationProperties(prefix = "site-mappings")
 @Profile("!functional")

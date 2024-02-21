@@ -11,8 +11,8 @@ import org.springframework.stereotype.Service;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.exceptions.UnknownMessageProcessingResultException;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.handler.MessageProcessingResult;
 
-import javax.jms.JMSException;
-import javax.jms.Message;
+import jakarta.jms.JMSException;
+import jakarta.jms.Message;
 
 /**
  * For LOCAL Dev Only. For AAT and upwards Azure Service Bus is used
