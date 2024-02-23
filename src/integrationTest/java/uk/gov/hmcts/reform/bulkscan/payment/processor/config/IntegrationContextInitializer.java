@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 
 import static org.mockito.Mockito.mock;
-import static org.springframework.util.SocketUtils.findAvailableTcpPort;
+import static org.springframework.test.util.TestSocketUtils.findAvailableTcpPort;
 
 @Configuration
 @Profile("integration") // no servicebus queue handler registration

@@ -1,6 +1,8 @@
 package uk.gov.hmcts.reform.bulkscan.payment.processor.config.jms;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import jakarta.jms.JMSException;
+import jakarta.jms.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -8,9 +10,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.jms.annotation.JmsListener;
 import org.springframework.jms.core.JmsTemplate;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.JmsPaymentMessageProcessor;
-
-import jakarta.jms.JMSException;
-import jakarta.jms.Message;
 
 @Configuration()
 @ConditionalOnProperty(name = "jms.enabled", havingValue = "true")

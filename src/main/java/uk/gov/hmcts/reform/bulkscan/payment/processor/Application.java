@@ -6,7 +6,7 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
-@SpringBootApplication
+@SpringBootApplication()
 @EnableFeignClients(basePackages = {"uk.gov.hmcts.reform"})
 @EnableScheduling
 @EnableAsync

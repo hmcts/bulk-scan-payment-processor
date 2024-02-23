@@ -1,8 +1,9 @@
 package uk.gov.hmcts.reform.bulkscan.payment.processor.helper;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.qpid.jms.JmsConnectionFactory;
-import org.apache.qpid.jms.policy.JmsDefaultRedeliveryPolicy;
+import jakarta.jms.ConnectionFactory;
+import org.apache.activemq.ActiveMQConnectionFactory;
+import org.apache.activemq.RedeliveryPolicy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Profile;
@@ -10,8 +11,6 @@ import org.springframework.jms.connection.CachingConnectionFactory;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.model.CreatePaymentsCommand;
-
-import javax.jms.ConnectionFactory;
 
 @Service
 @Profile("functional")
@@ -46,13 +45,13 @@ public class JmsPaymentsMessageSender {
 
     public ConnectionFactory getTestFactory() {
         String connection = String.format("amqp://localhost:%1s?amqp.idleTimeout=%2d", "5672", 30000);
-        JmsConnectionFactory jmsConnectionFactory = new JmsConnectionFactory(connection);
-        jmsConnectionFactory.setUsername("admin");
-        jmsConnectionFactory.setPassword("admin");
-        JmsDefaultRedeliveryPolicy jmsDefaultRedeliveryPolicy = new JmsDefaultRedeliveryPolicy();
-        jmsDefaultRedeliveryPolicy.setMaxRedeliveries(3);
-        jmsConnectionFactory.setRedeliveryPolicy(jmsDefaultRedeliveryPolicy);
-        jmsConnectionFactory.setClientID("clientId");
-        return new CachingConnectionFactory(jmsConnectionFactory);
+        ActiveMQConnectionFactory activeMQConnectionFactory = new ActiveMQConnectionFactory(connection);
+        activeMQConnectionFactory.setUserName("admin");
+        activeMQConnectionFactory.setPassword("admin");
+        RedeliveryPolicy redeliveryPolicy = new RedeliveryPolicy();
+        redeliveryPolicy.setMaximumRedeliveries(3);
+        activeMQConnectionFactory.setRedeliveryPolicy(redeliveryPolicy);
+        activeMQConnectionFactory.setClientID("clientId");
+        return new CachingConnectionFactory(activeMQConnectionFactory);
     }
 }
