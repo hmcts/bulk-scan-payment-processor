@@ -27,6 +27,17 @@ spring:
   autoconfigure:
     exclude:
 
+jms:
+  # JMS Configuration for local dev
+  application-name: BulkScanPaymentsApiDev
+  enabled: ${JMS_ENABLED:false}
+  namespace: ${JMS_NAMESPACE:5672}
+  amqp-connection-string-template: ${JMS_AMQP_CONNECTION_TEMPLATE:tcp://localhost:61616}
+  username: ${JMS_USERNAME:admin}
+  password: ${JMS_PASSWORD:admin}
+  receiveTimeout: ${JMS_RECEIVE_TIMEOUT:30000}
+  idleTimeout: ${JMS_IDLE_TIMEOUT:30000}
+
 site-mappings:
   sites:
     - siteName: PROBATE
@@ -89,13 +100,3 @@ springdoc:
   packagesToScan: uk.gov.hmcts.reform.bulkscan.payment.processor
   pathsToMatch: /**
 
-jms:
-  # JMS Configuration for local dev
-  application-name: BulkScanPaymentsApiDev
-  enabled: ${JMS_ENABLED:false}
-  namespace: ${JMS_NAMESPACE:5672}
-  amqp-connection-string-template: ${JMS_AMQP_CONNECTION_TEMPLATE:amqp://localhost:%1s?amqp.idleTimeout=%2d}
-  username: ${JMS_USERNAME:admin}
-  password: ${JMS_PASSWORD:admin}
-  receiveTimeout: ${JMS_RECEIVE_TIMEOUT:30000}
-  idleTimeout: ${JMS_IDLE_TIMEOUT:30000}

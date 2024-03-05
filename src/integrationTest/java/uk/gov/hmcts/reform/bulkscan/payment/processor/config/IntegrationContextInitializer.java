@@ -10,9 +10,9 @@ import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
+import org.springframework.test.util.TestSocketUtils;
 
 import static org.mockito.Mockito.mock;
-import static org.springframework.util.SocketUtils.findAvailableTcpPort;
 
 @Configuration
 @Profile("integration") // no servicebus queue handler registration
@@ -22,7 +22,7 @@ public class IntegrationContextInitializer implements ApplicationContextInitiali
 
     @Override
     public void initialize(ConfigurableApplicationContext applicationContext) {
-        System.setProperty("wiremock.port", Integer.toString(findAvailableTcpPort()));
+        System.setProperty("wiremock.port", Integer.toString(TestSocketUtils.findAvailableTcpPort()));
     }
 
     @Bean
