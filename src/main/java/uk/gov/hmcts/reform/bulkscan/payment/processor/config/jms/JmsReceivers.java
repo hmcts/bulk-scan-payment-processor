@@ -11,6 +11,9 @@ import org.springframework.jms.annotation.JmsListener;
 import org.springframework.jms.core.JmsTemplate;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.JmsPaymentMessageProcessor;
 
+/**
+ * JMS receivers.
+ */
 @Configuration()
 @ConditionalOnProperty(name = "jms.enabled", havingValue = "true")
 public class JmsReceivers {
@@ -20,6 +23,11 @@ public class JmsReceivers {
     private final JmsPaymentMessageProcessor jmsPaymentMessageProcessor;
     private final JmsTemplate jmsTemplate;
 
+    /**
+     * Constructor.
+     * @param jmsPaymentMessageProcessor The JmsPaymentMessageProcessor
+     * @param jmsTemplate The JmsTemplate
+     */
     public JmsReceivers(
         JmsPaymentMessageProcessor jmsPaymentMessageProcessor,
         JmsTemplate jmsTemplate
@@ -28,6 +36,12 @@ public class JmsReceivers {
         this.jmsTemplate = jmsTemplate;
     }
 
+    /**
+     * Receive message.
+     * @param message The message
+     * @throws JMSException JMSException
+     * @throws JsonProcessingException JsonProcessingException
+     */
     @JmsListener(destination = "payments", containerFactory = "paymentsEventQueueContainerFactory")
     public void receiveMessage(Message message) throws JMSException, JsonProcessingException {
         String messageBody = ((jakarta.jms.TextMessage) message).getText();

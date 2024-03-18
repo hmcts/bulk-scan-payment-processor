@@ -12,6 +12,9 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.PaymentMessageProcessor;
 
+/**
+ * Configuration for queue clients.
+ */
 @Configuration
 @ConditionalOnExpression("!${jms.enabled}")
 @Profile("!functional & !integration")
@@ -19,12 +22,24 @@ public class QueueClientsConfiguration {
 
     private static final Logger log = LoggerFactory.getLogger(QueueClientsConfiguration.class);
 
+    /**
+     * Creates a bean of QueueConfigurationProperties.
+     *
+     * @return the QueueConfigurationProperties
+     */
     @Bean
     @ConfigurationProperties(prefix = "azure.servicebus.payments")
     protected QueueConfigurationProperties paymentQueueConfig() {
         return new QueueConfigurationProperties();
     }
 
+    /**
+     * Creates a bean of ServiceBusProcessorClient.
+     *
+     * @param queueProperties the queue properties
+     * @param paymentMessageProcessor the payment message processor
+     * @return the ServiceBusProcessorClient
+     */
     @Bean
     public ServiceBusProcessorClient notificationsMessageReceiver(
         QueueConfigurationProperties queueProperties,

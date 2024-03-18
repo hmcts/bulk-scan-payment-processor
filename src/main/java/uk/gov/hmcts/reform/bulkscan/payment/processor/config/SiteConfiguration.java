@@ -9,6 +9,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Configuration for site mappings.
+ */
 @ConfigurationProperties(prefix = "site-mappings")
 @Profile("!functional")
 public class SiteConfiguration {
@@ -16,14 +19,25 @@ public class SiteConfiguration {
 
     private Map<String, String> poBoxToSiteIdMap;
 
+    /**
+     * Get the sites.
+     * @return The sites
+     */
     public List<Sites> getSites() {
         return sites;
     }
 
+    /**
+     * Set the sites.
+     * @param sites The sites
+     */
     public void setSites(List<Sites> sites) {
         this.sites = sites;
     }
 
+    /**
+     * Map po box to site id.
+     */
     @PostConstruct
     private void mapPoBoxToSiteId() {
         if (getSites() == null || getSites().isEmpty()) {

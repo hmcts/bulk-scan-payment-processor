@@ -13,6 +13,9 @@ import uk.gov.hmcts.reform.bulkscan.payment.processor.client.payhub.request.Case
 import uk.gov.hmcts.reform.bulkscan.payment.processor.client.payhub.request.CreatePaymentRequest;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.client.payhub.response.CreatePaymentResponse;
 
+/**
+ * PayHub client.
+ */
 @FeignClient(
     name = "pay-hub-api",
     url = "${pay-hub.api.url}"
@@ -20,6 +23,13 @@ import uk.gov.hmcts.reform.bulkscan.payment.processor.client.payhub.response.Cre
 @Profile("!functional")
 public interface PayHubClient {
 
+    /**
+     * Creates a payment in PayHub.
+     *
+     * @param serviceAuthorisation service authorisation header
+     * @param paymentRequest payment request
+     * @return response from PayHub
+     */
     @RequestMapping(
         method = RequestMethod.POST,
         value = "/bulk-scan-payments",
@@ -31,6 +41,14 @@ public interface PayHubClient {
         @RequestBody CreatePaymentRequest paymentRequest
     );
 
+    /**
+     * Updates case reference in PayHub.
+     *
+     * @param serviceAuthorisation service authorisation header
+     * @param exceptionReference exception reference
+     * @param caseReferenceRequest case reference request
+     * @return response from PayHub
+     */
     @RequestMapping(
         method = RequestMethod.PUT,
         value = "/bulk-scan-payments",

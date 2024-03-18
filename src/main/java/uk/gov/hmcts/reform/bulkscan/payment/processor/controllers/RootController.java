@@ -8,6 +8,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import static org.springframework.http.ResponseEntity.ok;
 
+/**
+ * Root controller.
+ */
 @RestController
 public class RootController {
 

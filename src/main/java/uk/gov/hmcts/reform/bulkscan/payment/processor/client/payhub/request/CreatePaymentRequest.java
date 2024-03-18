@@ -4,6 +4,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.List;
 
+/**
+ * Request to create payment in PayHub.
+ */
 public class CreatePaymentRequest {
 
     @JsonProperty("ccd_case_number")
@@ -18,6 +21,13 @@ public class CreatePaymentRequest {
     @JsonProperty("site_id")
     public final String siteId;
 
+    /**
+     * Constructor.
+     * @param ccdCaseNumber The CCD case number
+     * @param documentControlNumbers The document control numbers
+     * @param isExceptionRecord The exception record flag
+     * @param siteId The site ID
+     */
     public CreatePaymentRequest(
         String ccdCaseNumber,
         List<String> documentControlNumbers,

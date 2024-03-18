@@ -10,10 +10,19 @@ import org.springframework.web.client.HttpServerErrorException;
 import static org.springframework.retry.backoff.ExponentialBackOffPolicy.DEFAULT_MAX_INTERVAL;
 import static org.springframework.retry.backoff.ExponentialBackOffPolicy.DEFAULT_MULTIPLIER;
 
+/**
+ * Configuration for retry template.
+ */
 @Configuration
 @Profile("!functional")
 public class RetryConfig {
 
+    /**
+     * Get the retry template.
+     * @param numberOfRetries The number of retries
+     * @param timeToWait The time to wait
+     * @return The retry template
+     */
     @Bean("RetryTemplate")
     public RetryTemplate retryTemplate(@Value("${bulk-scan-procesor.api.retries}") int numberOfRetries,
                                        @Value("${bulk-scan-procesor.api.wait-time-in-ms}") long timeToWait) {
