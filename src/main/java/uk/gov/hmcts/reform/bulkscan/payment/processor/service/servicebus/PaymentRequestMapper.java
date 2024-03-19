@@ -13,6 +13,9 @@ import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.model.C
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Maps the payment message to the payment request.
+ */
 @Component
 @EnableConfigurationProperties(SiteConfiguration.class)
 @Profile("!functional")
@@ -24,6 +27,12 @@ public class PaymentRequestMapper {
         this.siteConfiguration = siteConfiguration;
     }
 
+    /**
+     * Maps the payment message to the payment request.
+     *
+     * @param message The payment message
+     * @return The payment request
+     */
     public CreatePaymentRequest mapPaymentMessage(CreatePaymentMessage message) {
         return new CreatePaymentRequest(
             message.ccdReference,
@@ -33,6 +42,13 @@ public class PaymentRequestMapper {
         );
     }
 
+    /**
+     * Get the document control numbers from the payment message.
+     *
+     * @param message The payment message
+     * @return The payment request
+     * @throws InvalidMessageException if no document control numbers are found in the payment message
+     */
     private List<String> getPaymentDocumentControlNumbers(CreatePaymentMessage message) {
         if (CollectionUtils.isEmpty(message.payments)) {
             throw new InvalidMessageException(
@@ -46,6 +62,13 @@ public class PaymentRequestMapper {
             .collect(Collectors.toList());
     }
 
+    /**
+     * Get the site id for the po box from the site configuration.
+     *
+     * @param poBox The po box
+     * @return The site id
+     * @throws SiteNotFoundException if no site id is found for the po box
+     */
     private String getSiteIdForPoBox(String poBox) {
         String siteId = siteConfiguration.getSiteIdByPoBox(poBox);
         if (siteId == null) {

@@ -11,6 +11,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
+/**
+ * Health indicator for Pay hub.
+ */
 @Component
 @Profile("!functional")
 public class PayHubHealthIndicator implements HealthIndicator {
@@ -20,6 +23,11 @@ public class PayHubHealthIndicator implements HealthIndicator {
     private final String payHubUri;
     private final RestTemplate restTemplate;
 
+    /**
+     * Constructor.
+     * @param payHubUri The Pay hub URI
+     * @param restTemplate The RestTemplate
+     */
     public PayHubHealthIndicator(
         @Value("${pay-hub.api.url}") String payHubUri,
         RestTemplate restTemplate
@@ -28,6 +36,10 @@ public class PayHubHealthIndicator implements HealthIndicator {
         this.restTemplate = restTemplate;
     }
 
+    /**
+     * Check the health of Pay hub.
+     * @return The health
+     */
     @Override
     public Health health() {
         try {
@@ -39,14 +51,27 @@ public class PayHubHealthIndicator implements HealthIndicator {
         }
     }
 
+    /**
+     * Get the health status.
+     * @return The health
+     */
     private Health statusHealthy() {
         return Health.up().build();
     }
 
+    /**
+     * Return the status down
+     * @return The health
+     */
     private Health statusDown() {
         return Health.down().build();
     }
 
+    /**
+     * Return the status unknown
+     * @param ex The exception
+     * @return The health
+     */
     private Health statusUnknown(Throwable ex) {
         return Health.unknown().withException(ex).build();
     }

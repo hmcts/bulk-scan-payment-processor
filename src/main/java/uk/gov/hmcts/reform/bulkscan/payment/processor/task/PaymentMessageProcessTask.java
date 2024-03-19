@@ -10,6 +10,9 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+/**
+ * Task to consume messages from payments queue.
+ */
 @Service
 @ConditionalOnProperty(value = "scheduling.task.consume-payments-queue.enabled", matchIfMissing = true)
 @ConditionalOnExpression("!${jms.enabled}")
@@ -20,17 +23,27 @@ public class PaymentMessageProcessTask {
 
     private final ServiceBusProcessorClient serviceBusProcessorClient;
 
+    /**
+     * Constructor.
+     * @param serviceBusProcessorClient The ServiceBusProcessorClient
+     */
     public PaymentMessageProcessTask(
         ServiceBusProcessorClient serviceBusProcessorClient
     ) {
         this.serviceBusProcessorClient = serviceBusProcessorClient;
     }
 
+    /**
+     * Start the processor.
+     */
     @PostConstruct
     void startProcessor() {
         serviceBusProcessorClient.start();
     }
 
+    /**
+     * Check if the processor client is running.
+     */
     @Scheduled(fixedDelayString = "${scheduling.task.consume-payments-queue.time-interval-ms}")
     public void checkServiceBusProcessorClient() {
         if (!serviceBusProcessorClient.isRunning()) {

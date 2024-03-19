@@ -18,6 +18,9 @@ import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.model.U
 
 import static java.lang.String.format;
 
+/**
+ * Handles payment messages.
+ */
 @Service
 @Profile("!functional")
 public class PaymentMessageHandler {
@@ -29,6 +32,13 @@ public class PaymentMessageHandler {
     private final PayHubClient payHubClient;
     private final CcdClient ccdClient;
 
+    /**
+     * Constructor.
+     * @param authTokenGenerator The auth token generator
+     * @param paymentRequestMapper The payment request mapper
+     * @param payHubClient The PayHub client
+     * @param ccdClient The CCD client
+     */
     public PaymentMessageHandler(
         AuthTokenGenerator authTokenGenerator,
         PaymentRequestMapper paymentRequestMapper,
@@ -41,6 +51,11 @@ public class PaymentMessageHandler {
         this.ccdClient = ccdClient;
     }
 
+    /**
+     * Handles payment message.
+     * @param paymentMessage The payment message
+     * @param messageId The message ID
+     */
     public void handlePaymentMessage(CreatePaymentMessage paymentMessage, String messageId) {
         createPayment(paymentMessage, messageId);
 
@@ -53,6 +68,10 @@ public class PaymentMessageHandler {
         }
     }
 
+    /**
+     * Updates payment case reference.
+     * @param paymentMessage The payment message
+     */
     public void updatePaymentCaseReference(UpdatePaymentMessage paymentMessage) {
         CaseReferenceRequest request = new CaseReferenceRequest(paymentMessage.newCaseRef);
 
@@ -90,6 +109,11 @@ public class PaymentMessageHandler {
         }
     }
 
+    /**
+     * Creates payment.
+     * @param paymentMessage The payment message
+     * @param messageId The message ID
+     */
     private void createPayment(CreatePaymentMessage paymentMessage, String messageId) {
         CreatePaymentRequest request = paymentRequestMapper.mapPaymentMessage(paymentMessage);
 
@@ -132,6 +156,11 @@ public class PaymentMessageHandler {
         }
     }
 
+    /**
+     * Logs PayHub exception.
+     * @param exception The exception
+     * @param introMessage The intro message
+     */
     private void debugPayHubException(FeignException exception, String introMessage) {
         log.debug(
             "{}. PayHub response: {}",

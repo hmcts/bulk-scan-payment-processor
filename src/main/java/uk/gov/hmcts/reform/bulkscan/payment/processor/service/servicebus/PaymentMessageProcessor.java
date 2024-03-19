@@ -11,6 +11,9 @@ import org.springframework.stereotype.Service;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.exceptions.UnknownMessageProcessingResultException;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.handler.MessageProcessingResult;
 
+/**
+ * Processes messages from the payment queue.
+ */
 @Service
 @Profile("!functional & !integration")
 public class PaymentMessageProcessor {
@@ -20,6 +23,11 @@ public class PaymentMessageProcessor {
     private final PaymentCommands paymentCommands;
     private final int maxDeliveryCount;
 
+    /**
+     * Constructor for the PaymentMessageProcessor.
+     * @param paymentCommands The payment commands
+     * @param maxDeliveryCount The maximum delivery count
+     */
     public PaymentMessageProcessor(
         PaymentCommands paymentCommands,
         @Value("${azure.servicebus.payments.max-delivery-count}") int maxDeliveryCount
@@ -30,7 +38,9 @@ public class PaymentMessageProcessor {
 
     /**
      * Reads and processes next message from the queue.
-     * return false if there was no message to process. Otherwise true.
+     * return false if there was no message to process. Otherwise, true.
+     * @param serviceBusReceivedMessageContext The message context
+     * @return true if there was a message to process, otherwise false
      */
     public void processNextMessage(ServiceBusReceivedMessageContext serviceBusReceivedMessageContext) {
         ServiceBusReceivedMessage message = serviceBusReceivedMessageContext.getMessage();
@@ -64,6 +74,11 @@ public class PaymentMessageProcessor {
 
     }
 
+    /**
+     * Try to finalise the processed message.
+     * @param messageContext The message context
+     * @param processingResult The processing result
+     */
     private void tryFinaliseProcessedMessage(
         ServiceBusReceivedMessageContext messageContext,
         MessageProcessingResult processingResult
@@ -76,6 +91,11 @@ public class PaymentMessageProcessor {
         }
     }
 
+    /**
+     * Finalise the processed message.
+     * @param messageContext The message context
+     * @param processingResult The processing result
+     */
     private void finaliseProcessedMessage(
         ServiceBusReceivedMessageContext messageContext,
         MessageProcessingResult processingResult
@@ -98,6 +118,10 @@ public class PaymentMessageProcessor {
         }
     }
 
+    /**
+     * Dead letter the message if the maximum delivery count is reached.
+     * @param messageContext The message context
+     */
     private void deadLetterIfMaxDeliveryCountIsReached(ServiceBusReceivedMessageContext messageContext) {
 
         ServiceBusReceivedMessage message = messageContext.getMessage();
@@ -119,6 +143,12 @@ public class PaymentMessageProcessor {
         }
     }
 
+    /**
+     * Dead letter the message.
+     * @param messageContext The message context
+     * @param reason The reason
+     * @param description The description
+     */
     private void deadLetterTheMessage(
         ServiceBusReceivedMessageContext messageContext,
         String reason,

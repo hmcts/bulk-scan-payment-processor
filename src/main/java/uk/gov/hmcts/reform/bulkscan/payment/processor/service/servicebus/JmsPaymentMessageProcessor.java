@@ -23,6 +23,10 @@ public class JmsPaymentMessageProcessor {
 
     private final PaymentCommands paymentCommands;
 
+    /**
+     * Constructor for the JmsPaymentMessageProcessor.
+     * @param paymentCommands The payment commands
+     */
     public JmsPaymentMessageProcessor(
         PaymentCommands paymentCommands
     ) {
@@ -30,8 +34,13 @@ public class JmsPaymentMessageProcessor {
     }
 
     /**
+     * Process the next message.
      * Reads and processes next message from the queue.
      * return false if there was no message to process. Otherwise true.
+     * @param message The message
+     * @param messageBody The message body
+     * @throws JsonProcessingException If there is a JSON processing error
+     * @throws JMSException If there is a JMS error
      */
     public void processNextMessage(Message message, String messageBody) throws JsonProcessingException, JMSException {
         if (message != null && !messageBody.isEmpty()) {
@@ -70,6 +79,12 @@ public class JmsPaymentMessageProcessor {
 
     }
 
+    /**
+     * Try to finalise the processed message.
+     * @param message The message
+     * @param processingResult The processing result
+     * @throws JMSException If there is a JMS error
+     */
     private void tryFinaliseProcessedMessage(
         Message message,
         MessageProcessingResult processingResult
@@ -83,6 +98,12 @@ public class JmsPaymentMessageProcessor {
         }
     }
 
+    /**
+     * Finalise the processed message.
+     * @param messageContext The message context
+     * @param processingResult The processing result
+     * @throws JMSException If there is a JMS error
+     */
     private void finaliseProcessedMessage(
         Message messageContext,
         MessageProcessingResult processingResult
