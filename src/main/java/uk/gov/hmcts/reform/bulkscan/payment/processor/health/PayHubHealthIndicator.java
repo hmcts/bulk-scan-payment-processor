@@ -60,7 +60,7 @@ public class PayHubHealthIndicator implements HealthIndicator {
     }
 
     /**
-     * Return the status down
+     * Return the status down.
      * @return The health
      */
     private Health statusDown() {
@@ -68,7 +68,7 @@ public class PayHubHealthIndicator implements HealthIndicator {
     }
 
     /**
-     * Return the status unknown
+     * Return the status unknown.
      * @param ex The exception
      * @return The health
      */

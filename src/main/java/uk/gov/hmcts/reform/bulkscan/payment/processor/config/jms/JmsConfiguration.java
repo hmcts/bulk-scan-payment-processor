@@ -117,12 +117,12 @@ public class JmsConfiguration {
     public static class CustomMessageConverter implements MessageConverter {
 
         /**
-         * Convert object to message
+         * Convert object to message.
          * @param object the object to convert
          * @param session the Session to use for creating a JMS Message
+         * @return The message
          * @throws JMSException if thrown by JMS API methods
          * @throws MessageConversionException if there is a problem with conversion
-         * @return The message
          */
         @Override
         public Message toMessage(Object object, Session session) throws JMSException, MessageConversionException {
@@ -130,10 +130,10 @@ public class JmsConfiguration {
         }
 
         /**
-         * Convert message to object
+         * Convert message to object.
          * @param message the message to convert
-         * @throws MessageConversionException if there is a problem with conversion
          * @return The object
+         * @throws MessageConversionException if there is a problem with conversion
          */
         @Override
         public Object fromMessage(Message message) throws MessageConversionException {
