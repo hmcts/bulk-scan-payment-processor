@@ -5,6 +5,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.List;
 
+/**
+ * Represents a message that is sent to the payment processor to create a payment.
+ */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class CreatePaymentMessage {
 
@@ -17,6 +20,18 @@ public class CreatePaymentMessage {
     public final String service;
     public final List<PaymentInfo> payments;
 
+    /**
+     * Constructor.
+     *
+     * @param label The label
+     * @param envelopeId The envelope ID
+     * @param ccdReference The CCD reference
+     * @param isExceptionRecord Whether the record is an exception record
+     * @param poBox The PO box
+     * @param jurisdiction The jurisdiction
+     * @param service The service
+     * @param payments The payments
+     */
     public CreatePaymentMessage(
         @JsonProperty(value = "label", required = true) String label,
         @JsonProperty(value = "envelope_id", required = true) String envelopeId,

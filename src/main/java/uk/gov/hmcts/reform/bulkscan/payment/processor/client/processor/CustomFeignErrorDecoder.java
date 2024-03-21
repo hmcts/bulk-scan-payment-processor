@@ -14,9 +14,19 @@ import java.util.Optional;
 
 import static com.google.common.io.ByteStreams.toByteArray;
 
+/**
+ * Custom Feign error decoder.
+ */
 public class CustomFeignErrorDecoder implements ErrorDecoder {
     private final ErrorDecoder delegate = new Default();
 
+    /**
+     * Decodes the response and returns the exception.
+     *
+     * @param methodKey the method key
+     * @param response the response
+     * @return the exception
+     */
     @Override
     public Exception decode(String methodKey, Response response) {
         HttpHeaders responseHeaders = new HttpHeaders();

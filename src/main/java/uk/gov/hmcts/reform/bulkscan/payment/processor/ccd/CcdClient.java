@@ -13,6 +13,9 @@ import java.util.Map;
 
 import static java.lang.String.format;
 
+/**
+ * Client for interacting with CCD.
+ */
 @Service
 public class CcdClient {
 
@@ -24,6 +27,11 @@ public class CcdClient {
     private final CoreCaseDataApi ccdApi;
     private final CcdAuthenticatorFactory authenticatorFactory;
 
+    /**
+     * Constructor for the CcdClient.
+     * @param ccdApi The CoreCaseDataApi
+     * @param authenticatorFactory The CcdAuthenticatorFactory
+     */
     public CcdClient(
         CoreCaseDataApi ccdApi,
         CcdAuthenticatorFactory authenticatorFactory
@@ -32,6 +40,12 @@ public class CcdClient {
         this.authenticatorFactory = authenticatorFactory;
     }
 
+    /**
+     * Completes the awaiting payment DCN processing for the given exception record.
+     * @param exceptionRecordCcdId The ID of the exception record in CCD
+     * @param service The service name
+     * @param jurisdiction The jurisdiction name
+     */
     public void completeAwaitingDcnProcessing(
         String exceptionRecordCcdId,
         String service,
@@ -78,6 +92,14 @@ public class CcdClient {
         );
     }
 
+    /**
+     * Starts the event for completing payment DCN processing.
+     * @param authenticator The authenticator
+     * @param jurisdiction The jurisdiction name
+     * @param caseTypeId The case type ID
+     * @param caseRef The case reference
+     * @return The start event response
+     */
     private StartEventResponse startCompleteAwaitingDcnProcessing(
         CcdAuthenticator authenticator,
         String jurisdiction,
@@ -117,6 +139,14 @@ public class CcdClient {
         }
     }
 
+    /**
+     * Submits the event for completing payment DCN processing.
+     * @param authenticator The authenticator
+     * @param jurisdiction The jurisdiction name
+     * @param caseTypeId The case type ID
+     * @param caseRef The case reference
+     * @param caseDataContent The case data content
+     */
     private void submitCompleteAwaitingDcnProcessing(
         CcdAuthenticator authenticator,
         String jurisdiction,
@@ -156,6 +186,11 @@ public class CcdClient {
         }
     }
 
+    /**
+     * Logs the response from CCD.
+     * @param exception The exception
+     * @param introMessage The intro message
+     */
     private void debugCcdException(FeignException exception, String introMessage) {
         log.debug(
             "{}. CCD response: {}",

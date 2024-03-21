@@ -7,6 +7,9 @@ import uk.gov.hmcts.reform.bulkscan.payment.processor.config.JurisdictionToUserM
 import uk.gov.hmcts.reform.idam.client.IdamClient;
 import uk.gov.hmcts.reform.idam.client.models.UserDetails;
 
+/**
+ * Factory for creating {@link CcdAuthenticator} instances.
+ */
 @Service
 @EnableConfigurationProperties(JurisdictionToUserMapping.class)
 public class CcdAuthenticatorFactory {
@@ -15,6 +18,12 @@ public class CcdAuthenticatorFactory {
     private final IdamClient idamClient;
     private final JurisdictionToUserMapping users;
 
+    /**
+     * Constructor for the CcdAuthenticatorFactory.
+     * @param s2sTokenGenerator The S2S token generator
+     * @param idamClient The IDAM client
+     * @param users The users
+     */
     public CcdAuthenticatorFactory(
         AuthTokenGenerator s2sTokenGenerator,
         IdamClient idamClient,
@@ -25,6 +34,9 @@ public class CcdAuthenticatorFactory {
         this.users = users;
     }
 
+    /**
+     * Creates a new {@link CcdAuthenticator} for the given jurisdiction.
+     */
     public CcdAuthenticator createForJurisdiction(String jurisdiction) {
         Credential user = users.getUser(jurisdiction);
 

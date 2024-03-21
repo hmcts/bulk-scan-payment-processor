@@ -1,5 +1,8 @@
 package uk.gov.hmcts.reform.bulkscan.payment.processor.launchdarkly;
 
+/**
+ * Feature flags.
+ */
 public final class Flags {
     private Flags() {
 

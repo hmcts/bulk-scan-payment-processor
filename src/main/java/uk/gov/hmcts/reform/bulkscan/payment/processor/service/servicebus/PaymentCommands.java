@@ -17,6 +17,9 @@ import static uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.
 import static uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.handler.MessageProcessingResultType.SUCCESS;
 import static uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.handler.MessageProcessingResultType.UNRECOVERABLE_FAILURE;
 
+/**
+ * Processes payment messages.
+ */
 @Service
 @Profile("!functional")
 public class PaymentCommands {
@@ -27,6 +30,12 @@ public class PaymentCommands {
     private final PaymentMessageParser paymentMessageParser;
     private final ProcessorClient processorClient;
 
+    /**
+     * Constructor for the PaymentCommands.
+     * @param paymentMessageHandler The payment message handler
+     * @param paymentMessageParser The payment message parser
+     * @param processorClient The processor client
+     */
     public PaymentCommands(
         PaymentMessageHandler paymentMessageHandler,
         PaymentMessageParser paymentMessageParser,
@@ -37,6 +46,12 @@ public class PaymentCommands {
         this.processorClient = processorClient;
     }
 
+    /**
+     * Process the create command.
+     * @param messageId The message ID
+     * @param body The message body
+     * @return The message processing result
+     */
     MessageProcessingResult processCreateCommand(String messageId, BinaryData body) {
         log.info("Started processing payment message with ID {}", messageId);
 
@@ -62,6 +77,12 @@ public class PaymentCommands {
         }
     }
 
+    /**
+     * Process the update command.
+     * @param messageId The message ID
+     * @param messageBody The message body
+     * @return The message processing result
+     */
     MessageProcessingResult processUpdateCommand(String messageId, BinaryData messageBody) {
         log.info("Started processing update payment message with ID {}", messageId);
 
@@ -89,6 +110,12 @@ public class PaymentCommands {
         }
     }
 
+    /**
+     * Log the update message processing error.
+     * @param messageId The message ID
+     * @param paymentMessage The payment message
+     * @param exception The exception
+     */
     private void logUpdateMessageProcessingError(
         String messageId,
         UpdatePaymentMessage paymentMessage,
@@ -114,6 +141,12 @@ public class PaymentCommands {
         log.error(fullMessageWithClientResponse, exception);
     }
 
+    /**
+     * Log processing error.
+     * @param messageId The message ID
+     * @param paymentMessage The payment message
+     * @param exception The exception
+     */
     private void logMessageProcessingError(
         String messageId,
         CreatePaymentMessage paymentMessage,
@@ -135,6 +168,12 @@ public class PaymentCommands {
         log.error(fullMessageWithClientResponse, exception);
     }
 
+    /**
+     * Log finalise error.
+     * @param messageId The message ID
+     * @param processingResultType The processing result type
+     * @param ex The exception
+     */
     public void logMessageFinaliseError(
         String messageId,
         Object processingResultType,

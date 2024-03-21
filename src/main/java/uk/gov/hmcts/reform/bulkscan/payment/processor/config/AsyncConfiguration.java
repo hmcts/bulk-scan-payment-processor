@@ -11,11 +11,19 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 
+/**
+ * Configuration for async executor.
+ */
 @Configuration
 @Profile("!functional")
 public class AsyncConfiguration {
     private Logger logger = LoggerFactory.getLogger(AsyncConfiguration.class);
 
+    /**
+     * Get the async executor.
+     * @param threadPoolSize The thread pool size
+     * @return The executor
+     */
     @Bean(name = "AsyncExecutor")
     public Executor getExecutor(@Value("${bulk-scan-procesor.async.threadpool-size:5}") int threadPoolSize) {
         logger.info("thread pool size {}", threadPoolSize);

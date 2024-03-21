@@ -22,6 +22,9 @@ import org.springframework.jms.support.converter.MessageConversionException;
 import org.springframework.jms.support.converter.MessageConverter;
 import org.springframework.stereotype.Component;
 
+/**
+ * JMS configuration.
+ */
 @Configuration
 @EnableJms
 @ConditionalOnProperty(name = "jms.enabled", havingValue = "true")
@@ -45,12 +48,21 @@ public class JmsConfiguration {
     @Value("${jms.amqp-connection-string-template}")
     public String amqpConnectionStringTemplate;
 
+    /**
+     * Jms properties.
+     * @return The JmsProperties
+     */
     @Primary
     @Bean
     public JmsProperties jmsProperties() {
         return new JmsProperties();
     }
 
+    /**
+     * Payments JMS connection factory.
+     * @param clientId The client id
+     * @return The connection factory
+     */
     @Bean
     public ConnectionFactory paymentsJmsConnectionFactory(@Value("${jms.application-name}") final String clientId) {
         String connection = String.format(amqpConnectionStringTemplate, namespace, idleTimeout);
@@ -64,7 +76,11 @@ public class JmsConfiguration {
         return new CachingConnectionFactory(activeMQConnectionFactory);
     }
 
-    // for if we need to write a message back to a specific queue
+    /**
+     * Payments hearings JMS connection factory.
+     * @param connectionFactory The client id
+     * @return The Jms template with a timeout of 5 seconds
+     */
     @Bean
     public JmsTemplate jmsTemplate(ConnectionFactory connectionFactory) {
         JmsTemplate jmsTemplate = new JmsTemplate();
@@ -73,6 +89,12 @@ public class JmsConfiguration {
         return jmsTemplate;
     }
 
+    /**
+     * Payments event queue container factory.
+     * @param paymentsHearingsJmsConnectionFactory The connection factory
+     * @param jmsProperties The JmsProperties
+     * @return The jms listener container factory
+     */
     @Bean
     public JmsListenerContainerFactory<DefaultMessageListenerContainer> paymentsEventQueueContainerFactory(
         ConnectionFactory paymentsHearingsJmsConnectionFactory,
@@ -88,14 +110,31 @@ public class JmsConfiguration {
         return factory;
     }
 
+    /**
+     * Custom message converter.
+     */
     @Component
     public static class CustomMessageConverter implements MessageConverter {
 
+        /**
+         * Convert object to message.
+         * @param object the object to convert
+         * @param session the Session to use for creating a JMS Message
+         * @return The message
+         * @throws JMSException if thrown by JMS API methods
+         * @throws MessageConversionException if there is a problem with conversion
+         */
         @Override
         public Message toMessage(Object object, Session session) throws JMSException, MessageConversionException {
             return session.createTextMessage(object.toString());
         }
 
+        /**
+         * Convert message to object.
+         * @param message the message to convert
+         * @return The object
+         * @throws MessageConversionException if there is a problem with conversion
+         */
         @Override
         public Object fromMessage(Message message) throws MessageConversionException {
             return message;

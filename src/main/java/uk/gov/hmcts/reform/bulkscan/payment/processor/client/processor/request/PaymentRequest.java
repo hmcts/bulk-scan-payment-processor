@@ -5,10 +5,17 @@ import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.model.P
 
 import java.util.List;
 
+/**
+ * Request to create payment in processor.
+ */
 public class PaymentRequest {
     @JsonProperty(value = "payments", required = true)
     public final List<PaymentInfo> payments;
 
+    /**
+     * Constructor.
+     * @param payments The payments
+     */
     public PaymentRequest(List<PaymentInfo> payments) {
         this.payments = payments;
     }

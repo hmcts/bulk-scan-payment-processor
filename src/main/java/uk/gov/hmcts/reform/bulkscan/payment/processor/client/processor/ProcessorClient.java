@@ -13,6 +13,9 @@ import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.model.P
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 
+/**
+ * Client for Bulk Scan Processor API.
+ */
 @Service
 @Profile("!functional")
 public class ProcessorClient {
@@ -21,6 +24,12 @@ public class ProcessorClient {
     private final BulkScanProcessorApiProxy proxy;
     private final RetryTemplate retryTemplate;
 
+    /**
+     * Constructor for the ProcessorClient.
+     * @param authTokenGenerator The AuthTokenGenerator
+     * @param proxy The BulkScanProcessorApiProxy
+     * @param retryTemplate The RetryTemplate
+     */
     public ProcessorClient(
         AuthTokenGenerator authTokenGenerator,
         BulkScanProcessorApiProxy proxy,
@@ -31,6 +40,11 @@ public class ProcessorClient {
         this.retryTemplate = retryTemplate;
     }
 
+    /**
+     * Update payment status.
+     * @param payments The payments
+     * @return The result
+     */
     @Async("AsyncExecutor")
     public CompletableFuture<Boolean> updatePayments(List<PaymentInfo> payments) {
         PaymentRequest request = new PaymentRequest(payments);
