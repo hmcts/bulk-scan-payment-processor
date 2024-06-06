@@ -200,7 +200,7 @@ dependencies {
   implementation group: 'net.logstash.logback', name: 'logstash-logback-encoder', version: '7.4'
   implementation group: 'com.github.hmcts', name: 'service-auth-provider-java-client', version: '4.1.2'
   implementation group: 'com.github.hmcts', name: 'idam-java-client', version: '3.0.3'
-  implementation group: 'com.github.hmcts', name: 'ccd-client', version: '4.9.2'
+  implementation group: 'com.github.hmcts', name: 'ccd-client', version: 'v5.0.1'
 
   implementation group: 'com.google.guava', name: 'guava', version: '33.0.0-jre'
 
