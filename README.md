@@ -1,10 +1,22 @@
 # bulk-scan-payment-processor
 
-[![Build Status](https://build.platform.hmcts.net/job/HMCTS_BSP/job/bulk-scan-payment-processor/job/master/)
-
 ## Purpose
 
-Retrieve service bus queue messages from payments queue and process them by either creating a new payment record for an exception record in CCD or update an existing CCD exception record reference in payments to use service case reference.
+The Bulk Scan Payment Processor retrieves service bus queue messages from the payments queue and processes them by either:
+
+- Creating a new payment record for an exception record in CCD.
+- Updating an existing CCD exception record reference in payments to use the service case reference.
+
+## Getting Started
+### Prerequisites
+
+- [JDK 17](https://www.oracle.com/java)
+- Project requires Spring Boot v3.x to be present
+
+## Quick Start
+An alternative faster way getting started is by using the automated setup script. This script will help set up all
+bulk scan/print repos including bulk-scan-payment-processor and its dependencies.
+See [common-dev-env-bsbp](https://github.com/hmcts/common-dev-env-bsbp) repository for more information.
 
 ## Building and deploying the application
 
