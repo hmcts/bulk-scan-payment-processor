@@ -4,7 +4,7 @@
 
 The Bulk Scan Payment Processor retrieves service bus queue messages from the payments queue and processes them by either:
 
-- Creating a new payment record for an exception record in CCD.
+- Creating a new payment record for an exception record in CCD
 - Updating an existing CCD exception record reference in payments to use the service case reference.
 
 ## Getting Started
