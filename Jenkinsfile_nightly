@@ -11,6 +11,8 @@ def type = "java"
 def product = "bulk-scan"
 def component = "payment-processor"
 
+env.TESTCONTAINERS_HUB_IMAGE_NAME_PREFIX = 'hmctspublic.azurecr.io/imported/'
+
 def secrets = [
   'bulk-scan-${env}': [
     secret('fortify-on-demand-username', 'FORTIFY_USER_NAME'),
