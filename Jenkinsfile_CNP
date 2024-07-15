@@ -13,6 +13,8 @@ def component = "payment-processor"
 def channel = '#bsp-build-notices'
 GradleBuilder builder = new GradleBuilder(this, product)
 
+env.TESTCONTAINERS_HUB_IMAGE_NAME_PREFIX = 'hmctspublic.azurecr.io/imported/'
+
 def previewSecrets = [
   'bulk-scan-${env}': [
     secret('s2s-secret-payment-processor', 'S2S_SECRET'),
