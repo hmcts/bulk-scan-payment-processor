@@ -9,12 +9,13 @@ locals {
   // configures a user for a service
   // add secrets to all bulk-scan vaults in the form idam-users-<service>-username idam-users-<service>-password
   users = {
-    SSCS     = "idam-users-sscs"
-    BULKSCAN = "idam-users-bulkscan"
-    DIVORCE  = "idam-users-div"
-    PROBATE  = "idam-users-probate"
-    FINREM   = "idam-users-finrem"
-    CMC      = "idam-users-cmc"
+    SSCS        = "idam-users-sscs"
+    BULKSCAN    = "idam-users-bulkscan"
+    DIVORCE     = "idam-users-div"
+    PROBATE     = "idam-users-probate"
+    FINREM      = "idam-users-finrem"
+    CMC         = "idam-users-cmc"
+    PRIVATELAW  = "idam-users-privatelaw"
   }
 
   # maps the names of environment variables representing PayHub site IDs to key vault secret names
