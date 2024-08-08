@@ -9,61 +9,61 @@ locals {
   // configures a user for a service
   // add secrets to all bulk-scan vaults in the form idam-users-<service>-username idam-users-<service>-password
   users = {
-    SSCS        = "idam-users-sscs"
-    BULKSCAN    = "idam-users-bulkscan"
-    DIVORCE     = "idam-users-div"
-    PROBATE     = "idam-users-probate"
-    FINREM      = "idam-users-finrem"
-    CMC         = "idam-users-cmc"
-    PRIVATELAW  = "idam-users-privatelaw"
+    SSCS       = "idam-users-sscs"
+    BULKSCAN   = "idam-users-bulkscan"
+    DIVORCE    = "idam-users-div"
+    PROBATE    = "idam-users-probate"
+    FINREM     = "idam-users-finrem"
+    CMC        = "idam-users-cmc"
+    PRIVATELAW = "idam-users-privatelaw"
   }
 
   # maps the names of environment variables representing PayHub site IDs to key vault secret names
   payhub_sites = {
-    SITE_ID_PROBATE = "site-id-probate"
-    SITE_ID_DIVORCE = "site-id-divorce"
-    SITE_ID_FINREM  = "site-id-finrem"
-    SITE_ID_NFD  = "site-id-nfd"
+    SITE_ID_PROBATE    = "site-id-probate"
+    SITE_ID_DIVORCE    = "site-id-divorce"
+    SITE_ID_FINREM     = "site-id-finrem"
+    SITE_ID_NFD        = "site-id-nfd"
     SITE_ID_PRIVATELAW = "site-id-privatelaw"
     # site-id-bulkscan secret should not be defined in prod
     SITE_ID_BULKSCAN = "site-id-bulkscan"
   }
 
-  all_services          = "${keys(local.users)}"
-  supported_user_keys   = "${matchkeys(local.all_services, local.all_services, var.supported_services)}"
-  supported_user_values = "${matchkeys(values(local.users), local.all_services, var.supported_services)}"
+  all_services          = keys(local.users)
+  supported_user_keys   = matchkeys(local.all_services, local.all_services, var.supported_services)
+  supported_user_values = matchkeys(values(local.users), local.all_services, var.supported_services)
 
   # a subset of local.users, limited to the supported services
-  supported_users = "${zipmap(local.supported_user_keys, local.supported_user_values)}"
+  supported_users = zipmap(local.supported_user_keys, local.supported_user_values)
 
-  users_secret_names = "${values(local.supported_users)}"
+  users_secret_names = values(local.supported_users)
 
-  users_usernames_settings = "${zipmap(
-                                    formatlist("IDAM_USERS_%s_USERNAME", keys(local.supported_users)),
-                                    data.azurerm_key_vault_secret.idam_users_usernames.*.value
-                                )}"
+  users_usernames_settings = (zipmap(
+    formatlist("IDAM_USERS_%s_USERNAME", keys(local.supported_users)),
+    data.azurerm_key_vault_secret.idam_users_usernames.*.value
+  ))
 
-  users_passwords_settings = "${zipmap(
-                                    formatlist("IDAM_USERS_%s_PASSWORD", keys(local.supported_users)),
-                                    data.azurerm_key_vault_secret.idam_users_passwords.*.value
-                                )}"
+  users_passwords_settings = (zipmap(
+    formatlist("IDAM_USERS_%s_PASSWORD", keys(local.supported_users)),
+    data.azurerm_key_vault_secret.idam_users_passwords.*.value
+  ))
 
-  payhub_site_id_secret_names = "${values(local.payhub_sites)}"
+  payhub_site_id_secret_names = values(local.payhub_sites)
 
-  payhub_site_settings = "${zipmap(
-                                    keys(local.payhub_sites),
-                                    data.azurerm_key_vault_secret.payhub_site_ids.*.value
-                                )}"
+  payhub_site_settings = (zipmap(
+    keys(local.payhub_sites),
+    data.azurerm_key_vault_secret.payhub_site_ids.*.value
+  ))
 
   core_app_settings = {
-    PAY_HUB_URL                           = "http://ccpay-bulkscanning-api-${var.env}.service.core-compute-${var.env}.internal"
-    S2S_URL                               = local.s2s_url
-    S2S_SECRET                            = "${data.azurerm_key_vault_secret.s2s_secret.value}"
-    IDAM_API_URL                          = "https://idam-api.${var.env}.platform.hmcts.net"
-    IDAM_CLIENT_REDIRECT_URI              = var.idam_client_redirect_uri
-    CORE_CASE_DATA_API_URL                = "http://ccd-data-store-api-${var.env}.service.core-compute-${var.env}.internal"
-    IDAM_CLIENT_SECRET                    = "${data.azurerm_key_vault_secret.idam_client_secret.value}"
-    PAYMENTS_QUEUE_MAX_DELIVERY_COUNT     = "5"
+    PAY_HUB_URL                       = "http://ccpay-bulkscanning-api-${var.env}.service.core-compute-${var.env}.internal"
+    S2S_URL                           = local.s2s_url
+    S2S_SECRET                        = "${data.azurerm_key_vault_secret.s2s_secret.value}"
+    IDAM_API_URL                      = "https://idam-api.${var.env}.platform.hmcts.net"
+    IDAM_CLIENT_REDIRECT_URI          = var.idam_client_redirect_uri
+    CORE_CASE_DATA_API_URL            = "http://ccd-data-store-api-${var.env}.service.core-compute-${var.env}.internal"
+    IDAM_CLIENT_SECRET                = "${data.azurerm_key_vault_secret.idam_client_secret.value}"
+    PAYMENTS_QUEUE_MAX_DELIVERY_COUNT = "5"
   }
 }
 
@@ -95,21 +95,21 @@ resource "azurerm_key_vault_secret" "bulk_scan_s2s_secret" {
 }
 
 data "azurerm_key_vault_secret" "idam_users_usernames" {
-  count        = "${length(local.users_secret_names)}"
+  count        = length(local.users_secret_names)
   key_vault_id = data.azurerm_key_vault.bulk_scan_key_vault.id
   name         = "${local.users_secret_names[count.index]}-username"
 }
 
 data "azurerm_key_vault_secret" "idam_users_passwords" {
-  count        = "${length(local.users_secret_names)}"
+  count        = length(local.users_secret_names)
   key_vault_id = data.azurerm_key_vault.bulk_scan_key_vault.id
   name         = "${local.users_secret_names[count.index]}-password"
 }
 
 data "azurerm_key_vault_secret" "payhub_site_ids" {
-  count        = "${length(local.payhub_sites)}"
+  count        = length(local.payhub_sites)
   key_vault_id = data.azurerm_key_vault.bulk_scan_key_vault.id
-  name         = "${local.payhub_site_id_secret_names[count.index]}"
+  name         = local.payhub_site_id_secret_names[count.index]
 }
 
 data "azurerm_key_vault_secret" "appinsights_secret" {
