@@ -23,6 +23,8 @@ java:
           alias: SITE_ID_FINREM
         - name: site-id-nfd
           alias: SITE_ID_NFD
+        - name: site-id-privatelaw
+          alias: SITE_ID_PRIVATELAW
         - name: site-id-bulkscan
           alias: SITE_ID_BULKSCAN
         - name: s2s-secret-payment-processor
