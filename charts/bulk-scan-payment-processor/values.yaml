@@ -35,6 +35,8 @@ java:
           alias: SITE_ID_FINREM
         - name: site-id-nfd
           alias: SITE_ID_NFD
+        - name: site-id-privatelaw
+          alias: SITE_ID_PRIVATELAW
         - name: site-id-bulkscan
           alias: SITE_ID_BULKSCAN
         - name: payments-queue-listen-shared-access-key-premium
@@ -61,6 +63,10 @@ java:
           alias: idam.users.probate.username
         - name: idam-users-probate-password
           alias: idam.users.probate.password
+        - name: idam-users-privatelaw-username
+          alias: idam.users.privatelaw.username
+        - name: idam-users-privatelaw-password
+          alias: idam.users.privatelaw.password
         - name: launch-darkly-sdk-key
           alias: LAUNCH_DARKLY_SDK_KEY
         - name: launch-darkly-offline-mode
