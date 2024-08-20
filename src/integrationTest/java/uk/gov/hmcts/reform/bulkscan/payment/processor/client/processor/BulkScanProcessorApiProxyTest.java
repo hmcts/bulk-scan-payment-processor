@@ -5,7 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.client.processor.request.PaymentRequest;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.client.processor.response.PaymentStatusReponse;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.config.IntegrationTest;
-import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.model.PaymentInfo;
+import uk.gov.hmcts.reform.bulkscan.payment.processor.models.PaymentInfo;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.util.TestUtil;
 
 import java.io.IOException;

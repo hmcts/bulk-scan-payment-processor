@@ -1,4 +1,4 @@
-package uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.handler;
+package uk.gov.hmcts.reform.bulkscan.payment.processor.service;
 
 import feign.FeignException;
 import org.slf4j.Logger;
@@ -7,12 +7,13 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.ccd.CcdClient;
-import uk.gov.hmcts.reform.bulkscan.payment.processor.client.payhub.PayHubCallException;
+import uk.gov.hmcts.reform.bulkscan.payment.processor.errorhandling.exception.PayHubCallException;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.client.payhub.PayHubClient;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.client.payhub.request.CaseReferenceRequest;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.client.payhub.request.CreatePaymentRequest;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.client.payhub.response.CreatePaymentResponse;
-import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.PaymentRequestMapper;
+import uk.gov.hmcts.reform.bulkscan.payment.processor.models.CreatePayment;
+import uk.gov.hmcts.reform.bulkscan.payment.processor.models.UpdatePayment;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.model.CreatePaymentMessage;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.model.UpdatePaymentMessage;
 
@@ -21,11 +22,12 @@ import static java.lang.String.format;
 /**
  * Handles payment messages.
  */
+@SuppressWarnings("LoggingSimilarMessage")
 @Service
 @Profile("!functional")
-public class PaymentMessageHandler {
+public class PaymentHubHandlerService {
 
-    private static final Logger log = LoggerFactory.getLogger(PaymentMessageHandler.class);
+    private static final Logger log = LoggerFactory.getLogger(PaymentHubHandlerService.class);
 
     private final AuthTokenGenerator authTokenGenerator;
     private final PaymentRequestMapper paymentRequestMapper;
@@ -39,7 +41,7 @@ public class PaymentMessageHandler {
      * @param payHubClient The PayHub client
      * @param ccdClient The CCD client
      */
-    public PaymentMessageHandler(
+    public PaymentHubHandlerService(
         AuthTokenGenerator authTokenGenerator,
         PaymentRequestMapper paymentRequestMapper,
         PayHubClient payHubClient,
@@ -52,6 +54,111 @@ public class PaymentMessageHandler {
     }
 
     /**
+     * Handles creating a new payment with the payment hub.
+     * @param createPayment The details of the payment to create.
+     */
+    public void handleCreatingPayment(CreatePayment createPayment) {
+        createPaymentNew(createPayment);
+
+        if (createPayment.isExceptionRecord()) {
+            ccdClient.completeAwaitingDcnProcessing(
+                createPayment.getCcdReference(),
+                createPayment.getService(),
+                createPayment.getJurisdiction()
+            );
+        }
+
+    }
+
+    /**
+     * TODO: Rename to createPayment when service buses and old code removed.
+     * Creates payment.
+     * @param createPayment The model containing all the details to create a payment.
+     */
+    private void createPaymentNew(CreatePayment createPayment) {
+        CreatePaymentRequest request = paymentRequestMapper.mapPayments(createPayment);
+
+        log.info(
+            "Sending Payment request with Document Control Numbers: {}, Envelope id: {}, poBox: {}, ccdReference {}",
+            String.join(", ", request.documentControlNumbers),
+            createPayment.getEnvelopeId(),
+            createPayment.getPoBox(),
+            createPayment.getCcdReference()
+        );
+
+        try {
+            CreatePaymentResponse paymentResult = payHubClient.createPayment(
+                authTokenGenerator.generate(),
+                request
+            ).getBody();
+
+            log.info(
+                "Payment response received from PayHub: {}. Envelope id: {}. Ccd case reference: {}",
+                paymentResult == null ? null : String.join(", ", paymentResult.paymentDcns),
+                createPayment.getEnvelopeId(),
+                createPayment.getCcdReference()
+            );
+        } catch (FeignException.Conflict exc) {
+            log.info(
+                "Payment Processed with Http 409, Envelope ID: {}",
+                createPayment.getEnvelopeId()
+            );
+        } catch (FeignException ex) {
+            debugPayHubException(ex, "Failed to call 'createPayment'");
+            throw new PayHubCallException(
+                format(
+                    "Failed creating payment. Envelope ID: %s",
+                    createPayment.getEnvelopeId()
+                ),
+                ex
+            );
+        }
+    }
+
+    /**
+     * TODO: Update naming when service buses are removed.
+     * Updates payment case reference.
+     * @param updatePayment The model containing the details to update a payment.
+     */
+    public void updatePaymentCaseReferenceNew(UpdatePayment updatePayment) {
+        CaseReferenceRequest request = new CaseReferenceRequest(updatePayment.getNewCaseRef());
+
+        log.info(
+            "Sending payment update case reference request. Envelope id: {}, Case ref: {}, Exception record ref: {}",
+            updatePayment.getEnvelopeId(),
+            request.ccdCaseNumber,
+            updatePayment.getExceptionRecordRef()
+        );
+
+        try {
+            payHubClient.updateCaseReference(
+                authTokenGenerator.generate(),
+                updatePayment.getExceptionRecordRef(),
+                request
+            );
+
+            log.info(
+                "Payments have been reassigned in PayHub. Envelope id: {}, Exception record ref: {}, New case ref: {}",
+                updatePayment.getEnvelopeId(),
+                updatePayment.getExceptionRecordRef(),
+                updatePayment.getNewCaseRef()
+            );
+        } catch (FeignException ex) {
+            debugPayHubException(ex, "Failed to call 'updatePaymentCaseReference'");
+            throw new PayHubCallException(
+                format(
+                    "Failed updating payment. Envelope id: %s, Exception record ref: %s, New case ref: %s",
+                    updatePayment.getEnvelopeId(),
+                    updatePayment.getExceptionRecordRef(),
+                    updatePayment.getNewCaseRef()
+                ),
+                ex
+            );
+        }
+    }
+
+    /**
+     * TODO: Remove when Service buses are no longer used.
      * Handles payment message.
      * @param paymentMessage The payment message
      * @param messageId The message ID
@@ -69,6 +176,7 @@ public class PaymentMessageHandler {
     }
 
     /**
+     * TODO: Remove when service buses are removed.
      * Updates payment case reference.
      * @param paymentMessage The payment message
      */
@@ -110,19 +218,21 @@ public class PaymentMessageHandler {
     }
 
     /**
+     * TODO: Remove when service buses are removed.
      * Creates payment.
      * @param paymentMessage The payment message
-     * @param messageId The message ID
      */
     private void createPayment(CreatePaymentMessage paymentMessage, String messageId) {
         CreatePaymentRequest request = paymentRequestMapper.mapPaymentMessage(paymentMessage);
 
         log.info(
-            "Sending Payment request with Document Control Numbers: {}, Envelope id: {}, poBox: {}, ccdReference {}",
+            "Sending Payment request with Document Control Numbers: {}, Envelope id: {}, poBox: {}, ccdReference {},"
+                + "messageId: {}",
             String.join(", ", request.documentControlNumbers),
             paymentMessage.envelopeId,
             paymentMessage.poBox,
-            paymentMessage.ccdReference
+            paymentMessage.ccdReference,
+            messageId
         );
 
         try {
@@ -139,16 +249,14 @@ public class PaymentMessageHandler {
             );
         } catch (FeignException.Conflict exc) {
             log.info(
-                "Payment Processed with Http 409, message ID {}. Envelope ID: {}",
-                messageId,
+                "Payment Processed with Http 409, Envelope ID: {}",
                 paymentMessage.envelopeId
             );
         } catch (FeignException ex) {
             debugPayHubException(ex, "Failed to call 'createPayment'");
             throw new PayHubCallException(
                 format(
-                    "Failed creating payment, message ID %s. Envelope ID: %s",
-                    messageId,
+                    "Failed creating payment. Envelope ID: %s",
                     paymentMessage.envelopeId
                 ),
                 ex

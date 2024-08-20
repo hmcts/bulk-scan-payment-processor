@@ -10,13 +10,14 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.ResponseEntity;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.ccd.CcdClient;
-import uk.gov.hmcts.reform.bulkscan.payment.processor.client.payhub.PayHubCallException;
+import uk.gov.hmcts.reform.bulkscan.payment.processor.errorhandling.exception.PayHubCallException;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.client.payhub.PayHubClient;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.client.payhub.request.CaseReferenceRequest;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.client.payhub.request.CreatePaymentRequest;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.client.payhub.response.CreatePaymentResponse;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.data.producer.SamplePaymentMessageData;
-import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.handler.PaymentMessageHandler;
+import uk.gov.hmcts.reform.bulkscan.payment.processor.service.PaymentHubHandlerService;
+import uk.gov.hmcts.reform.bulkscan.payment.processor.service.PaymentRequestMapper;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.model.CreatePaymentMessage;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.model.UpdatePaymentMessage;
 
@@ -36,7 +37,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-class PaymentMessageHandlerTest {
+class PaymentHubHandlerServiceTest {
 
     @Mock
     private PayHubClient payHubClient;
@@ -50,7 +51,7 @@ class PaymentMessageHandlerTest {
     @Mock
     private CcdClient ccdClient;
 
-    private PaymentMessageHandler messageHandler;
+    private PaymentHubHandlerService messageHandler;
 
     private final FeignException.InternalServerError mockFeignException =
             mock(FeignException.InternalServerError.class);
@@ -58,7 +59,7 @@ class PaymentMessageHandlerTest {
 
     @BeforeEach
     void setUp() {
-        messageHandler = new PaymentMessageHandler(s2sTokenGenerator, requestMapper, payHubClient, ccdClient);
+        messageHandler = new PaymentHubHandlerService(s2sTokenGenerator, requestMapper, payHubClient, ccdClient);
     }
 
     @Test
@@ -118,7 +119,7 @@ class PaymentMessageHandlerTest {
 
         // then
         assertThat(ex.getMessage())
-            .isEqualTo("Failed creating payment, message ID messageId1. Envelope ID: 99999ZS");
+            .isEqualTo("Failed creating payment. Envelope ID: 99999ZS");
         assertThat(ex.getCause()).isEqualTo(exception);
     }
 
@@ -207,7 +208,7 @@ class PaymentMessageHandlerTest {
 
         // then
         assertThat(ex.getMessage())
-            .isEqualTo("Failed creating payment, message ID messageId1. Envelope ID: 99999ZS");
+            .isEqualTo("Failed creating payment. Envelope ID: 99999ZS");
         assertThat(ex.getCause()).isEqualTo(exception);
 
         verify(payHubClient).createPayment(s2sToken, request);

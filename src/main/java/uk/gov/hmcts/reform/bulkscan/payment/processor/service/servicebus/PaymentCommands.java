@@ -7,9 +7,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.client.processor.ProcessorClient;
+import uk.gov.hmcts.reform.bulkscan.payment.processor.service.PaymentHubHandlerService;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.exceptions.InvalidMessageException;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.handler.MessageProcessingResult;
-import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.handler.PaymentMessageHandler;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.model.CreatePaymentMessage;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.model.UpdatePaymentMessage;
 
@@ -26,22 +26,22 @@ public class PaymentCommands {
 
     private static final Logger log = LoggerFactory.getLogger(PaymentCommands.class);
 
-    private final PaymentMessageHandler paymentMessageHandler;
+    private final PaymentHubHandlerService paymentHubHandlerService;
     private final PaymentMessageParser paymentMessageParser;
     private final ProcessorClient processorClient;
 
     /**
      * Constructor for the PaymentCommands.
-     * @param paymentMessageHandler The payment message handler
+     * @param paymentHubHandlerService The payment message handler
      * @param paymentMessageParser The payment message parser
      * @param processorClient The processor client
      */
     public PaymentCommands(
-        PaymentMessageHandler paymentMessageHandler,
+        PaymentHubHandlerService paymentHubHandlerService,
         PaymentMessageParser paymentMessageParser,
         ProcessorClient processorClient
     ) {
-        this.paymentMessageHandler = paymentMessageHandler;
+        this.paymentHubHandlerService = paymentHubHandlerService;
         this.paymentMessageParser = paymentMessageParser;
         this.processorClient = processorClient;
     }
@@ -59,7 +59,7 @@ public class PaymentCommands {
 
         try {
             payment = paymentMessageParser.parse(body);
-            paymentMessageHandler.handlePaymentMessage(payment, messageId);
+            paymentHubHandlerService.handlePaymentMessage(payment, messageId);
             processorClient.updatePayments(payment.payments);
             log.info(
                 "Processed payment message with ID {}. Envelope ID: {}",
@@ -90,7 +90,7 @@ public class PaymentCommands {
 
         try {
             payment = paymentMessageParser.parseUpdateMessage(messageBody);
-            paymentMessageHandler.updatePaymentCaseReference(payment);
+            paymentHubHandlerService.updatePaymentCaseReference(payment);
             log.info(
                 "Processed update payment message with ID {}. Envelope ID: {}",
                 messageId,

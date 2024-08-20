@@ -2,7 +2,7 @@ package uk.gov.hmcts.reform.bulkscan.payment.processor.config;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.ccd.Credential;
-import uk.gov.hmcts.reform.bulkscan.payment.processor.exception.NoUserConfiguredException;
+import uk.gov.hmcts.reform.bulkscan.payment.processor.errorhandling.exception.NoUserConfiguredException;
 
 import java.util.AbstractMap;
 import java.util.HashMap;

@@ -10,7 +10,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.ccd.CcdAuthenticator;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.ccd.CcdAuthenticatorFactory;
-import uk.gov.hmcts.reform.bulkscan.payment.processor.ccd.CcdCallException;
+import uk.gov.hmcts.reform.bulkscan.payment.processor.errorhandling.exception.CcdCallException;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.ccd.CcdClient;
 import uk.gov.hmcts.reform.ccd.client.CoreCaseDataApi;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDataContent;
