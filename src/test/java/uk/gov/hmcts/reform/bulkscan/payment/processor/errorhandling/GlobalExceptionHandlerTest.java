@@ -1,5 +1,6 @@
 package uk.gov.hmcts.reform.bulkscan.payment.processor.errorhandling;
 
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -9,7 +10,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
-import org.junit.jupiter.api.Test;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.errorhandling.exception.CcdCallException;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.errorhandling.exception.PayHubCallException;
 
