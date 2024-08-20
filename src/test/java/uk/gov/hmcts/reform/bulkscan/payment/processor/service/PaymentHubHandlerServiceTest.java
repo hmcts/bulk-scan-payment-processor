@@ -1,4 +1,4 @@
-package uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus;
+package uk.gov.hmcts.reform.bulkscan.payment.processor.service;
 
 import feign.FeignException;
 import org.junit.jupiter.api.BeforeEach;
@@ -16,8 +16,6 @@ import uk.gov.hmcts.reform.bulkscan.payment.processor.client.payhub.request.Crea
 import uk.gov.hmcts.reform.bulkscan.payment.processor.client.payhub.response.CreatePaymentResponse;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.data.producer.SamplePaymentMessageData;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.errorhandling.exception.PayHubCallException;
-import uk.gov.hmcts.reform.bulkscan.payment.processor.service.PaymentHubHandlerService;
-import uk.gov.hmcts.reform.bulkscan.payment.processor.service.PaymentRequestMapper;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.model.CreatePaymentMessage;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.model.UpdatePaymentMessage;
 
