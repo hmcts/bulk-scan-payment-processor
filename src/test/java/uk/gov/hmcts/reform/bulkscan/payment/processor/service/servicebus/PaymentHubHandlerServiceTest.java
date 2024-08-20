@@ -119,7 +119,7 @@ class PaymentHubHandlerServiceTest {
 
         // then
         assertThat(ex.getMessage())
-            .isEqualTo("Failed creating payment. Envelope ID: 99999ZS");
+            .isEqualTo("Failed creating payment, message ID messageId1. Envelope ID: 99999ZS");
         assertThat(ex.getCause()).isEqualTo(exception);
     }
 
@@ -208,7 +208,7 @@ class PaymentHubHandlerServiceTest {
 
         // then
         assertThat(ex.getMessage())
-            .isEqualTo("Failed creating payment. Envelope ID: 99999ZS");
+            .isEqualTo("Failed creating payment, message ID messageId1. Envelope ID: 99999ZS");
         assertThat(ex.getCause()).isEqualTo(exception);
 
         verify(payHubClient).createPayment(s2sToken, request);

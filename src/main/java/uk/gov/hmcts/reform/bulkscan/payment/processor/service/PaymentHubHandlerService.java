@@ -226,13 +226,11 @@ public class PaymentHubHandlerService {
         CreatePaymentRequest request = paymentRequestMapper.mapPaymentMessage(paymentMessage);
 
         log.info(
-            "Sending Payment request with Document Control Numbers: {}, Envelope id: {}, poBox: {}, ccdReference {},"
-                + "messageId: {}",
+            "Sending Payment request with Document Control Numbers: {}, Envelope id: {}, poBox: {}, ccdReference {}",
             String.join(", ", request.documentControlNumbers),
             paymentMessage.envelopeId,
             paymentMessage.poBox,
-            paymentMessage.ccdReference,
-            messageId
+            paymentMessage.ccdReference
         );
 
         try {
@@ -249,14 +247,16 @@ public class PaymentHubHandlerService {
             );
         } catch (FeignException.Conflict exc) {
             log.info(
-                "Payment Processed with Http 409, Envelope ID: {}",
+                "Payment Processed with Http 409, message ID {}. Envelope ID: {}",
+                messageId,
                 paymentMessage.envelopeId
             );
         } catch (FeignException ex) {
             debugPayHubException(ex, "Failed to call 'createPayment'");
             throw new PayHubCallException(
                 format(
-                    "Failed creating payment. Envelope ID: %s",
+                    "Failed creating payment, message ID %s. Envelope ID: %s",
+                    messageId,
                     paymentMessage.envelopeId
                 ),
                 ex
