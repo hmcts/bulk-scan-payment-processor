@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,6 +17,7 @@ import uk.gov.hmcts.reform.bulkscan.payment.processor.service.PaymentService;
 
 @RestController
 @RequestMapping("/payment")
+@Profile("!functional")
 @Tag(name = "Payment API", description = "API for managing payments")
 public class PaymentController {
 
