@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.ccd.Credential;
-import uk.gov.hmcts.reform.bulkscan.payment.processor.exception.NoUserConfiguredException;
+import uk.gov.hmcts.reform.bulkscan.payment.processor.errorhandling.exception.NoUserConfiguredException;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowable;

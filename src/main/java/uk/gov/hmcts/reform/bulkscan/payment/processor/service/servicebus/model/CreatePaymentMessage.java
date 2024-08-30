@@ -2,6 +2,7 @@ package uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import uk.gov.hmcts.reform.bulkscan.payment.processor.models.PaymentInfo;
 
 import java.util.List;
 

@@ -1,4 +1,4 @@
-package uk.gov.hmcts.reform.bulkscan.payment.processor.client.payhub;
+package uk.gov.hmcts.reform.bulkscan.payment.processor.errorhandling.exception;
 
 /**
  * Exception to be thrown when there is an error calling PayHub API.

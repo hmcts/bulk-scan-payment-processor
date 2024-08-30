@@ -1,4 +1,4 @@
-package uk.gov.hmcts.reform.bulkscan.payment.processor.exception;
+package uk.gov.hmcts.reform.bulkscan.payment.processor.errorhandling.exception;
 
 /**
  * NoUserConfiguredException.

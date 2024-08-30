@@ -7,7 +7,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.config.JurisdictionToUserMapping;
-import uk.gov.hmcts.reform.bulkscan.payment.processor.exception.NoUserConfiguredException;
+import uk.gov.hmcts.reform.bulkscan.payment.processor.errorhandling.exception.NoUserConfiguredException;
 import uk.gov.hmcts.reform.idam.client.IdamClient;
 import uk.gov.hmcts.reform.idam.client.models.UserDetails;
 
