@@ -1,4 +1,4 @@
-package uk.gov.hmcts.reform.bulkscan.payment.processor.ccd;
+package uk.gov.hmcts.reform.bulkscan.payment.processor.errorhandling.exception;
 
 /**
  * Exception to be thrown when there is an error calling CCD API.

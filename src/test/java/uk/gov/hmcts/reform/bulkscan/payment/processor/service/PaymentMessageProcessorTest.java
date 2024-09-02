@@ -17,7 +17,6 @@ import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.Payment
 import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.PaymentMessageParser;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.PaymentMessageProcessor;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.exceptions.InvalidMessageException;
-import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.handler.PaymentMessageHandler;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.model.UpdatePaymentMessage;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -49,7 +48,7 @@ class PaymentMessageProcessorTest {
     private ServiceBusReceivedMessage message;
 
     @Mock
-    private PaymentMessageHandler paymentMessageHandler;
+    private PaymentHubHandlerService paymentHubHandlerService;
 
     @Mock
     private PaymentMessageParser paymentMessageParser;
@@ -67,7 +66,7 @@ class PaymentMessageProcessorTest {
     @BeforeEach
     void before() {
         paymentCommands = new PaymentCommands(
-            paymentMessageHandler,
+            paymentHubHandlerService,
             paymentMessageParser,
             processorClient
         );
@@ -210,7 +209,7 @@ class PaymentMessageProcessorTest {
 
 
         // given an error occurs during message processing
-        willThrow(processingFailureCause).given(paymentMessageHandler).handlePaymentMessage(any(), any());
+        willThrow(processingFailureCause).given(paymentHubHandlerService).handlePaymentMessage(any(), any());
 
         // when
         paymentMessageProcessor.processNextMessage(serviceBusReceivedMessageContext);
@@ -246,7 +245,7 @@ class PaymentMessageProcessorTest {
                         )
             );
         // given an error occurs during message processing
-        willThrow(processingFailureCause).given(paymentMessageHandler).updatePaymentCaseReference(any());
+        willThrow(processingFailureCause).given(paymentHubHandlerService).updatePaymentCaseReference(any());
 
         // when
         paymentMessageProcessor.processNextMessage(serviceBusReceivedMessageContext);
@@ -272,7 +271,7 @@ class PaymentMessageProcessorTest {
         Exception processingFailureCause = new RuntimeException(RECOVERABLE_EXCEPTION_MESSAGE);
 
         // and an error occurs during message processing
-        willThrow(processingFailureCause).given(paymentMessageHandler).handlePaymentMessage(any(), any());
+        willThrow(processingFailureCause).given(paymentHubHandlerService).handlePaymentMessage(any(), any());
 
         // when
         paymentMessageProcessor.processNextMessage(serviceBusReceivedMessageContext);
@@ -323,7 +322,7 @@ class PaymentMessageProcessorTest {
         Exception processingFailureCause = new RuntimeException(RECOVERABLE_EXCEPTION_MESSAGE);
 
         // and an error occurs during message processing
-        willThrow(processingFailureCause).given(paymentMessageHandler).updatePaymentCaseReference(any());
+        willThrow(processingFailureCause).given(paymentHubHandlerService).updatePaymentCaseReference(any());
 
         // when
         paymentMessageProcessor.processNextMessage(serviceBusReceivedMessageContext);

@@ -10,7 +10,7 @@ import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.client.processor.request.PaymentRequest;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.client.processor.response.PaymentStatusReponse;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.config.IntegrationTest;
-import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.model.PaymentInfo;
+import uk.gov.hmcts.reform.bulkscan.payment.processor.models.PaymentInfo;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -58,7 +58,7 @@ public class ProcessorClientTest {
     }
 
     @Test
-    void should_update_payemnts_after_two_server_failure() throws ExecutionException, InterruptedException {
+    void should_update_payments_after_two_server_failure() throws ExecutionException, InterruptedException {
         List<PaymentInfo> paymentInfoList = of(
             new PaymentInfo("11234"),
             new PaymentInfo("22234"),
