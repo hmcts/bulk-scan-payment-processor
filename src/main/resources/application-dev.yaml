@@ -57,6 +57,10 @@ site-mappings:
       poBoxes:
         - 13226
       siteId: ${SITE_ID_NFD}
+    - siteName: PRIVATELAW
+      poBoxes:
+        - 13235
+      siteId: ${SITE_ID_PRIVATELAW}
     - siteName: BULKSCAN
       poBoxes:
         - BULKSCANPO
