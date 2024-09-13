@@ -7,7 +7,7 @@ plugins {
   id 'org.springframework.boot' version '3.2.7'
   id 'org.owasp.dependencycheck' version '9.1.0'
   id 'com.github.ben-manes.versions' version '0.51.0'
-  id 'org.sonarqube' version '4.4.1.3373'
+  id 'org.sonarqube' version '5.0.0.4638'
   id 'io.freefair.lombok' version '8.6'
 }
 
@@ -16,7 +16,7 @@ version = '0.0.1'
 
 java {
   toolchain {
-    languageVersion = JavaLanguageVersion.of(17)
+    languageVersion = JavaLanguageVersion.of(21)
   }
 }
 
@@ -106,8 +106,6 @@ pmd {
 jacocoTestReport {
   executionData(test, integration)
   reports {
-    xml.enabled = true
-    csv.enabled = false
     xml.destination = file("${project.buildDir}/reports/jacoco/test/jacocoTestReport.xml")
   }
   afterEvaluate {
@@ -125,7 +123,6 @@ sonarqube {
   properties {
     property "sonar.projectName", "Reform :: Bulk Scan Payment Processor"
     property "sonar.projectKey", "uk.gov.hmcts.reform:bulk-scan-payment-processor"
-    property "sonar.coverage.jacoco.xmlReportPaths", jacocoTestReport.reports.xml.destination.path
     property "sonar.exclusions", "**/config/**,**/Application.java,**/service/servicebus/JmsPaymentMessageProcessor.java"
   }
 }
