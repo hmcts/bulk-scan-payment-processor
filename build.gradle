@@ -106,7 +106,9 @@ pmd {
 jacocoTestReport {
   executionData(test, integration)
   reports {
-    xml.destination = file("${project.buildDir}/reports/jacoco/test/jacocoTestReport.xml")
+    xml.required.set(true)
+    csv.required.set(false)
+    xml.outputLocation.set(layout.buildDirectory.file("reports/jacoco/test/jacocoTestReport.xml"))
   }
   afterEvaluate {
     getClassDirectories().from = getClassDirectories().files.collect {
