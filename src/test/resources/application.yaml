@@ -1,0 +1,18 @@
+pay-hub:
+  api:
+    url: ${PAY_HUB_URL:AAAAAAAA}
+
+bulk-scan-procesor:
+  api:
+    url: ${PROCESSOR_URL:AAAAAAAA}
+
+idam:
+  s2s-auth:
+    url: ${S2S_URL:http://localhost:4552}
+    secret: ${S2S_SECRET:AAAAAAAAAAAAAAAA}
+  api:
+    url: ${IDAM_API_URL:AAAAAAAA}
+
+core_case_data:
+  api:
+    url: ${CORE_CASE_DATA_API_URL:AAAAAAAA}
