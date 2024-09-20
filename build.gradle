@@ -99,7 +99,7 @@ pmd {
   toolVersion = "6.55.0"
   ignoreFailures = true
   sourceSets = [sourceSets.main, sourceSets.test, sourceSets.functionalTest, sourceSets.integrationTest, sourceSets.smokeTest]
-  reportsDir = file("$project.buildDir/reports/pmd")
+  reportsDir = layout.buildDirectory.dir("reports/pmd").get().asFile
   ruleSetFiles = files("config/pmd/ruleset.xml")
 }
 
@@ -125,6 +125,7 @@ sonarqube {
   properties {
     property "sonar.projectName", "Reform :: Bulk Scan Payment Processor"
     property "sonar.projectKey", "uk.gov.hmcts.reform:bulk-scan-payment-processor"
+    property "sonar.coverage.jacoco.xmlReportPaths", jacocoTestReport.reports.xml.outputLocation.get().asFile.absolutePath
     property "sonar.exclusions", "**/config/**,**/Application.java,**/service/servicebus/JmsPaymentMessageProcessor.java"
   }
 }
