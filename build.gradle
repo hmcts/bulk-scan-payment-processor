@@ -16,7 +16,7 @@ version = '0.0.1'
 
 java {
   toolchain {
-    languageVersion = JavaLanguageVersion.of(17)
+    languageVersion = JavaLanguageVersion.of(21)
   }
 }
 
@@ -99,16 +99,16 @@ pmd {
   toolVersion = "6.55.0"
   ignoreFailures = true
   sourceSets = [sourceSets.main, sourceSets.test, sourceSets.functionalTest, sourceSets.integrationTest, sourceSets.smokeTest]
-  reportsDir = file("$project.buildDir/reports/pmd")
+  reportsDir = layout.buildDirectory.dir("reports/pmd").get().asFile
   ruleSetFiles = files("config/pmd/ruleset.xml")
 }
 
 jacocoTestReport {
   executionData(test, integration)
   reports {
-    xml.required = true
-    csv.required = false
-    xml.outputLocation = file("${buildDir}/reports/jacoco/test/jacocoTestReport.xml")
+    xml.required.set(true)
+    csv.required.set(false)
+    xml.outputLocation.set(layout.buildDirectory.file("reports/jacoco/test/jacocoTestReport.xml"))
   }
   afterEvaluate {
     getClassDirectories().from = getClassDirectories().files.collect {
@@ -125,6 +125,7 @@ sonarqube {
   properties {
     property "sonar.projectName", "Reform :: Bulk Scan Payment Processor"
     property "sonar.projectKey", "uk.gov.hmcts.reform:bulk-scan-payment-processor"
+    property "sonar.coverage.jacoco.xmlReportPaths", jacocoTestReport.reports.xml.outputLocation.get().asFile.absolutePath
     property "sonar.exclusions", "**/config/**,**/Application.java,**/service/servicebus/JmsPaymentMessageProcessor.java"
   }
 }
