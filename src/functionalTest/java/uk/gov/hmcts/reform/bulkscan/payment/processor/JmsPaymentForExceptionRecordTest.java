@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.ccd.CcdAuthenticator;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.ccd.CcdAuthenticatorFactory;
@@ -13,6 +14,7 @@ import uk.gov.hmcts.reform.bulkscan.payment.processor.helper.ExceptionRecordCrea
 import uk.gov.hmcts.reform.bulkscan.payment.processor.helper.JmsPaymentsMessageSender;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.model.CreatePaymentsCommand;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.model.PaymentData;
+import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.PaymentMessageProcessor;
 import uk.gov.hmcts.reform.ccd.client.CoreCaseDataApi;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
 
@@ -23,8 +25,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
 
 @SpringBootTest
-@ActiveProfiles("functional")
-@Disabled // For local dev testing only
+@ActiveProfiles("dev")
 class JmsPaymentForExceptionRecordTest {
 
     private static final String AWAITING_DNC_PROCESSING_FLAG_NAME = "awaitingPaymentDCNProcessing";
@@ -32,6 +33,9 @@ class JmsPaymentForExceptionRecordTest {
     private static final String NO = "No";
     private static final String JURISDICTION = "BULKSCAN";
     private static final String BULKSCAN_PO_BOX = "BULKSCANPO1";
+
+    @MockBean
+    private PaymentMessageProcessor paymentMessageProcessor;
 
     @Autowired
     private CoreCaseDataApi coreCaseDataApi;

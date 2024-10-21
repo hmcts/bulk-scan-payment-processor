@@ -17,7 +17,7 @@ import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.handler
  * For LOCAL Dev Only. For AAT and upwards Azure Service Bus is used
  */
 @Service
-@Profile("!functional & !integration")
+@Profile("dev")
 public class JmsPaymentMessageProcessor {
     private static final Logger log = LoggerFactory.getLogger(JmsPaymentMessageProcessor.class);
 

@@ -46,6 +46,8 @@ class PaymentForExceptionRecordTest {
     @Autowired
     private CcdAuthenticatorFactory ccdAuthenticatorFactory;
 
+    // Note: if running locally, refer to JmsPaymentForExceptionRecordTest, not this one
+    // Remove @Disabled on the other if you want to run it locally
     @Test
     public void should_set_awaiting_payment_false_after_payment_sent() {
         // given
