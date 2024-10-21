@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.model.CreatePaymentsCommand;
 
 @Service
-@Profile("functional")
+@Profile("dev")
 public class JmsPaymentsMessageSender {
 
     private static final Logger log = LoggerFactory.getLogger(JmsPaymentsMessageSender.class);
@@ -44,7 +44,7 @@ public class JmsPaymentsMessageSender {
     }
 
     public ConnectionFactory getTestFactory() {
-        String connection = String.format("amqp://localhost:%1s?amqp.idleTimeout=%2d", "5672", 30000);
+        String connection = "tcp://localhost:61616";
         ActiveMQConnectionFactory activeMQConnectionFactory = new ActiveMQConnectionFactory(connection);
         activeMQConnectionFactory.setUserName("admin");
         activeMQConnectionFactory.setPassword("admin");
