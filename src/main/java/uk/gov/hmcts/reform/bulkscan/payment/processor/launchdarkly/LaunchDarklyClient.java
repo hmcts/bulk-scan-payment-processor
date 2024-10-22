@@ -1,6 +1,6 @@
 package uk.gov.hmcts.reform.bulkscan.payment.processor.launchdarkly;
 
-import com.launchdarkly.sdk.LDUser;
+import com.launchdarkly.sdk.LDContext;
 import com.launchdarkly.sdk.server.interfaces.DataSourceStatusProvider;
 import com.launchdarkly.sdk.server.interfaces.LDClientInterface;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,9 +12,7 @@ import org.springframework.stereotype.Service;
  */
 @Service
 public class LaunchDarklyClient {
-    public static final LDUser BULK_SCAN_PAYMENT_PROCESSOR_USER = new LDUser.Builder("bulk-scan-payment-processor")
-            .anonymous(true)
-            .build();
+    public final LDContext bulkScanPaymentProcessorContext;
 
     private final LDClientInterface internalClient;
 
@@ -31,6 +29,7 @@ public class LaunchDarklyClient {
         @Value("${launchdarkly.offline-mode:false}") Boolean offlineMode
     ) {
         this.internalClient = launchDarklyClientFactory.create(sdkKey, offlineMode);
+        this.bulkScanPaymentProcessorContext = LDContext.builder(sdkKey).build();
     }
 
     /**
@@ -39,7 +38,7 @@ public class LaunchDarklyClient {
      * @return True if the feature is enabled
      */
     public boolean isFeatureEnabled(String feature) {
-        return internalClient.boolVariation(feature, LaunchDarklyClient.BULK_SCAN_PAYMENT_PROCESSOR_USER, false);
+        return internalClient.boolVariation(feature, bulkScanPaymentProcessorContext, false);
     }
 
     /**
@@ -48,7 +47,7 @@ public class LaunchDarklyClient {
      * @param user The user
      * @return True if the feature is enabled
      */
-    public boolean isFeatureEnabled(String feature, LDUser user) {
+    public boolean isFeatureEnabled(String feature, LDContext user) {
         return internalClient.boolVariation(feature, user, false);
     }
 
