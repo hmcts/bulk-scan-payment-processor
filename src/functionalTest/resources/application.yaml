@@ -38,3 +38,11 @@ scheduling:
   task:
     consume-payments-queue:
       enabled: false
+
+site-mappings:
+  sites:
+    - siteName: BULKSCAN
+      poBoxes:
+        - BULKSCANPO
+        - BULKSCANPO1
+      siteId: ${SITE_ID_BULKSCAN}
