@@ -10,8 +10,9 @@ import uk.gov.hmcts.reform.bulkscan.payment.processor.ccd.CcdAuthenticatorFactor
 import uk.gov.hmcts.reform.bulkscan.payment.processor.helper.CaseSearcher;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.helper.ExceptionRecordCreator;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.helper.PaymentsMessageSender;
-import uk.gov.hmcts.reform.bulkscan.payment.processor.model.CreatePaymentsCommand;
-import uk.gov.hmcts.reform.bulkscan.payment.processor.model.PaymentData;
+import uk.gov.hmcts.reform.bulkscan.payment.processor.models.CreatePayment;
+import uk.gov.hmcts.reform.bulkscan.payment.processor.models.PaymentInfo;
+import uk.gov.hmcts.reform.bulkscan.payment.processor.service.PaymentService;
 import uk.gov.hmcts.reform.ccd.client.CoreCaseDataApi;
 import uk.gov.hmcts.reform.ccd.client.model.CaseDetails;
 
@@ -41,6 +42,8 @@ class PaymentForExceptionRecordTest {
     private CaseSearcher caseSearcher;
 
     @Autowired
+    private PaymentService paymentService;
+    @Autowired
     private PaymentsMessageSender paymentsMessageSender;
 
     @Autowired
@@ -59,16 +62,15 @@ class PaymentForExceptionRecordTest {
 
         // when
         // payment sent to payments queue
-        paymentsMessageSender.send(
-            new CreatePaymentsCommand(
+        paymentService.createPayment(
+            new CreatePayment(
                 "some_envelope_id",
                 Long.toString(caseDetails.getId()),
+                true,
+                BULKSCAN_PO_BOX,
                 caseDetails.getJurisdiction(),
                 "bulkscan",
-                BULKSCAN_PO_BOX,
-                true,
-                // document_control_number length must be exactly 21 Characters
-                singletonList(new PaymentData("154565768345123456789"))
+                singletonList(new PaymentInfo("154565768345123456789"))
             )
         );
 

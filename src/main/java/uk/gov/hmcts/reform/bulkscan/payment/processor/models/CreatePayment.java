@@ -41,4 +41,19 @@ public class CreatePayment {
     @JsonProperty(value = "payments", required = true)
     @NotEmpty(message = "Payments list is required")
     private final List<PaymentInfo> payments;
+
+    public CreatePayment(String envelopeId,
+                         String ccdReference,
+                         boolean isExceptionRecord,
+                         String poBox, String jurisdiction,
+                         String service,
+                         List<PaymentInfo> payments) {
+        this.envelopeId = envelopeId;
+        this.ccdReference = ccdReference;
+        this.isExceptionRecord = isExceptionRecord;
+        this.poBox = poBox;
+        this.jurisdiction = jurisdiction;
+        this.service = service;
+        this.payments = payments;
+    }
 }
