@@ -13,7 +13,6 @@ import java.util.Map;
  * Configuration for site mappings.
  */
 @ConfigurationProperties(prefix = "site-mappings")
-@Profile("!functional")
 public class SiteConfiguration {
     private List<Sites> sites;
 
