@@ -3,7 +3,6 @@ package uk.gov.hmcts.reform.bulkscan.payment.processor.service;
 import feign.FeignException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.ccd.CcdClient;
@@ -24,7 +23,6 @@ import static java.lang.String.format;
  */
 @SuppressWarnings("LoggingSimilarMessage")
 @Service
-@Profile("!functional")
 public class PaymentHubHandlerService {
 
     private static final Logger log = LoggerFactory.getLogger(PaymentHubHandlerService.class);
