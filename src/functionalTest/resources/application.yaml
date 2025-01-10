@@ -50,3 +50,11 @@ site-mappings:
 pay-hub:
   api:
     url: 'http://ccpay-bulkscanning-api-aat.service.core-compute-aat.internal'
+
+bulk-scan-procesor:
+  api:
+    url: 'http://bulk-scan-processor-aat.service.core-compute-aat.internal'
+    retries: 10
+    wait-time-in-ms: 1000
+  async:
+    threadpool-size:5
