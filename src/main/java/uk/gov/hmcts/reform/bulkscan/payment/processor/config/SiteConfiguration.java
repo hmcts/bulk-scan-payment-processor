@@ -2,6 +2,7 @@ package uk.gov.hmcts.reform.bulkscan.payment.processor.config;
 
 import jakarta.annotation.PostConstruct;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.stereotype.Component;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.errorhandling.exception.SiteConfigurationException;
 
 import java.util.HashMap;
@@ -11,6 +12,7 @@ import java.util.Map;
 /**
  * Configuration for site mappings.
  */
+@Component
 @ConfigurationProperties(prefix = "site-mappings")
 public class SiteConfiguration {
     private List<Sites> sites;
