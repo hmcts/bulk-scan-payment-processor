@@ -49,4 +49,4 @@ site-mappings:
 
 pay-hub:
   api:
-    url: ${PAY_HUB_URL}
+    url: 'http://ccpay-bulkscanning-api-aat.service.core-compute-aat.internal'
