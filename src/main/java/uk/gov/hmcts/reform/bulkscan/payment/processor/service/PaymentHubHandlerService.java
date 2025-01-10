@@ -13,8 +13,8 @@ import uk.gov.hmcts.reform.bulkscan.payment.processor.client.payhub.response.Cre
 import uk.gov.hmcts.reform.bulkscan.payment.processor.errorhandling.exception.PayHubCallException;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.models.CreatePayment;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.models.UpdatePayment;
-import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.model.CreatePaymentMessage;
-import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.model.UpdatePaymentMessage;
+import uk.gov.hmcts.reform.bulkscan.payment.processor.service.model.CreatePaymentMessage;
+import uk.gov.hmcts.reform.bulkscan.payment.processor.service.model.UpdatePaymentMessage;
 
 import static java.lang.String.format;
 

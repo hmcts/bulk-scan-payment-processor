@@ -1,4 +1,4 @@
-package uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.model;
+package uk.gov.hmcts.reform.bulkscan.payment.processor.service.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;

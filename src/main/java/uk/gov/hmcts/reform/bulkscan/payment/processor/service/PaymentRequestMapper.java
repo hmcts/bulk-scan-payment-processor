@@ -8,8 +8,8 @@ import uk.gov.hmcts.reform.bulkscan.payment.processor.config.SiteConfiguration;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.errorhandling.exception.SiteNotFoundException;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.models.CreatePayment;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.models.PaymentInfo;
-import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.exceptions.InvalidMessageException;
-import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.model.CreatePaymentMessage;
+import uk.gov.hmcts.reform.bulkscan.payment.processor.service.exceptions.InvalidMessageException;
+import uk.gov.hmcts.reform.bulkscan.payment.processor.service.model.CreatePaymentMessage;
 
 import java.util.List;
 import java.util.stream.Collectors;
