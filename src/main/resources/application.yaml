@@ -88,7 +88,3 @@ springdoc:
   packagesToScan: uk.gov.hmcts.reform.bulkscan.payment.processor
   pathsToMatch: /**
 
-jms:
-  # Set to disable configuration in envs besides local/dev
-  enabled: ${JMS_ENABLED:false}
-

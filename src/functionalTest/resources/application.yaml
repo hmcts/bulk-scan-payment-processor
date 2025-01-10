@@ -6,13 +6,6 @@ spring:
     # TODO: remove when possible
     allow-bean-definition-overriding: true
 
-azure:
-  servicebus:
-    payments:
-      namespace: ${PAYMENTS_QUEUE_NAMESPACE}
-      write-access-key: ${PAYMENTS_QUEUE_WRITE_ACCESS_KEY}
-      write-access-key-name: ${PAYMENTS_QUEUE_WRITE_ACCESS_KEY_NAME}
-      queue-name: ${PAYMENTS_QUEUE_NAME}
 idam:
   s2s-auth:
     url: ${S2S_URL}
@@ -32,12 +25,6 @@ idam:
 core_case_data:
   api:
     url: ${CORE_CASE_DATA_API_URL}
-
-scheduling:
-  enabled: false
-  task:
-    consume-payments-queue:
-      enabled: false
 
 site-mappings:
   sites:
