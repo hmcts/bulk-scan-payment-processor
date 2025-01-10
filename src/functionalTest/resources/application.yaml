@@ -45,7 +45,7 @@ site-mappings:
       poBoxes:
         - BULKSCANPO
         - BULKSCANPO1
-      siteId: ${SITE_ID_BULKSCAN}
+      siteId: AA08
 
 pay-hub:
   api:
