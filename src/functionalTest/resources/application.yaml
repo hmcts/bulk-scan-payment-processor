@@ -46,3 +46,7 @@ site-mappings:
         - BULKSCANPO
         - BULKSCANPO1
       siteId: ${SITE_ID_BULKSCAN}
+
+pay-hub:
+  api:
+    url: ${PAY_HUB_URL}
