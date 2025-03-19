@@ -191,7 +191,7 @@ dependencies {
   implementation group: 'org.springframework.boot', name: 'spring-boot-starter-batch', {
     exclude group: 'org.springframework.boot', module: 'spring-boot-starter-jdbc'
   }
-  implementation group: 'org.apache.httpcomponents.client5', name: 'httpclient5', version: '5.4.2'
+  implementation group: 'org.apache.httpcomponents.client5', name: 'httpclient5', version: '5.3.1'
   implementation group: 'javax.jms', name: 'javax.jms-api', version: '2.0.1'
 
   implementation group: 'javax.xml.bind', name: 'jaxb-api', version: '2.3.1' // Needed for openjdk 11 to execute test
@@ -205,7 +205,7 @@ dependencies {
   implementation group: 'com.github.hmcts', name: 'idam-java-client', version: '3.0.3'
   implementation group: 'com.github.hmcts', name: 'ccd-client', version: '5.0.3'
 
-  implementation group: 'com.google.guava', name: 'guava', version: '33.4.0-jre'
+  implementation group: 'com.google.guava', name: 'guava', version: '33.3.1-jre'
 
   implementation group: 'com.launchdarkly', name: 'launchdarkly-java-server-sdk', version: '7.7.0'
 
@@ -216,7 +216,7 @@ dependencies {
   implementation group: 'io.github.openfeign', name: 'feign-httpclient', version: versions.openFeign
   implementation group: 'io.github.openfeign', name: 'feign-jackson', version: versions.openFeign
 
-  implementation group: 'org.apache.qpid', name: 'qpid-jms-client', version: '2.7.0'
+  implementation group: 'org.apache.qpid', name: 'qpid-jms-client', version: '2.5.0'
 
   testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: versions.junit
   testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: versions.junit
