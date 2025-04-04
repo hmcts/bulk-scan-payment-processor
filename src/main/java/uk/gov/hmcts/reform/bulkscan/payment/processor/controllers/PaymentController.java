@@ -5,15 +5,17 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.context.annotation.Profile;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import uk.gov.hmcts.reform.bulkscan.payment.processor.errorhandling.exception.PayHubCallException;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.models.CreatePayment;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.models.UpdatePayment;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.service.PaymentService;
+
+import static java.lang.String.format;
 
 @RestController
 @RequestMapping("/payment")
@@ -37,8 +39,13 @@ public class PaymentController {
     @ApiResponse(responseCode = "424", description = "Error back from payment hub")
     @ApiResponse(responseCode = "424", description = "Error back from CCD")
     public ResponseEntity<String> createPayment(@Valid @RequestBody CreatePayment createPayment) {
-        paymentService.createPayment(createPayment);
-        return new ResponseEntity<>("Payment created successfully", HttpStatus.CREATED);
+        throw new PayHubCallException(
+            format(
+                "Failed creating payment. Envelope ID: %s",
+                createPayment.getEnvelopeId()
+            ),
+            new RuntimeException("Payment failed")
+        );
     }
 
     @PostMapping("/update")
@@ -51,8 +58,13 @@ public class PaymentController {
     @ApiResponse(responseCode = "424", description = "Error back from payment hub")
     @ApiResponse(responseCode = "424", description = "Error back from CCD")
     public ResponseEntity<String> updatePayment(@Valid @RequestBody UpdatePayment updatePayment) {
-        paymentService.updatePayment(updatePayment);
-        return new ResponseEntity<>("Payment updated successfully", HttpStatus.OK);
+        throw new PayHubCallException(
+            format(
+                "Failed creating payment. Envelope ID: %s",
+                updatePayment.getEnvelopeId()
+            ),
+            new RuntimeException("Payment failed")
+        );
     }
 }
 
