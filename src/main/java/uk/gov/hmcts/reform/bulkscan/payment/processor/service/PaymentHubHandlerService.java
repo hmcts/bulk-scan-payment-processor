@@ -61,6 +61,8 @@ public class PaymentHubHandlerService {
         createPaymentNew(createPayment);
 
         if (createPayment.isExceptionRecord()) {
+            log.info("Sending request to complete awaiting payment DCN processing. Envelope ID: {}",
+                     createPayment.getEnvelopeId());
             ccdClient.completeAwaitingDcnProcessing(
                 createPayment.getCcdReference(),
                 createPayment.getService(),
@@ -167,6 +169,8 @@ public class PaymentHubHandlerService {
         createPayment(paymentMessage, messageId);
 
         if (paymentMessage.isExceptionRecord) {
+            log.info("Sending request to complete awaiting payment DCN processing. Envelope ID: {}",
+                     paymentMessage.envelopeId);
             ccdClient.completeAwaitingDcnProcessing(
                 paymentMessage.ccdReference,
                 paymentMessage.service,
