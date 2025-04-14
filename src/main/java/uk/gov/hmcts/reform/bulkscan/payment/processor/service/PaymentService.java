@@ -26,12 +26,20 @@ public class PaymentService {
      * @param createPayment The details containing the payment to create.
      */
     public void createPayment(CreatePayment createPayment) {
-        log.info("Start processing payment creation with ID {}", createPayment.getEnvelopeId());
+        log.info("Start processing payment creation with ID {}, CCD ID: {}, Exception record: {}",
+                 createPayment.getEnvelopeId(),
+                 createPayment.getCcdReference(),
+                 createPayment.isExceptionRecord()
+        );
 
         paymentHubHandlerService.handleCreatingPayment(createPayment);
         processorClient.updatePayments(createPayment.getPayments());
 
-        log.info("Processed payment message with envelope ID {}", createPayment.getEnvelopeId());
+        log.info("Processed payment message with ID {}, CCD ID: {}, Exception record: {}",
+                 createPayment.getEnvelopeId(),
+                 createPayment.getCcdReference(),
+                 createPayment.isExceptionRecord()
+        );
     }
 
     /**
