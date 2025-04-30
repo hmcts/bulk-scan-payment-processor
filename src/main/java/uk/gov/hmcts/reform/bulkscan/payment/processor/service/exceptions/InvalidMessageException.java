@@ -1,4 +1,4 @@
-package uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.exceptions;
+package uk.gov.hmcts.reform.bulkscan.payment.processor.service.exceptions;
 
 /**
  * InvalidMessageException.

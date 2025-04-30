@@ -1,7 +1,6 @@
 package uk.gov.hmcts.reform.bulkscan.payment.processor.service;
 
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.client.payhub.request.CreatePaymentRequest;
@@ -9,8 +8,8 @@ import uk.gov.hmcts.reform.bulkscan.payment.processor.config.SiteConfiguration;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.errorhandling.exception.SiteNotFoundException;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.models.CreatePayment;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.models.PaymentInfo;
-import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.exceptions.InvalidMessageException;
-import uk.gov.hmcts.reform.bulkscan.payment.processor.service.servicebus.model.CreatePaymentMessage;
+import uk.gov.hmcts.reform.bulkscan.payment.processor.service.exceptions.InvalidMessageException;
+import uk.gov.hmcts.reform.bulkscan.payment.processor.service.model.CreatePaymentMessage;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -20,7 +19,6 @@ import java.util.stream.Collectors;
  */
 @Component
 @EnableConfigurationProperties(SiteConfiguration.class)
-@Profile("!functional")
 public class PaymentRequestMapper {
 
     private final SiteConfiguration siteConfiguration;
