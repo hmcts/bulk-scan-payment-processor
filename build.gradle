@@ -166,8 +166,8 @@ repositories {
 }
 
 def versions = [
-  junit           : '5.11.0',
-  junitPlatform   : '1.11.0',
+  junit           : '5.13.0',
+  junitPlatform   : '1.13.0',
   reformLogging   : '6.0.1',
   springBoot      : springBoot.class.package.implementationVersion,
   openFeign       : '13.5'
