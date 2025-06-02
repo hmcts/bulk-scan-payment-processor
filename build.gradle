@@ -216,7 +216,7 @@ dependencies {
   implementation group: 'io.github.openfeign', name: 'feign-httpclient', version: versions.openFeign
   implementation group: 'io.github.openfeign', name: 'feign-jackson', version: versions.openFeign
 
-  implementation group: 'org.apache.qpid', name: 'qpid-jms-client', version: '2.5.0'
+  implementation group: 'org.apache.qpid', name: 'qpid-jms-client', version: '2.7.0'
 
   testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-api', version: versions.junit
   testImplementation group: 'org.junit.jupiter', name: 'junit-jupiter-engine', version: versions.junit
