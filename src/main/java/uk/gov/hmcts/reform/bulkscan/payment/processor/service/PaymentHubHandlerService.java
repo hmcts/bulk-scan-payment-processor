@@ -4,6 +4,7 @@ import feign.FeignException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Profile;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.ccd.CcdClient;
@@ -133,17 +134,19 @@ public class PaymentHubHandlerService {
         );
 
         try {
-            payHubClient.updateCaseReference(
+            ResponseEntity<String> response = payHubClient.updateCaseReference(
                 authTokenGenerator.generate(),
                 updatePayment.getExceptionRecordRef(),
                 request
             );
 
             log.info(
-                "Payments have been reassigned in PayHub. Envelope id: {}, Exception record ref: {}, New case ref: {}",
+                "Payments have been reassigned in PayHub. Envelope id: {}, Exception record ref: {}, New case ref: {}"
+                + "Update response: {}",
                 updatePayment.getEnvelopeId(),
                 updatePayment.getExceptionRecordRef(),
-                updatePayment.getNewCaseRef()
+                updatePayment.getNewCaseRef(),
+                response.getBody()
             );
         } catch (FeignException ex) {
             debugPayHubException(ex, "Failed to call 'updatePaymentCaseReference'");
