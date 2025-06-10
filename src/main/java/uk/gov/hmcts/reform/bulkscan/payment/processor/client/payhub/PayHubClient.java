@@ -55,7 +55,7 @@ public interface PayHubClient {
         consumes = MimeTypeUtils.APPLICATION_JSON_VALUE,
         produces = MimeTypeUtils.APPLICATION_JSON_VALUE
     )
-    ResponseEntity<Void> updateCaseReference(
+    ResponseEntity<String> updateCaseReference(
         @RequestHeader("ServiceAuthorization") String serviceAuthorisation,
         @RequestParam("exception_reference") String exceptionReference,
         @RequestBody CaseReferenceRequest caseReferenceRequest
