@@ -34,7 +34,7 @@ public class PayHubClientPutPaymentTest {
     private PayHubClient client;
 
     @Test
-    public void should_return_ok_when_everything_is_ok_ignore_response_body() {
+    public void should_return_ok_when_everything_is_ok() {
         // given
         String s2sToken = randomUUID().toString();
 
@@ -56,8 +56,7 @@ public class PayHubClientPutPaymentTest {
         // then
         assertThat(updateResponse.getStatusCodeValue()).isEqualTo(200);
 
-        //Ignore response body for now !!!
-        assertThat(updateResponse.getBody()).isNull();
+        assertThat(updateResponse.getBody()).isEqualTo("{\"a\":\"1\"}");
     }
 
     @ParameterizedTest
