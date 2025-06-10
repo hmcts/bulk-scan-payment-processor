@@ -3,8 +3,8 @@ package uk.gov.hmcts.reform.bulkscan.payment.processor.task;
 import com.azure.messaging.servicebus.ServiceBusProcessorClient;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
-import org.springframework.test.context.bean.override.mockito.MockitoSpyBean;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.mock.mockito.SpyBean;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.config.IntegrationTest;
 
 import static org.mockito.Mockito.verify;
@@ -16,10 +16,10 @@ import static org.mockito.Mockito.verify;
 @IntegrationTest
 class PaymentMessageProcessTaskTest {
 
-    @MockitoSpyBean
+    @SpyBean
     private  PaymentMessageProcessTask paymentMessageProcessTask;
 
-    @MockitoBean
+    @MockBean
     private ServiceBusProcessorClient serviceBusProcessorClient;
 
     @Test

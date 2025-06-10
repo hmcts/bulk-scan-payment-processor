@@ -3,7 +3,7 @@ package uk.gov.hmcts.reform.bulkscan.payment.processor.client.processor;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 import uk.gov.hmcts.reform.authorisation.generators.AuthTokenGenerator;
@@ -31,10 +31,10 @@ import static org.springframework.http.HttpStatus.GATEWAY_TIMEOUT;
 
 @IntegrationTest
 public class ProcessorClientTest {
-    @MockitoBean
+    @MockBean
     private AuthTokenGenerator authTokenGenerator;
 
-    @MockitoBean
+    @MockBean
     private BulkScanProcessorApiProxy proxy;
 
     @Autowired

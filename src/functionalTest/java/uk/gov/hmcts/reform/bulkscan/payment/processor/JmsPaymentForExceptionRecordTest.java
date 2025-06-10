@@ -5,8 +5,8 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.ccd.CcdAuthenticator;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.ccd.CcdAuthenticatorFactory;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.helper.CaseSearcher;
@@ -35,7 +35,7 @@ class JmsPaymentForExceptionRecordTest {
     private static final String JURISDICTION = "BULKSCAN";
     private static final String BULKSCAN_PO_BOX = "BULKSCANPO1";
 
-    @MockitoBean
+    @MockBean
     private PaymentMessageProcessor paymentMessageProcessor;
 
     @Autowired
