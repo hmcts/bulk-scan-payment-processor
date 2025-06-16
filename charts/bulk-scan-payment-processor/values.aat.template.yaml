@@ -21,8 +21,6 @@ java:
           alias: SITE_ID_PRIVATELAW
         - name: site-id-bulkscan
           alias: SITE_ID_BULKSCAN
-        - name: payments-staging-queue-listen-shared-access-key
-          alias: PAYMENTS_QUEUE_READ_ACCESS_KEY
         - name: idam-client-secret
           alias: IDAM_CLIENT_SECRET
         - name: idam-users-bulkscan-username

@@ -24,19 +24,6 @@ spring:
     # without this, Spring can't properly resolve feign clients when IDAM and CCD clients are both included
     # TODO: remove when possible
     allow-bean-definition-overriding: true
-  autoconfigure:
-    exclude:
-
-jms:
-  # JMS Configuration for local dev
-  application-name: BulkScanPaymentsApiDev
-  enabled: ${JMS_ENABLED:false}
-  namespace: ${JMS_NAMESPACE:5672}
-  amqp-connection-string-template: ${JMS_AMQP_CONNECTION_TEMPLATE:tcp://localhost:61616}
-  username: ${JMS_USERNAME:admin}
-  password: ${JMS_PASSWORD:admin}
-  receiveTimeout: ${JMS_RECEIVE_TIMEOUT:30000}
-  idleTimeout: ${JMS_IDLE_TIMEOUT:30000}
 
 site-mappings:
   sites:
@@ -94,11 +81,6 @@ idam:
 core_case_data:
   api:
     url: ${CORE_CASE_DATA_API_URL}
-
-scheduling:
-  task:
-    consume-payments-queue:
-      time-interval-ms: ${PAYMENTS_CONSUME_CHECK_TIME_INTERVAL_MS}
 
 springdoc:
   packagesToScan: uk.gov.hmcts.reform.bulkscan.payment.processor
