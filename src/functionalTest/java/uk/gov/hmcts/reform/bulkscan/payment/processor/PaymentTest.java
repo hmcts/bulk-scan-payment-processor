@@ -17,7 +17,6 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
-import org.springframework.test.context.ActiveProfiles;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.models.CreatePayment;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.models.PaymentInfo;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.models.UpdatePayment;
@@ -30,7 +29,6 @@ import static org.hamcrest.Matchers.containsString;
 import static org.hamcrest.Matchers.equalTo;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@ActiveProfiles("functional")
 public class PaymentTest {
 
     private static MockWebServer payHubMockWebServer;
