@@ -1,0 +1,10 @@
+spring:
+  main:
+    allow-bean-definition-overriding: true
+
+profile: functional
+
+pay-hub:
+  api:
+    url: localhost:8082
+
