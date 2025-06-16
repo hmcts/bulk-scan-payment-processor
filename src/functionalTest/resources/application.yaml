@@ -1,0 +1,88 @@
+server:
+  port: 8583
+
+management:
+  endpoint:
+    health:
+      cache:
+        time-to-live: 30s
+      show-details: "always"
+  endpoints:
+    web:
+      base-path: "/"
+      exposure:
+        include: health, info
+
+# liveness alert settings depend on application name, if it is changed alert configuration must also be adjusted
+# https://github.com/hmcts/bulk-scan-shared-infrastructure/blob/master/liveness-alert.tf
+spring:
+  application:
+    name: Bulk Scan Payment Processor
+  config:
+    import: "optional:configtree:/mnt/secrets/bulk-scan/"
+  main:
+    # without this, Spring can't properly resolve feign clients when IDAM and CCD clients are both included
+    # TODO: remove when possible
+    allow-bean-definition-overriding: true
+
+site-mappings:
+  sites:
+    - siteName: PROBATE
+      poBoxes:
+        - 12625
+        - 12624
+      siteId: ${SITE_ID_PROBATE}
+    - siteName: DIVORCE
+      poBoxes:
+        - 12706
+      siteId: ${SITE_ID_DIVORCE}
+    - siteName: DIVORCE
+      poBoxes:
+        - 12746
+      siteId: ${SITE_ID_FINREM}
+    - siteName: DIVORCE
+      poBoxes:
+        - 13226
+      siteId: ${SITE_ID_NFD}
+    - siteName: PRIVATELAW
+      poBoxes:
+        - 13235
+      siteId: ${SITE_ID_PRIVATELAW}
+    - siteName: BULKSCAN
+      poBoxes:
+        - BULKSCANPO
+        - BULKSCANPO1
+      siteId: ${SITE_ID_BULKSCAN}
+
+pay-hub:
+  api:
+    url: localhost:8082
+
+bulk-scan-procesor:
+  api:
+    url: ${PROCESSOR_URL}
+    retries: 10
+    wait-time-in-ms: 1000
+  async:
+    threadpool-size:5
+
+idam:
+  s2s-auth:
+    url: ${S2S_URL:http://localhost:4552}
+    secret: ${S2S_SECRET:AAAAAAAAAAAAAAAA}
+    name: ${S2S_NAME:bulk_scan_payment_processor}
+  api:
+    url: ${IDAM_API_URL}
+  client:
+    id: 'bsp'
+    secret: ${IDAM_CLIENT_SECRET}
+    redirect_uri: ${IDAM_CLIENT_REDIRECT_URI}
+
+core_case_data:
+  api:
+    url: ${CORE_CASE_DATA_API_URL}
+
+springdoc:
+  packagesToScan: uk.gov.hmcts.reform.bulkscan.payment.processor
+  pathsToMatch: /**
+
