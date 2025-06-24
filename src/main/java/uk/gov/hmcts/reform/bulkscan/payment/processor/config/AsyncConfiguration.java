@@ -5,7 +5,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Profile;
 
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
@@ -15,7 +14,6 @@ import java.util.concurrent.atomic.AtomicInteger;
  * Configuration for async executor.
  */
 @Configuration
-@Profile("!functional")
 public class AsyncConfiguration {
     private Logger logger = LoggerFactory.getLogger(AsyncConfiguration.class);
 

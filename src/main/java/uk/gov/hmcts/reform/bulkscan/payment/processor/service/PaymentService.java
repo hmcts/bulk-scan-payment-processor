@@ -1,7 +1,6 @@
 package uk.gov.hmcts.reform.bulkscan.payment.processor.service;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.client.processor.ProcessorClient;
 import uk.gov.hmcts.reform.bulkscan.payment.processor.models.CreatePayment;
@@ -9,7 +8,6 @@ import uk.gov.hmcts.reform.bulkscan.payment.processor.models.UpdatePayment;
 
 @Service
 @Slf4j
-@Profile("!functional")
 public class PaymentService {
 
     private final PaymentHubHandlerService paymentHubHandlerService;
@@ -49,6 +47,6 @@ public class PaymentService {
     public void updatePayment(UpdatePayment updatePayment) {
         log.info("Start processing payment update with ID {}", updatePayment.getEnvelopeId());
 
-        paymentHubHandlerService.updatePaymentCaseReferenceNew(updatePayment);
+        paymentHubHandlerService.updatePaymentCaseReference(updatePayment);
     }
 }

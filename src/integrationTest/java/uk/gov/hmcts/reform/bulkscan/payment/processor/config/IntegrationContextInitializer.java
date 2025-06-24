@@ -1,6 +1,5 @@
 package uk.gov.hmcts.reform.bulkscan.payment.processor.config;
 
-import com.azure.messaging.servicebus.ServiceBusProcessorClient;
 import com.github.tomakehurst.wiremock.common.Slf4jNotifier;
 import com.github.tomakehurst.wiremock.core.Options;
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
@@ -12,10 +11,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.test.util.TestSocketUtils;
 
-import static org.mockito.Mockito.mock;
-
 @Configuration
-@Profile("integration") // no servicebus queue handler registration
+@Profile("integration")
 public class IntegrationContextInitializer implements ApplicationContextInitializer<ConfigurableApplicationContext> {
 
     public static final String PROFILE_WIREMOCK = "wiremock";
@@ -29,10 +26,4 @@ public class IntegrationContextInitializer implements ApplicationContextInitiali
     public Options options(@Value("${wiremock.port}") int port) {
         return WireMockConfiguration.options().port(port).notifier(new Slf4jNotifier(false));
     }
-
-    @Bean
-    public ServiceBusProcessorClient paymentServiceBusProcessorClient() {
-        return mock(ServiceBusProcessorClient.class);
-    }
-
 }
