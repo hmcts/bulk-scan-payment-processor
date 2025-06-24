@@ -5,7 +5,6 @@ import feign.codec.Decoder;
 import feign.jackson.JacksonDecoder;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Profile;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -18,7 +17,6 @@ import uk.gov.hmcts.reform.bulkscan.payment.processor.client.processor.response.
  */
 @FeignClient(name = "bulk-scan-processor-api", url = "${bulk-scan-procesor.api.url}",
     configuration = BulkScanProcessorApiProxy.BulkScanConfiguration.class)
-@Profile("!functional")
 public interface BulkScanProcessorApiProxy {
 
     /**

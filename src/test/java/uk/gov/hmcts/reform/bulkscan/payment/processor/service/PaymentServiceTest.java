@@ -81,7 +81,7 @@ class PaymentServiceTest {
 
         paymentService.updatePayment(updatePayment);
 
-        verify(paymentHubHandlerService, times(1)).updatePaymentCaseReferenceNew(updatePayment);
+        verify(paymentHubHandlerService, times(1)).updatePaymentCaseReference(updatePayment);
     }
 
     @Test
@@ -89,10 +89,10 @@ class PaymentServiceTest {
         UpdatePayment updatePayment = createValidUpdatePayment();
 
         doThrow(new RuntimeException("PaymentHubHandlerService failed"))
-            .when(paymentHubHandlerService).updatePaymentCaseReferenceNew(updatePayment);
+            .when(paymentHubHandlerService).updatePaymentCaseReference(updatePayment);
 
         assertThrows(RuntimeException.class, () -> paymentService.updatePayment(updatePayment));
 
-        verify(paymentHubHandlerService, times(1)).updatePaymentCaseReferenceNew(updatePayment);
+        verify(paymentHubHandlerService, times(1)).updatePaymentCaseReference(updatePayment);
     }
 }
