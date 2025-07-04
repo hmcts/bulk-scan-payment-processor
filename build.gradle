@@ -226,7 +226,7 @@ dependencies {
   smokeTestImplementation group: 'com.typesafe', name: 'config', version: '1.4.3'
 
   functionalTestImplementation sourceSets.smokeTest.runtimeClasspath
-  functionalTestImplementation group: 'com.squareup.okhttp3', name: 'mockwebserver', version: '4.12.0'
+  functionalTestImplementation group: 'com.squareup.okhttp3', name: 'mockwebserver', version: '5.0.0'
 
 }
 
