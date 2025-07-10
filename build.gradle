@@ -223,7 +223,7 @@ dependencies {
   smokeTestImplementation sourceSets.main.runtimeClasspath
   smokeTestImplementation sourceSets.test.runtimeClasspath
   smokeTestImplementation group: 'io.rest-assured', name: 'rest-assured', version: '5.5.5'
-  smokeTestImplementation group: 'com.typesafe', name: 'config', version: '1.4.3'
+  smokeTestImplementation group: 'com.typesafe', name: 'config', version: '1.4.4'
 
   functionalTestImplementation sourceSets.smokeTest.runtimeClasspath
   functionalTestImplementation group: 'com.squareup.okhttp3', name: 'mockwebserver', version: '5.0.0'
