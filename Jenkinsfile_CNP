@@ -97,6 +97,6 @@ withPipeline(type, product, component) {
     loadVaultSecrets(nonPreviewSecrets)
   }
 
-  def branchesToSync = ['demo', 'perftest']
+  def branchesToSync = ['demo', 'perftest', 'ithc']
   syncBranchesWithMaster(branchesToSync)
 }
