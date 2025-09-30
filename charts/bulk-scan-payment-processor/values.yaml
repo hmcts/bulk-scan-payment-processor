@@ -15,9 +15,7 @@ java:
   keyVaults:
     "bulk-scan":
       secrets:
-        - name: app-insights-instrumentation-key
-          alias: azure.application-insights.instrumentation-key
-        - name: app-insights-connection-string
+        - name: app-insights-connection-string-uk
           alias: app-insights-connection-string
         - name: s2s-secret-payment-processor
           alias: S2S_SECRET
