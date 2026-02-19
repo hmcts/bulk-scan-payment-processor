@@ -112,11 +112,6 @@ data "azurerm_key_vault_secret" "payhub_site_ids" {
   name         = local.payhub_site_id_secret_names[count.index]
 }
 
-data "azurerm_key_vault_secret" "appinsights_secret" {
-  name         = "app-insights-instrumentation-key"
-  key_vault_id = data.azurerm_key_vault.bulk_scan_key_vault.id
-}
-
 data "azurerm_key_vault_secret" "launch_darkly_sdk_key" {
   name         = "launch-darkly-sdk-key"
   key_vault_id = data.azurerm_key_vault.bulk_scan_key_vault.id
