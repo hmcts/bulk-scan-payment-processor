@@ -197,7 +197,7 @@ dependencies {
 
   implementation group: 'com.google.guava', name: 'guava', version: '33.6.0-jre'
 
-  implementation group: 'com.launchdarkly', name: 'launchdarkly-java-server-sdk', version: '7.13.2'
+  implementation group: 'com.launchdarkly', name: 'launchdarkly-java-server-sdk', version: '7.13.4'
 
   implementation group: 'org.springframework.cloud', name: 'spring-cloud-starter-bootstrap', version: '4.3.1'
 
