@@ -171,7 +171,7 @@ repositories {
 
 def versions = [
   reformLogging   : '6.1.9',
-  openFeign       : '13.11'
+  openFeign       : '13.12'
 ]
 
 dependencies {
