@@ -170,7 +170,7 @@ repositories {
 }
 
 def versions = [
-  reformLogging   : '6.1.9',
+  reformLogging   : '8.0.0',
   openFeign       : '13.12'
 ]
 
