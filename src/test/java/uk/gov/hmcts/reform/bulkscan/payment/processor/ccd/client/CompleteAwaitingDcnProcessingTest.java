@@ -1,6 +1,5 @@
 package uk.gov.hmcts.reform.bulkscan.payment.processor.ccd.client;
 
-import com.microsoft.applicationinsights.core.dependencies.google.common.collect.ImmutableMap;
 import feign.FeignException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -17,6 +16,8 @@ import uk.gov.hmcts.reform.ccd.client.model.CaseDataContent;
 import uk.gov.hmcts.reform.ccd.client.model.Event;
 import uk.gov.hmcts.reform.ccd.client.model.StartEventResponse;
 import uk.gov.hmcts.reform.idam.client.models.UserDetails;
+
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.catchThrowableOfType;
@@ -175,7 +176,7 @@ class CompleteAwaitingDcnProcessingTest {
     private CaseDataContent getExpectedCaseDataContentForSubmitEvent(String exceptionRecordId, String eventToken) {
         return CaseDataContent
             .builder()
-            .data(ImmutableMap.of(AWAITING_DCN_PROCESSING_FIELD_NAME, "No"))
+            .data(Map.of(AWAITING_DCN_PROCESSING_FIELD_NAME, "No"))
             .caseReference(exceptionRecordId)
             .event(Event.builder().id(COMPLETE_AWAITING_PROCESSING_EVENT_ID).summary(EVENT_SUMMARY).build())
             .ignoreWarning(true)
