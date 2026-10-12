@@ -10,13 +10,48 @@ The Bulk Scan Payment Processor retrieves service bus queue messages from the pa
 ## Getting Started
 ### Prerequisites
 
-- [JDK 21](https://www.oracle.com/java)
+- [JDK 25](https://www.oracle.com/java)
 - Project requires Spring Boot v3.x to be present
 
 ## Quick Start
 An alternative faster way getting started is by using the automated setup script. This script will help set up all
 bulk scan/print repos including bulk-scan-payment-processor and its dependencies.
 See [common-dev-env-bsbp](https://github.com/hmcts/common-dev-env-bsbp) repository for more information.
+
+### Development container (IntelliJ)
+
+The devcontainer provides Java 25, GitHub CLI and Copilot CLI, using the same
+setup as bsp-cron-trigger. Start Docker Desktop and create the repository's `.env`
+using the existing common-dev-env setup before opening the container.
+
+1. Open this repository in IntelliJ.
+2. Open `.devcontainer/devcontainer.json`.
+3. Use the gutter action **Create Dev Container and Mount Sources**.
+4. Select **Build Container and Continue**.
+5. Connect to the IntelliJ backend with JetBrains Client.
+
+Mount Sources uses your current checkout. The container reads the existing `.env`
+and forwards application port 8583. For dependencies running on your Mac through
+common-dev-env, use `host.docker.internal` instead of `localhost` in service URLs.
+
+Set the project SDK, Gradle JVM and application run configuration JRE to the
+container's Java 25 installation. Run local checks with:
+
+```bash
+./gradlew clean build integration compileFunctionalTestJava compileSmokeTestJava jacocoTestReport
+```
+
+Integration tests use the repository's WireMock configuration. Functional and
+smoke tests require their configured services and credentials.
+
+Install the IntelliJ Copilot plugin through **Settings → Plugins** after connecting.
+Automatic plugin installation is omitted because it caused a backend restart loop
+in bsp-cron-trigger. Copilot CLI is installed by the container setup command.
+
+The `devcontainer-home` volume preserves GitHub CLI and Copilot CLI settings.
+The host Git configuration is mounted read-only and the host SSH agent is forwarded.
+Commit and tag signing are disabled inside the container, matching the BSP cron setup.
+Feature versions are recorded in `.devcontainer/devcontainer-lock.json`.
 
 ## Building and deploying the application
 

@@ -1,0 +1,37 @@
+{
+  "name": "bulk-scan-payment-processor",
+  "dockerComposeFile": "docker-compose.yml",
+  "service": "devcontainer",
+  "workspaceFolder": "/workspaces/bulk-scan-payment-processor",
+  "shutdownAction": "stopCompose",
+  "remoteUser": "vscode",
+  "mounts": [
+    "source=${localEnv:HOME}/.gitconfig,target=/home/vscode/.gitconfig,type=bind,readonly"
+  ],
+  "features": {
+    "ghcr.io/devcontainers/features/java:1": {
+      "version": "25"
+    },
+    "ghcr.io/devcontainers/features/github-cli:1": {}
+  },
+  "forwardPorts": [
+    8583
+  ],
+  "portsAttributes": {
+    "8583": {
+      "label": "Bulk Scan Payment Processor",
+      "onAutoForward": "notify"
+    }
+  },
+  "postCreateCommand": "bash -o pipefail -c './gradlew --version && curl -fsSL https://gh.io/copilot-install | sudo bash'",
+  "hostRequirements": {
+    "cpus": 4,
+    "memory": "8gb",
+    "storage": "32gb"
+  },
+  "customizations": {
+    "jetbrains": {
+      "backend": "IntelliJ"
+    }
+  }
+}

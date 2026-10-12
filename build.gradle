@@ -8,7 +8,7 @@ plugins {
   id 'org.owasp.dependencycheck' version '12.2.2'
   id 'com.github.ben-manes.versions' version '0.54.0'
   id 'org.sonarqube' version '6.3.1.5724'
-  id 'io.freefair.lombok' version '8.14.4'
+  id 'io.freefair.lombok' version '9.5.0'
 }
 
 group = 'uk.gov.hmcts.reform'
@@ -16,7 +16,7 @@ version = '0.0.1'
 
 java {
   toolchain {
-    languageVersion = JavaLanguageVersion.of(21)
+    languageVersion = JavaLanguageVersion.of(25)
   }
 }
 
@@ -55,18 +55,22 @@ tasks.withType(JavaExec).configureEach {
   javaLauncher.set(javaToolchains.launcherFor(java.toolchain))
 }
 
-task functional(type: Test, description: 'Runs the functional tests.', group: 'Verification') {
+tasks.register('functional', Test) {
+  description = 'Runs the functional tests.'
+  group = 'Verification'
   testClassesDirs = sourceSets.functionalTest.output.classesDirs
   classpath = sourceSets.functionalTest.runtimeClasspath
 }
 
-task integration(type: Test, description: 'Runs the integration tests.', group: 'Verification') {
+tasks.register('integration', Test) {
+  description = 'Runs the integration tests.'
+  group = 'Verification'
   testClassesDirs = sourceSets.integrationTest.output.classesDirs
   classpath = sourceSets.integrationTest.runtimeClasspath
   failFast = true
 }
 
-task smoke(type: Test) {
+tasks.register('smoke', Test) {
   description = "Runs Smoke Tests"
   testClassesDirs = sourceSets.smokeTest.output.classesDirs
   classpath = sourceSets.smokeTest.runtimeClasspath
@@ -80,8 +84,8 @@ tasks.withType(Test) {
   }
 }
 
-task fortifyScan(type: JavaExec)  {
-  main = "uk.gov.hmcts.fortifyclient.FortifyClientMainApp"
+tasks.register('fortifyScan', JavaExec) {
+  mainClass = "uk.gov.hmcts.fortifyclient.FortifyClientMainApp"
   classpath += sourceSets.test.runtimeClasspath
   jvmArgs = ['--add-opens=java.base/java.lang.reflect=ALL-UNNAMED']
 }
@@ -101,8 +105,11 @@ pmd {
   toolVersion = "7.19.0"
   ignoreFailures = true
   sourceSets = [sourceSets.main, sourceSets.test, sourceSets.functionalTest, sourceSets.integrationTest, sourceSets.smokeTest]
-  reportsDir = layout.buildDirectory.dir("reports/pmd").get().asFile
   ruleSetFiles = files("config/pmd/ruleset.xml")
+}
+
+jacoco {
+  toolVersion = '0.8.14'
 }
 
 jacocoTestReport {
@@ -233,7 +240,9 @@ dependencies {
 
 }
 
-mainClassName = 'uk.gov.hmcts.reform.bulkscan.payment.processor.Application'
+application {
+  mainClass = 'uk.gov.hmcts.reform.bulkscan.payment.processor.Application'
+}
 
 bootJar {
   getArchiveFileName().set(provider {
