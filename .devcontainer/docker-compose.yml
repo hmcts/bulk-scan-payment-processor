@@ -1,0 +1,27 @@
+name: bulk-scan-payment-processor-dev
+
+services:
+  devcontainer:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: sleep infinity
+    volumes:
+      - ..:/workspaces/bulk-scan-payment-processor:cached
+      # Preserve GitHub CLI and Copilot CLI settings across rebuilds.
+      - devcontainer-home:/home/vscode
+      # Docker Desktop forwards the host SSH agent without copying private keys.
+      - /run/host-services/ssh-auth.sock:/ssh-agent
+    env_file:
+      - ../.env
+    environment:
+      SSH_AUTH_SOCK: /ssh-agent
+      # Override host signing settings inside the development container.
+      GIT_CONFIG_COUNT: "2"
+      GIT_CONFIG_KEY_0: commit.gpgsign
+      GIT_CONFIG_VALUE_0: "false"
+      GIT_CONFIG_KEY_1: tag.gpgsign
+      GIT_CONFIG_VALUE_1: "false"
+
+volumes:
+  devcontainer-home:

@@ -24,3 +24,6 @@
 .env
 /bin/setup-azurite.sh
 /bin/setup-sftp.sh
+
+# IntelliJ-generated devcontainer overrides
+.devcontainer/devcontainer-docker-compose.override.*.yml
