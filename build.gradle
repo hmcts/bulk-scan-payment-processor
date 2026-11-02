@@ -232,7 +232,7 @@ dependencies {
 
   smokeTestImplementation sourceSets.main.runtimeClasspath
   smokeTestImplementation sourceSets.test.runtimeClasspath
-  smokeTestImplementation group: 'io.rest-assured', name: 'rest-assured', version: '5.5.7'
+  smokeTestImplementation group: 'io.rest-assured', name: 'rest-assured', version: '6.3.0'
   smokeTestImplementation group: 'com.typesafe', name: 'config', version: '1.4.9'
 
   functionalTestImplementation sourceSets.smokeTest.runtimeClasspath
